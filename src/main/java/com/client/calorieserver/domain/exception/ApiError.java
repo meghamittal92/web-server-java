@@ -16,7 +16,9 @@ public enum ApiError {
 
     HANDLER_NOT_FOUND("E0007", "Handler Not Found"),
     REQUEST_METHOD_NOT_SUPPORTED("E0008", "Request Method not supported"),
-    MEDIA_TYPE_NOT_SUPPORTED("E0009", "Media Type not supported");
+    MEDIA_TYPE_NOT_SUPPORTED("E0009", "Media Type not supported"),
+
+    UNAUTHORIZED("E0010", "Unauthorized");
 
 
     private final String errorCode;

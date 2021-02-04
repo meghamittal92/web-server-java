@@ -1,7 +1,10 @@
 package com.client.calorieserver.controller;
 
+import com.client.calorieserver.configuration.CustomRestExceptionHandler;
 import com.client.calorieserver.domain.dto.ErrorResponse;
 import com.client.calorieserver.domain.exception.ApiError;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +21,14 @@ import javax.servlet.http.HttpServletRequest;
 @SuppressWarnings("deprecation")
 public class CustomErrorController implements ErrorController {
 
+    private final Logger logger = LogManager.getLogger(CustomErrorController.class);
 
     @RequestMapping("${server.error.path}")
     public ResponseEntity<ErrorResponse> handleError(HttpServletRequest request) {
+        logger.error("Error controller reached:", request.getRequestURI(), request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
         Object statusCode = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         ApiError apiError = ApiError.SERVER_ERROR;
-        ;
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         if (statusCode != null) {
 

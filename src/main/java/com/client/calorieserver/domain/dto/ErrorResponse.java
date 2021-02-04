@@ -1,7 +1,9 @@
 package com.client.calorieserver.domain.dto;
 
+import com.client.calorieserver.configuration.Constants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,16 +19,17 @@ import java.util.List;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class ErrorResponse {
 
     private HttpStatus status;
     private String message;
     private String errorCode;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonSerialize(as = LocalDateTime.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DateConstants.DATE_TIME_FORMAT)
     private LocalDateTime timestamp;
     List<String> details;
 
-    //TODO can add an errors field which will be the exceptions message field.
     private ErrorResponse() {
         timestamp = LocalDateTime.now();
     }

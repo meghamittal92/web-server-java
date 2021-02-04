@@ -1,13 +1,12 @@
 package com.client.calorieserver.controller;
 
 import com.client.calorieserver.domain.dto.CreateUserRequest;
-import com.client.calorieserver.domain.dto.UpdateUserRequest;
 import com.client.calorieserver.domain.dto.UserView;
 import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.service.UserService;
-import javassist.tools.web.BadHttpRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('USER')")
 public class UserController {
 
 
@@ -53,10 +53,12 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
-    public UserView update(@PathVariable("id") Long userId, @RequestBody @Valid UpdateUserRequest updateUserRequest) throws BadHttpRequest {
+    public UserView replace(@PathVariable("id") Long userId, @RequestBody @Valid CreateUserRequest createUserRequest) {
 
-        User updatedUser = userMapper.toUser(updateUserRequest);
-        return userMapper.toUserView(userService.updateById(userId, updatedUser));
+        User updatedUser = userMapper.toUser(createUserRequest);
+        return userMapper.toUserView(userService.replaceById(userId, updatedUser));
     }
+
+    //TODO give patch API to only update parts of a user
 
 }

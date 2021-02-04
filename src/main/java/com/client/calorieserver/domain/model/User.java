@@ -4,6 +4,7 @@ package com.client.calorieserver.domain.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 /**
@@ -24,5 +25,13 @@ public class User {
     private String password;
     private boolean enabled;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
 }

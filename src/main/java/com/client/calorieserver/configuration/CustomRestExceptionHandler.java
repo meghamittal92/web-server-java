@@ -3,6 +3,7 @@ package com.client.calorieserver.configuration;
 
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -11,11 +12,15 @@ import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.exception.ApiError;
 import com.client.calorieserver.domain.model.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -36,6 +41,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private final Logger logger = LogManager.getLogger(CustomRestExceptionHandler.class);
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
@@ -171,10 +177,26 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    @ExceptionHandler({Exception.class})
-    protected ResponseEntity<Object> handleAll(Exception ex) {
+    @ExceptionHandler({DisabledException.class})
+    protected ResponseEntity<Object> handleDisabledException(DisabledException ex, final HttpServletRequest request) {
+        logger.error("Authentication failed : {}\n", request.getRequestURI(), ex);
 
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ApiError.INTERNAL_SERVER_ERROR, List.of(ex.getMessage()));
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.UNAUTHORIZED);
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
+    @ExceptionHandler({ BadCredentialsException.class})
+    protected ResponseEntity<Object> handleDisabledException(BadCredentialsException ex, final HttpServletRequest request) {
+        logger.error("Authentication failed : {}\n", request.getRequestURI(), ex);
+
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.UNAUTHORIZED, List.of("Incorrect Password"));
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+    @ExceptionHandler({Exception.class})
+    protected ResponseEntity<Object> handleAll(Exception ex, final HttpServletRequest request) {
+        logger.error("Internal Error {}\n", request.getRequestURI(), ex.getCause()!=null?ex.getCause():ex);
+
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ApiError.INTERNAL_SERVER_ERROR);
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
@@ -205,6 +227,4 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     }
-
-
 }

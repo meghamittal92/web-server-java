@@ -4,11 +4,8 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
-/**
- * Request object to update an existing user.
- */
 @Data
-public class UpdateUserRequest {
+public class LoginRequest {
 
     @NotBlank
     private String username;
@@ -16,5 +13,4 @@ public class UpdateUserRequest {
     @NotBlank
     private String password;
 
-    private boolean enabled;
 }
