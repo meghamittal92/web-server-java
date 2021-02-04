@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class UserView {
 
-
     private Long id;
     private String username;
-    private boolean enabled;
 }

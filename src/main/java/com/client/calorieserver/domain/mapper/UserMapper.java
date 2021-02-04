@@ -35,17 +35,8 @@ public abstract class UserMapper {
     @Mapping(target = "roles", qualifiedByName = "stringSetToRoleSet")
     @Mapping(target = "password", qualifiedByName = "passwordToEncodedPassword")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "enabled", qualifiedByName = "enabledFieldMapper")
     public abstract User toUser(CreateUserRequest request);
 
-    @Named("enabledFieldMapper")
-    public boolean enabledFieldMapper(Boolean input) {
-        boolean enabled = true;
-
-        if (input != null)
-            enabled = input;
-        return enabled;
-    }
 
     @Named("stringSetToRoleSet")
     public Set<Role> stringSetToRoleSet(Set<String> roleSet) {

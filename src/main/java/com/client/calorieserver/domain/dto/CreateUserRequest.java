@@ -20,7 +20,6 @@ public class CreateUserRequest {
     @NotBlank
     private String password;
 
-    private Boolean enabled;
 
     //TODO custom validator to check if role names exist
     private Set<String> roles;
