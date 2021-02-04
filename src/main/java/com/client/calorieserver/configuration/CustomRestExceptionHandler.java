@@ -189,7 +189,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleDisabledException(BadCredentialsException ex, final HttpServletRequest request) {
         logger.error("Authentication failed : {}\n", request.getRequestURI(), ex);
 
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.UNAUTHORIZED, List.of("Incorrect Password"));
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.BAD_CREDENTIALS, List.of("Incorrect Password"));
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
     @ExceptionHandler({Exception.class})

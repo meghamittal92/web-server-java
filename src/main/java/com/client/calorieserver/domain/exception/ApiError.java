@@ -18,7 +18,8 @@ public enum ApiError {
     REQUEST_METHOD_NOT_SUPPORTED("E0008", "Request Method not supported"),
     MEDIA_TYPE_NOT_SUPPORTED("E0009", "Media Type not supported"),
 
-    UNAUTHORIZED("E0010", "Unauthorized");
+    UNAUTHORIZED("E0010", "Unauthorized"),
+    BAD_CREDENTIALS("E0011", "Bad Credentials");
 
 
     private final String errorCode;
