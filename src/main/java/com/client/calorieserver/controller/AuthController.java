@@ -1,7 +1,6 @@
 package com.client.calorieserver.controller;
 
 import com.client.calorieserver.configuration.security.JWTUtil;
-import com.client.calorieserver.configuration.security.UserDetailsImpl;
 import com.client.calorieserver.domain.dto.CreateUserRequest;
 import com.client.calorieserver.domain.dto.LoginRequest;
 import com.client.calorieserver.domain.dto.UserView;
@@ -44,7 +43,7 @@ public class AuthController {
         final Authentication auth = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        final String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
+        final String username = ((User) auth.getPrincipal()).getUsername();
         final User user = userService.findByUsername(username);
 
         final HttpHeaders httpHeaders = new HttpHeaders();

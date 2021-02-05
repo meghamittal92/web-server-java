@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.client.calorieserver.domain.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,7 @@ public class JWTUtil {
     public String generateJwtToken(Authentication auth) {
 
         final String token = JWT.create()
-                .withSubject(((UserDetailsImpl) auth.getPrincipal()).getUsername())
+                .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .sign(Algorithm.HMAC512(jwtSecret.getBytes()));
 

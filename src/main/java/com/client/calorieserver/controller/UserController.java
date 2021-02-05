@@ -1,6 +1,7 @@
 package com.client.calorieserver.controller;
 
 import com.client.calorieserver.domain.dto.CreateUserRequest;
+import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.UserView;
 import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.domain.model.User;
@@ -13,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Controller to provide operations on {@link User} object.
+ * Controller to provide operations on {@link UserDTO} object.
  */
 @RestController
 @RequestMapping(path = "/users")

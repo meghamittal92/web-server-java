@@ -1,33 +1,36 @@
 package com.client.calorieserver.domain.model;
 
 
-import lombok.Data;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import javax.persistence.*;
-import java.util.Collection;
+public enum Role {
 
-@Entity
-@Table(name = "roles")
-@Data
-public class Role {
+  USER("USER"),
+   USER_MANAGER("USER_MANAGER"),
+    ADMIN ("ADMIN");
 
-    public static final String USER = "USER";
-    public static final String USER_MANAGER = "USER_MANAGER";
-    public static final String ADMIN = "ADMIN";
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private static final Map<String,Role> ROLE_MAP;
+    private final String name;
 
-    private String name;
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
+    Role(final String name) {
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "roles_privileges",
-            joinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "privilege_id", referencedColumnName = "id"))
-    private Collection<Privilege> privileges;
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+    static {
+        Map<String,Role> map = new ConcurrentHashMap<String, Role>();
+        for (Role instance : Role.values()) {
+            map.put(instance.getName().toLowerCase(),instance);
+        }
+        ROLE_MAP = Collections.unmodifiableMap(map);
+    }
+
+    public static Role get (String name) {
+        return ROLE_MAP.get(name.toLowerCase());
+    }
 }

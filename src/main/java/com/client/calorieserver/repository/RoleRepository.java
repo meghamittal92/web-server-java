@@ -1,13 +1,13 @@
 package com.client.calorieserver.repository;
 
-import com.client.calorieserver.domain.model.Role;
+import com.client.calorieserver.domain.dto.db.RoleDTO;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface RoleRepository extends CrudRepository<Role, Long> {
+public interface RoleRepository extends CrudRepository<RoleDTO, Long> {
 
-    public Optional<Role> findByName(@Param("name") String roleName);
+    public Optional<RoleDTO> findByName(@Param("name") String roleName);
 }

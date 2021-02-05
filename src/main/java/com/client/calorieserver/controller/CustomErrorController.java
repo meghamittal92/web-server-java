@@ -1,6 +1,5 @@
 package com.client.calorieserver.controller;
 
-import com.client.calorieserver.configuration.CustomRestExceptionHandler;
 import com.client.calorieserver.domain.dto.ErrorResponse;
 import com.client.calorieserver.domain.exception.ApiError;
 import org.apache.logging.log4j.LogManager;

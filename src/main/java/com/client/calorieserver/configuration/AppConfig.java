@@ -1,4 +1,4 @@
-package com.client.calorieserver;
+package com.client.calorieserver.configuration;
 
 
 import com.client.calorieserver.configuration.Constants;

@@ -1,6 +1,7 @@
 package com.client.calorieserver.configuration.security;
 
 import com.client.calorieserver.configuration.Constants;
+import com.client.calorieserver.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,11 +56,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest req, final String token) {
 
         String username = jwtUtil.getUserNameFromJwtToken(token);
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
+        User user = (User) userDetailsService.loadUserByUsername(username);
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),
-                        Optional.ofNullable(userDetails).map(UserDetails::getAuthorities).orElse(of()));
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(),
+                        Optional.ofNullable(user).map(UserDetails::getAuthorities).orElse(of()));
 
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(req)
