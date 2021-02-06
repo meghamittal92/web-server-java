@@ -22,8 +22,8 @@ import java.nio.charset.StandardCharsets;
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
 
-    @Autowired
-    ObjectMapper objectMapper;
+
+    final ObjectMapper objectMapper;
 
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException {

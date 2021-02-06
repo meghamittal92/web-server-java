@@ -1,6 +1,7 @@
 package com.client.calorieserver.configuration.security;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -33,23 +34,15 @@ import java.util.List;
         jsr250Enabled = true,
         prePostEnabled = true
 )
+@RequiredArgsConstructor
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JWTAuthorizationFilter jwtAuthorizationFilter;
-
-
-    @Autowired
-    AccessDeniedHandler accessDeniedHandler;
-
-    @Autowired
-    AuthenticationEntryPoint authenticationEntryPoint;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTAuthorizationFilter jwtAuthorizationFilter;
+    private final AccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Value("${app.cors.allowedOrigins}")
     private List<String> allowedOrigins;

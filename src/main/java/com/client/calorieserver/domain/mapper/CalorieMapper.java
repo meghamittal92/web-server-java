@@ -19,8 +19,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public abstract class CalorieMapper {
 
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired

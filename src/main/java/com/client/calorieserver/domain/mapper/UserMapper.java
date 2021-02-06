@@ -24,11 +24,19 @@ import java.util.Set;
 public abstract class UserMapper {
 
 
-    @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setRoleRepository(final RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public abstract UserView toUserView(User user);
 
