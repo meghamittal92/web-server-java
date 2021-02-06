@@ -33,4 +33,7 @@ public class UserDTO {
                     name = "role_id", referencedColumnName = "id"))
     private Set<RoleDTO> roleDTOs;
 
+    @OneToMany(mappedBy = "userDTO")
+    private Set<CalorieDTO> calorieDTOS;
+
 }
