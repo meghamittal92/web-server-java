@@ -9,11 +9,12 @@ import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.repository.CaloriePerDayRepository;
 import com.client.calorieserver.repository.CalorieRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,11 +25,11 @@ public class CalorieService {
     private final CalorieMapper calorieMapper;
     private final CaloriePerDayRepository caloriePerDayRepository;
 
-    public List<Calorie> findAllByUser(final Long userId) {
+    public Page<Calorie> findAllByUser(final Long userId, final Pageable pageable) {
 
-        final List<CalorieDTO> calorieDTOS = calorieRepository.findAllByUser(userId);
+        final Page<CalorieDTO> calorieDTOS = calorieRepository.findAllByUser(userId, pageable);
 
-        return calorieMapper.toCalorie(calorieDTOS);
+        return calorieDTOS.map(calorieMapper::toCalorie);
 
     }
 

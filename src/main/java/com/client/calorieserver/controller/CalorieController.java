@@ -7,13 +7,14 @@ import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.service.CalorieService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Controller to provide operations on {@link Calorie} for
@@ -31,10 +32,10 @@ public class CalorieController {
 
 
     @GetMapping
-    public List<CalorieView> findAll() {
+    public Page<CalorieView> findAll(final Pageable pageable) {
 
         final Long userId = fetchUserIdFromAuth();
-        return calorieMapper.toCalorieView(calorieService.findAllByUser(userId));
+        return calorieService.findAllByUser(userId, pageable).map(calorieMapper::toCalorieView);
     }
 
     @GetMapping(path = "/{id}")

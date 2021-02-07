@@ -7,6 +7,8 @@ import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,9 @@ public class UserController {
 
 
     @GetMapping
-    public List<UserView> findAll() {
-        return userMapper.toUserView(userService.findAll());
+    public Page<UserView> findAll(final Pageable pageable) {
+
+        return userService.findAll(pageable).map(userMapper::toUserView);
     }
 
     @GetMapping(path = "/{username}")
