@@ -7,6 +7,7 @@ import com.client.calorieserver.domain.dto.UserView;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
+import lombok.Setter;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,9 +25,11 @@ import java.util.Set;
 public abstract class UserMapper {
 
 
+    @Setter
     @Autowired
     private RoleRepository roleRepository;
 
+    @Setter
     @Autowired
     private PasswordEncoder passwordEncoder;
 

@@ -2,6 +2,7 @@ package com.client.calorieserver.domain.dto.db;
 
 
 import lombok.Data;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import javax.persistence.*;
 import java.util.Set;
