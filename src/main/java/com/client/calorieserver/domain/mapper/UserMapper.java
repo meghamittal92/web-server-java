@@ -9,7 +9,6 @@ import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
@@ -43,7 +42,6 @@ public abstract class UserMapper {
     public abstract UserView toUserView(User user);
 
     public abstract List<UserView> toUserView(List<User> users);
-//    public abstract Page<UserView> toUserView(Page<User> users);
 
     @Mapping(target = "roles", qualifiedByName = "stringSetToRoleSet")
     @Mapping(target = "password", qualifiedByName = "passwordToEncodedPassword")
@@ -54,6 +52,7 @@ public abstract class UserMapper {
 
     @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "calorieDTOS", ignore = true)
     public abstract UserDTO toUserDTO(User user);
 
     @Mapping(source = "roleDTOs", target = "roles", qualifiedByName = "roleDTOsToRoles")
