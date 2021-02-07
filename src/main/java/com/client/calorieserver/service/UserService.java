@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
     public User replaceById(final Long id, User updatedUser) {
 
         UserDTO originalUserDTO = userRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(UserDTO.class, id)
+                () -> new EntityNotFoundException(User.class, id)
         );
 
         if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {

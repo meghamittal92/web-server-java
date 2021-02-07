@@ -23,4 +23,6 @@ public class CreateUserRequest {
 
     //TODO custom validator to check if role names exist
     private Set<String> roles;
+
+    private Long expectedCaloriesPerDay;
 }

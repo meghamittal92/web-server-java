@@ -23,6 +23,7 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
+    private static final Long DEFAULT_EXPECTED_CALORIES = 2000L;
 
     private RoleRepository roleRepository;
 
@@ -44,6 +45,7 @@ public abstract class UserMapper {
 
     @Mapping(target = "roles", qualifiedByName = "stringSetToRoleSet")
     @Mapping(target = "password", qualifiedByName = "passwordToEncodedPassword")
+    @Mapping(target = "expectedCaloriesPerDay", qualifiedByName = "expectedCaloriesMapper")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "authorities", ignore = true)
     public abstract User toUser(CreateUserRequest request);
@@ -114,4 +116,11 @@ public abstract class UserMapper {
         return passwordEncoder.encode(password);
     }
 
+    @Named("expectedCaloriesMapper")
+    public Long expectedCaloriesMapper(Long expectedCaloriesPerDay) {
+        if (expectedCaloriesPerDay == null)
+            expectedCaloriesPerDay = DEFAULT_EXPECTED_CALORIES;
+
+        return expectedCaloriesPerDay;
+    }
 }

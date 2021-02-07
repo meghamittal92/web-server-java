@@ -19,17 +19,22 @@ public class CalorieDTO {
     @Column(name = "num_calories")
     private int numCalories;
 
-    @Column(name = "details")
-    private String details;
-
-    @Column(name = "is_within_limit")
-    private boolean isWithinLimit;
+    @Column(name = "meal_details")
+    private String mealDetails;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id", referencedColumnName = "id")
     private UserDTO userDTO;
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumns(
+            {
+                    @JoinColumn(insertable = false, updatable = false, name = "user_id", referencedColumnName = "user_id"),
+                    @JoinColumn(insertable = false, updatable = false, name = "datetime", referencedColumnName = "date"),
+
+            })
+    private CaloriePerDayDTO caloriePerDayDTO;
 
 }
 

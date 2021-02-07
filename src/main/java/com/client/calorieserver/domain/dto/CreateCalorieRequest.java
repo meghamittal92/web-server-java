@@ -15,11 +15,12 @@ import java.time.LocalDateTime;
 public class CreateCalorieRequest {
 
     @JsonDeserialize(using = CustomDateDeserializer.class)
+    @NotNull
     LocalDateTime dateTime;
 
     @NotNull
     int numCalories;
 
     @NotEmpty
-    String details;
+    String mealDetails;
 }

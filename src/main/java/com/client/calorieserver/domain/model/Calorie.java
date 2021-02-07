@@ -11,7 +11,8 @@ public class Calorie {
     private Long id;
     LocalDateTime dateTime;
     int numCalories;
-    String details;
+    String mealDetails;
+    int totalCaloriesForDay;
     boolean isWithinLimit;
-    private Long userId;
+    Long userId;
 }

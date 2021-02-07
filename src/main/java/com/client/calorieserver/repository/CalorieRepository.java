@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CalorieRepository extends CrudRepository<CalorieDTO, Long> {
 
@@ -15,11 +16,13 @@ public interface CalorieRepository extends CrudRepository<CalorieDTO, Long> {
     List<CalorieDTO> findAllByUser(@Param("userId") Long userId);
 
     @Query("SELECT c FROM CalorieDTO c WHERE c.userDTO.id = :userId AND c.id = :calorieId")
-    CalorieDTO findOneByUser(@Param("userId") Long userId, @Param("calorieId") Long calorieId);
+    Optional<CalorieDTO> findOneByUser(@Param("userId") Long userId, @Param("calorieId") Long calorieId);
 
 
     @Modifying
     @Query("DELETE FROM CalorieDTO c WHERE c.userDTO.id = :userId AND c.id = :calorieId")
     void deleteOneByUserId(@Param("userId") Long userId, @Param("calorieId") Long calorieId);
+
+
 }
 

@@ -13,13 +13,14 @@ public enum ApiError {
     INTERNAL_SERVER_ERROR("E0004", "Internal Server Error"),
     USER_NOT_FOUND("E0005", "User not found"),
     USER_ALREADY_EXISTS("E0006", "User already exists"),
+    CALORIE_NOT_FOUND("E0007", "Calorie not found"),
 
-    HANDLER_NOT_FOUND("E0007", "Handler Not Found"),
-    REQUEST_METHOD_NOT_SUPPORTED("E0008", "Request Method not supported"),
-    MEDIA_TYPE_NOT_SUPPORTED("E0009", "Media Type not supported"),
+    HANDLER_NOT_FOUND("E0008", "Handler Not Found"),
+    REQUEST_METHOD_NOT_SUPPORTED("E0009", "Request Method not supported"),
+    MEDIA_TYPE_NOT_SUPPORTED("E0010", "Media Type not supported"),
 
-    UNAUTHORIZED("E0010", "Unauthorized"),
-    BAD_CREDENTIALS("E0011", "Bad Credentials");
+    UNAUTHORIZED("E0011", "Unauthorized"),
+    BAD_CREDENTIALS("E0012", "Bad Credentials");
 
 
     private final String errorCode;

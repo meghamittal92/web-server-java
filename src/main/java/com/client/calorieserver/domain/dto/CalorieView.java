@@ -11,6 +11,6 @@ public class CalorieView {
     private Long id;
     LocalDateTime dateTime;
     int numCalories;
-    String details;
+    String mealDetails;
     boolean isWithinLimit;
 }
