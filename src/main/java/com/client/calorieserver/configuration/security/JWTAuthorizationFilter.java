@@ -2,6 +2,7 @@ package com.client.calorieserver.configuration.security;
 
 import com.client.calorieserver.configuration.Constants;
 import com.client.calorieserver.domain.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,12 +23,13 @@ import java.util.Optional;
 import static java.util.List.of;
 
 @Component
+@RequiredArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    JWTUtil jwtUtil;
-    @Autowired
-    UserDetailsService userDetailsService;
+
+    final JWTUtil jwtUtil;
+
+    final UserDetailsService userDetailsService;
 
 
     @Override
@@ -59,7 +61,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         User user = (User) userDetailsService.loadUserByUsername(username);
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(),
+                new UsernamePasswordAuthenticationToken(user, user.getPassword(),
                         Optional.ofNullable(user).map(UserDetails::getAuthorities).orElse(of()));
 
         authentication.setDetails(

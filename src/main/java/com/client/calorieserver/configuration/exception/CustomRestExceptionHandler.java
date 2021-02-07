@@ -8,10 +8,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import com.client.calorieserver.domain.dto.ErrorResponse;
+import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.exception.ApiError;
+import com.client.calorieserver.domain.model.Calorie;
+import com.client.calorieserver.domain.model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.TypeMismatchException;
@@ -156,7 +159,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         ApiError apiError = ApiError.CLIENT_ERROR;
 
-        if (UserDTO.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
+        if (User.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
             apiError = ApiError.USER_ALREADY_EXISTS;
         }
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, apiError, List.of(ex.getMessage()));
@@ -168,8 +171,13 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         ApiError apiError = ApiError.CLIENT_ERROR;
 
-        if (UserDTO.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
+        if (User.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
             apiError = ApiError.USER_NOT_FOUND;
+        }
+        else if(Calorie.class.getSimpleName().equals(ex.getEntityClass().getSimpleName()))
+        {
+            apiError = ApiError.CALORIE_NOT_FOUND;
+
         }
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND, apiError, List.of(ex.getMessage()));
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);

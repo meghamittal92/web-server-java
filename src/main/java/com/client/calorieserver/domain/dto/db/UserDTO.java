@@ -25,6 +25,9 @@ public class UserDTO {
 
     private String password;
 
+    @Column(name = "expected_calories_per_day")
+    private Long expectedCaloriesPerDay;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -33,5 +36,8 @@ public class UserDTO {
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
     private Set<RoleDTO> roleDTOs;
+
+    @OneToMany(mappedBy = "userDTO")
+    private Set<CalorieDTO> calorieDTOS;
 
 }

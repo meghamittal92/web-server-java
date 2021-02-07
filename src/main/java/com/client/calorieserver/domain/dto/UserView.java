@@ -10,4 +10,5 @@ public class UserView {
 
     private Long id;
     private String username;
+    private Long expectedCaloriesPerDay;
 }

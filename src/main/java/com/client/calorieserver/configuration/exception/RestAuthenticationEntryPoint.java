@@ -22,8 +22,7 @@ import java.nio.charset.StandardCharsets;
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 
-    @Autowired
-    ObjectMapper objectMapper;
+    final ObjectMapper objectMapper;
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {

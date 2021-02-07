@@ -1,9 +1,12 @@
 package com.client.calorieserver.configuration.security;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,6 +22,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -27,24 +34,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
         jsr250Enabled = true,
         prePostEnabled = true
 )
+@RequiredArgsConstructor
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTAuthorizationFilter jwtAuthorizationFilter;
+    private final AccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
-    @Autowired
-    private JWTAuthorizationFilter jwtAuthorizationFilter;
-
-
-    @Autowired
-    AccessDeniedHandler accessDeniedHandler;
-
-    @Autowired
-    AuthenticationEntryPoint authenticationEntryPoint;
-
+    @Value("${app.cors.allowedOrigins}")
+    private List<String> allowedOrigins;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -71,8 +72,11 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.PATCH.name(), HttpMethod.DELETE.name()));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
