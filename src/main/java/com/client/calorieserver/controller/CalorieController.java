@@ -2,13 +2,19 @@ package com.client.calorieserver.controller;
 
 import com.client.calorieserver.domain.dto.CalorieView;
 import com.client.calorieserver.domain.dto.CreateCalorieRequest;
+import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
+import com.client.calorieserver.domain.model.search.CalorieSearchKey;
+import com.client.calorieserver.domain.model.search.RelationalOperator;
+import com.client.calorieserver.util.CalorieDTOSpecification;
+import com.client.calorieserver.util.SpecificationBuilder;
 import com.client.calorieserver.service.CalorieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,10 +38,16 @@ public class CalorieController {
 
 
     @GetMapping
-    public Page<CalorieView> findAll(final Pageable pageable) {
+    public Page<CalorieView> findAll(@RequestParam(value = "search", required = false) String search, final Pageable pageable) {
 
         final Long userId = fetchUserIdFromAuth();
-        return calorieService.findAllByUser(userId, pageable).map(calorieMapper::toCalorieView);
+
+        SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>().with(CalorieSearchKey.userId.getName(), RelationalOperator.EQUAL, userId);
+        if (search != null)
+            specBuilder = specBuilder.with(search);
+        Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
+
+        return calorieService.findAll(spec, pageable).map(calorieMapper::toCalorieView);
     }
 
     @GetMapping(path = "/{id}")

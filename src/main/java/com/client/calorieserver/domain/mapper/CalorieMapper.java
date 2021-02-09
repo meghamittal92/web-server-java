@@ -70,7 +70,8 @@ public abstract class CalorieMapper {
         final UserDay userDay = new UserDay(calorieDTO.getUserDTO().getId(), calorie.getDateTime().toLocalDate());
 
         calorieDTO.setCaloriePerDayDTO(caloriePerDayRepository.findById(userDay).orElseThrow(
-                () -> new InternalException("Something went wrong")));
+                () -> new InternalException
+                        (String.format("CaloriePerDay does not exist for user %s and day %s ", userDay.getUserId(), userDay.getDate()))));
     }
 
     @AfterMapping

@@ -30,6 +30,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	compile 'com.auth0:java-jwt:3.4.0'
+	annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
+	compile group: 'com.google.guava', name: 'guava', version: '21.0'
 }
 
 test {

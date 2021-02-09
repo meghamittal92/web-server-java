@@ -20,7 +20,8 @@ public enum ApiError {
     MEDIA_TYPE_NOT_SUPPORTED("E0010", "Media Type not supported"),
 
     UNAUTHORIZED("E0011", "Unauthorized"),
-    BAD_CREDENTIALS("E0012", "Bad Credentials");
+    BAD_CREDENTIALS("E0012", "Bad Credentials"),
+    INVALID_SEARCH_PARAMETER("E0013", "Invalid search parameters");
 
 
     private final String errorCode;

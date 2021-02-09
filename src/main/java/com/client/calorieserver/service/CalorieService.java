@@ -1,7 +1,9 @@
 package com.client.calorieserver.service;
 
+import com.client.calorieserver.domain.dto.CalorieView;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.CaloriePerDayDTO;
+import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.db.UserDay;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
@@ -11,6 +13,7 @@ import com.client.calorieserver.repository.CalorieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -107,4 +110,10 @@ public class CalorieService {
         caloriePerDayRepository.save(caloriePerDayDTO);
     }
 
+    public Page<Calorie> findAll(Specification<CalorieDTO> spec, Pageable pageable) {
+
+        final Page<CalorieDTO> calorieDTOS = calorieRepository.findAll(spec, pageable);
+
+        return calorieDTOS.map(calorieMapper::toCalorie);
+    }
 }

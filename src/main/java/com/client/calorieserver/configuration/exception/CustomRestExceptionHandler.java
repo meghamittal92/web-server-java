@@ -13,6 +13,7 @@ import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.exception.ApiError;
+import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
 import org.apache.logging.log4j.LogManager;
@@ -174,9 +175,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (User.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
             apiError = ApiError.USER_NOT_FOUND;
-        }
-        else if(Calorie.class.getSimpleName().equals(ex.getEntityClass().getSimpleName()))
-        {
+        } else if (Calorie.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
             apiError = ApiError.CALORIE_NOT_FOUND;
 
         }
@@ -193,16 +192,25 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
-    @ExceptionHandler({ BadCredentialsException.class})
+    @ExceptionHandler({BadCredentialsException.class})
     protected ResponseEntity<Object> handleDisabledException(BadCredentialsException ex, final HttpServletRequest request) {
         logger.error("Authentication failed : {}\n", request.getRequestURI(), ex);
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.BAD_CREDENTIALS, List.of("Incorrect Password"));
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
+
+    @ExceptionHandler({InvalidSearchQueryException.class})
+    protected ResponseEntity<Object> handleInvalidSearchQueryException(InvalidSearchQueryException ex, final HttpServletRequest request) {
+        logger.error("Invalid search query : {}\n", request.getRequestURI(), ex);
+
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_SEARCH_PARAMETER);
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> handleAll(Exception ex, final HttpServletRequest request) {
-        logger.error("Internal Error {}\n", request.getRequestURI(), ex.getCause()!=null?ex.getCause():ex);
+        logger.error("Internal Error {}\n", request.getRequestURI(), ex.getCause() != null ? ex.getCause() : ex);
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ApiError.INTERNAL_SERVER_ERROR);
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);

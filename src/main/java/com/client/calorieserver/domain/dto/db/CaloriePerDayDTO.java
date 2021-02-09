@@ -14,6 +14,6 @@ public class CaloriePerDayDTO {
     UserDay id;
 
     @Column(name = "total_calories")
-    int totalCalories;
+    Integer totalCalories;
 
 }

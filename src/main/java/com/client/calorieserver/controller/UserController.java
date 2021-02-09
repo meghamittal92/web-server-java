@@ -38,7 +38,6 @@ public class UserController {
     @GetMapping(path = "/{username}")
     public UserView find(@PathVariable("username") String username) {
 
-        final User user = userService.findByUsername(username);
         return userMapper.toUserView(userService.findByUsername(username));
 
     }

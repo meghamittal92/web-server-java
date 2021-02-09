@@ -1,8 +1,12 @@
 package com.client.calorieserver.domain.dto.db;
 
 import lombok.Data;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,10 +21,14 @@ public class CalorieDTO {
     private LocalDateTime dateTime;
 
     @Column(name = "num_calories")
-    private int numCalories;
+    private Integer numCalories;
 
     @Column(name = "meal_details")
     private String mealDetails;
+
+
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private Long userId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(
@@ -28,12 +36,12 @@ public class CalorieDTO {
     private UserDTO userDTO;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumns(
+    @JoinColumnsOrFormulas(
             {
-                    @JoinColumn(insertable = false, updatable = false, name = "user_id", referencedColumnName = "user_id"),
-                    @JoinColumn(insertable = false, updatable = false, name = "datetime", referencedColumnName = "date"),
-
-            })
+                    @JoinColumnOrFormula(column = @JoinColumn(insertable = false, updatable = false, name = "user_id", referencedColumnName = "user_id")),
+                    @JoinColumnOrFormula(formula = @JoinFormula(value = "CAST(datetime as date)", referencedColumnName = "date"))
+            }
+    )
     private CaloriePerDayDTO caloriePerDayDTO;
 
 }

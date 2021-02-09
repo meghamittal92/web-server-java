@@ -2,6 +2,7 @@ package com.client.calorieserver.configuration;
 
 
 import com.client.calorieserver.configuration.Constants;
+import com.client.calorieserver.util.SpecificationBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
