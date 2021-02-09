@@ -96,7 +96,7 @@ public abstract class UserMapper {
     public Set<Role> stringSetToRoleSet(Set<String> roleSet) {
         HashSet<Role> roles = new HashSet<>();
 
-        if (roleSet != null) {
+        if (roleSet != null && roleSet.size() > 0) {
             for (final String roleString : roleSet) {
 
                 if (Role.get(roleString) != null) {
@@ -106,7 +106,7 @@ public abstract class UserMapper {
             }
         }
         //by default give the user role to all users
-        else {
+        if (roles.size() == 0) {
             roles.add(Role.USER);
         }
         return roles;

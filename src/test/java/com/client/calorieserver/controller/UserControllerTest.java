@@ -153,9 +153,63 @@ public class UserControllerTest {
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
-        ArgumentCaptor<Long> idCapture = ArgumentCaptor.forClass(Long.class);
-        Mockito.verify(userService).deleteById(idCapture.capture());
-        assert (idCapture.getValue() == 12L);
+        ArgumentCaptor<String> idCapture = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(userService).findByUsername(idCapture.capture());
+        assert (idCapture.getValue().equalsIgnoreCase("test1"));
     }
+
+    @Test
+    void replaceUserNoUserName() throws Exception{
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setPassword("testPasssword");
+        MvcResult result = mockMvc.perform(put("/users/12")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(createUserRequest)))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
+    @Test
+    void replaceUserNoPassword() throws Exception{
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setUsername("test");
+        MvcResult result = mockMvc.perform(put("/users/12")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
+    @Test
+    void replaceUserValidParameters() throws Exception{
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setUsername("test");
+        createUserRequest.setPassword("testPassword");
+
+        User user = new User();
+        user.setUsername(createUserRequest.getUsername());
+        user.setPassword(createUserRequest.getPassword());
+        user.setId(12L);
+
+        UserView userView = new UserView();
+        userView.setUsername(user.getUsername());
+        userView.setId(user.getId());
+        userView.setExpectedCaloriesPerDay(user.getExpectedCaloriesPerDay());
+
+        Mockito.when(userMapper.toUser(Mockito.any(CreateUserRequest.class))).thenReturn(user);
+        Mockito.when(userService.replaceById(Mockito.anyLong(), Mockito.any(User.class))).thenReturn(user);
+        Mockito.when(userMapper.toUserView(Mockito.any(User.class))).thenReturn(userView);
+
+        MvcResult result = mockMvc.perform(put("/users/12")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONObject response_json = new JSONObject(result.getResponse().getContentAsString());
+        assert (response_json.getInt("id") == user.getId());
+        assert (response_json.getString("username").equalsIgnoreCase(user.getUsername()));
+    }
+
 
 }
