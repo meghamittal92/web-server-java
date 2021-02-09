@@ -53,6 +53,7 @@ public abstract class UserMapper {
 
     @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "calorieDTOS", ignore = true)
     public abstract UserDTO toUserDTO(User user);
 
     @Mapping(source = "roleDTOs", target = "roles", qualifiedByName = "roleDTOsToRoles")
@@ -60,6 +61,8 @@ public abstract class UserMapper {
     public abstract User toUser(UserDTO userDTO);
 
     public abstract List<User> toUser(List<UserDTO> userDTO);
+
+//    public abstract Page<User> toUser(Page<UserDTO> userDTO);
 
     @Named("roleDTOsToRoles")
     public Set<Role> roleDTOsToRoles(Set<RoleDTO> roleDTOS) {

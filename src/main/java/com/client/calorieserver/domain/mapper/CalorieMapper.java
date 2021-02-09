@@ -6,6 +6,7 @@ import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.db.UserDay;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
+import com.client.calorieserver.domain.exception.InternalException;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.CaloriePerDayRepository;
@@ -37,6 +38,7 @@ public abstract class CalorieMapper {
     @Mapping(target = "withinLimit", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "totalCaloriesForDay", ignore = true)
     public abstract Calorie toCalorie(CreateCalorieRequest createCalorieRequest);
 
     public abstract CalorieView toCalorieView(Calorie calorie);
@@ -44,11 +46,14 @@ public abstract class CalorieMapper {
     public abstract List<CalorieView> toCalorieView(List<Calorie> calorie);
 
     @Mapping(source = "userDTO.id", target = "userId")
+    @Mapping(target = "totalCaloriesForDay", ignore = true)
+    @Mapping(target = "withinLimit", ignore = true)
     public abstract Calorie toCalorie(CalorieDTO calorieDTO);
 
     public abstract List<Calorie> toCalorie(List<CalorieDTO> calorieDTOs);
 
     @Mapping(source = "userId", target = "userDTO", qualifiedByName = "userIdToUserDTO")
+    @Mapping(target = "caloriePerDayDTO", ignore = true)
     public abstract CalorieDTO toCalorieDTO(Calorie calorie);
 
 
@@ -63,8 +68,10 @@ public abstract class CalorieMapper {
     @AfterMapping
     public void afterMappingCalorieDTO(Calorie calorie, @MappingTarget CalorieDTO calorieDTO) {
         final UserDay userDay = new UserDay(calorieDTO.getUserDTO().getId(), calorie.getDateTime().toLocalDate());
+
         calorieDTO.setCaloriePerDayDTO(caloriePerDayRepository.findById(userDay).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, "something")));
+                () -> new InternalException
+                        (String.format("CaloriePerDay does not exist for user %s and day %s ", userDay.getUserId(), userDay.getDate()))));
     }
 
     @AfterMapping

@@ -7,6 +7,8 @@ import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -62,9 +64,9 @@ public class UserService implements UserDetailsService {
         return userMapper.toUser(userDTO);
     }
 
-    public List<User> findAll() {
+    public Page<User> findAll(final Pageable pageable) {
 
-        return userMapper.toUser((List<UserDTO>) userRepository.findAll());
+        return userRepository.findAll(pageable).map(userMapper::toUser);
     }
 
     @Transactional

@@ -1,7 +1,9 @@
 package com.client.calorieserver.service;
 
+import com.client.calorieserver.domain.dto.CalorieView;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.CaloriePerDayDTO;
+import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.db.UserDay;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
@@ -9,11 +11,13 @@ import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.repository.CaloriePerDayRepository;
 import com.client.calorieserver.repository.CalorieRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,11 +28,11 @@ public class CalorieService {
     private final CalorieMapper calorieMapper;
     private final CaloriePerDayRepository caloriePerDayRepository;
 
-    public List<Calorie> findAllByUser(final Long userId) {
+    public Page<Calorie> findAllByUser(final Long userId, final Pageable pageable) {
 
-        final List<CalorieDTO> calorieDTOS = calorieRepository.findAllByUser(userId);
+        final Page<CalorieDTO> calorieDTOS = calorieRepository.findAllByUser(userId, pageable);
 
-        return calorieMapper.toCalorie(calorieDTOS);
+        return calorieDTOS.map(calorieMapper::toCalorie);
 
     }
 
@@ -106,4 +110,10 @@ public class CalorieService {
         caloriePerDayRepository.save(caloriePerDayDTO);
     }
 
+    public Page<Calorie> findAll(Specification<CalorieDTO> spec, Pageable pageable) {
+
+        final Page<CalorieDTO> calorieDTOS = calorieRepository.findAll(spec, pageable);
+
+        return calorieDTOS.map(calorieMapper::toCalorie);
+    }
 }

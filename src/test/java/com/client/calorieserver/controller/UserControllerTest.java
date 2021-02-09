@@ -32,6 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
@@ -130,7 +131,7 @@ public class UserControllerTest {
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
-        Mockito.verify(userService).findAll();
+        Mockito.verify(userService).findAll(Mockito.any(Pageable.class));
         Mockito.verify(userMapper).toUserView(ArgumentMatchers.anyList());
     }
 
