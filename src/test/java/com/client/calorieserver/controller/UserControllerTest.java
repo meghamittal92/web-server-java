@@ -20,18 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -50,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@UnsecuredWebMvcTest(value = UserController.class)
+@UnsecuredWebMvcTest(value = UserAdminController.class)
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -68,7 +57,7 @@ public class UserControllerTest {
     void createUserNoUserName() throws  Exception{
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setPassword("testPasssword");
-        MvcResult result = mockMvc.perform(post("/users")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().is4xxClientError())
@@ -84,7 +73,7 @@ public class UserControllerTest {
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setUsername("test");
         createUserRequest.setPassword("");
-        MvcResult result = mockMvc.perform(post("/users")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().is4xxClientError())
@@ -113,7 +102,7 @@ public class UserControllerTest {
         Mockito.when(userMapper.toUser(ArgumentMatchers.any(CreateUserRequest.class))).thenReturn(user);
         Mockito.when(userService.create(ArgumentMatchers.any(User.class))).thenReturn(user);
         Mockito.when(userMapper.toUserView(ArgumentMatchers.any(User.class))).thenReturn(userView);
-        MvcResult result = mockMvc.perform(post("/users")
+        MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().is2xxSuccessful())
@@ -126,7 +115,7 @@ public class UserControllerTest {
 
     @Test
     void getUsers() throws Exception{
-        MvcResult result = mockMvc.perform(get("/users")
+        MvcResult result = mockMvc.perform(get("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
@@ -137,7 +126,7 @@ public class UserControllerTest {
 
     @Test
     void deleteUser() throws Exception{
-        MvcResult result = mockMvc.perform(delete("/users/12")
+        MvcResult result = mockMvc.perform(delete("/api/v1/users/12")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
@@ -149,7 +138,7 @@ public class UserControllerTest {
 
     @Test
     void findUser() throws Exception{
-        MvcResult result = mockMvc.perform(get("/users/test1")
+        MvcResult result = mockMvc.perform(get("/api/v1/users/test1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
@@ -163,7 +152,7 @@ public class UserControllerTest {
     void replaceUserNoUserName() throws Exception{
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setPassword("testPasssword");
-        MvcResult result = mockMvc.perform(put("/users/12")
+        MvcResult result = mockMvc.perform(put("/api/v1/users/12")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(createUserRequest)))
                 .andExpect(status().is4xxClientError())
@@ -174,7 +163,7 @@ public class UserControllerTest {
     void replaceUserNoPassword() throws Exception{
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setUsername("test");
-        MvcResult result = mockMvc.perform(put("/users/12")
+        MvcResult result = mockMvc.perform(put("/api/v1/users/12")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().is4xxClientError())
@@ -201,7 +190,7 @@ public class UserControllerTest {
         Mockito.when(userService.replaceById(Mockito.anyLong(), Mockito.any(User.class))).thenReturn(user);
         Mockito.when(userMapper.toUserView(Mockito.any(User.class))).thenReturn(userView);
 
-        MvcResult result = mockMvc.perform(put("/users/12")
+        MvcResult result = mockMvc.perform(put("/api/v1/users/12")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().is2xxSuccessful())
