@@ -2,9 +2,11 @@ package com.client.calorieserver.controller;
 
 import com.client.calorieserver.domain.dto.CalorieView;
 import com.client.calorieserver.domain.dto.CreateCalorieRequest;
+import com.client.calorieserver.domain.dto.UpdateCalorieRequest;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
 import com.client.calorieserver.domain.model.Calorie;
+import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.domain.model.search.CalorieSearchKey;
 import com.client.calorieserver.domain.model.search.RelationalOperator;
@@ -15,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 /**
@@ -27,10 +29,10 @@ import javax.validation.Valid;
  * a logged in user.
  */
 @RestController
-@RequestMapping(path = "/profile/calories")
-@PreAuthorize("hasRole('USER')")
+@RequestMapping(path = "api/v1/profile/calories")
+@RolesAllowed({Role.RoleConstants.USER_VALUE})
 @RequiredArgsConstructor
-public class CalorieController {
+public class UserCalorieController {
 
 
     private final CalorieService calorieService;
@@ -73,12 +75,14 @@ public class CalorieController {
         calorieService.deleteById(userId, calorieId);
     }
 
-    @PutMapping(path = "/{id}")
-    public CalorieView replace(@PathVariable("id") final Long calorieId, @RequestBody @Valid final CreateCalorieRequest createCalorieRequest) {
+    @PatchMapping(path = "/{id}")
+    public CalorieView update(@PathVariable("id") final Long calorieId, @RequestBody @Valid final UpdateCalorieRequest updateCalorieRequest) {
 
         final Long userId = fetchUserIdFromAuth();
-        Calorie updatedCalorie = calorieMapper.toCalorie(createCalorieRequest);
-        return calorieMapper.toCalorieView(calorieService.replaceById(userId, calorieId, updatedCalorie));
+        Calorie originalCalorie = calorieService.findOneByUser(userId, calorieId);
+        Calorie updatedCalorie = calorieMapper.updateCalorie(updateCalorieRequest, originalCalorie);
+
+        return calorieMapper.toCalorieView(calorieService.updateById(userId, calorieId, updatedCalorie));
     }
 
     private Long fetchUserIdFromAuth() {

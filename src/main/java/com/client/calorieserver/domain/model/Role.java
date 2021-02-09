@@ -34,4 +34,10 @@ public enum Role {
     public static Role get(String name) {
         return ROLE_MAP.get(name.toLowerCase());
     }
+
+    public static class RoleConstants {
+        public static final String USER_VALUE = "USER";
+        public static final String USER_MANAGER_VALUE = "USER_MANAGER";
+        public static final String ADMIN_VALUE = "ADMIN";
+    }
 }

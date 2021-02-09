@@ -1,9 +1,8 @@
 package com.client.calorieserver.domain.mapper;
 
-import com.client.calorieserver.domain.dto.CreateUserRequest;
+import com.client.calorieserver.domain.dto.*;
 import com.client.calorieserver.domain.dto.db.RoleDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
-import com.client.calorieserver.domain.dto.UserView;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
@@ -40,6 +39,7 @@ public abstract class UserMapper {
     }
 
     public abstract UserView toUserView(User user);
+    public abstract ProfileView toProfileView(User user);
 
     public abstract List<UserView> toUserView(List<User> users);
 
@@ -61,7 +61,18 @@ public abstract class UserMapper {
 
     public abstract List<User> toUser(List<UserDTO> userDTO);
 
-//    public abstract Page<User> toUser(Page<UserDTO> userDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract User updateUser(UpdateProfileRequest updateProfileRequest, @MappingTarget User user);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "roles", qualifiedByName = "stringSetToRoleSet")
+    @Mapping(target = "password", qualifiedByName = "passwordToEncodedPassword")
+    @Mapping(target = "expectedCaloriesPerDay", qualifiedByName = "expectedCaloriesMapper")
+    public abstract User updateUser(UpdateUserRequest updateUserRequest, @MappingTarget User user);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
+    public abstract UserDTO updateUserDTO(User updatedUser, @MappingTarget UserDTO originalUserDTO);
 
     @Named("roleDTOsToRoles")
     public Set<Role> roleDTOsToRoles(Set<RoleDTO> roleDTOS) {
@@ -126,4 +137,6 @@ public abstract class UserMapper {
 
         return expectedCaloriesPerDay;
     }
+
+
 }

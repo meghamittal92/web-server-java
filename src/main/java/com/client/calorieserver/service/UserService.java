@@ -55,6 +55,22 @@ public class UserService implements UserDetailsService {
         return userMapper.toUser(userRepository.save(updatedUserDTO));
     }
 
+    @Transactional
+    public User updateById(final Long id, User updatedUser) {
+
+        UserDTO originalUserDTO = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(User.class, id)
+        );
+
+        if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
+            if (userRepository.existsByUsername(updatedUser.getUsername()))
+                throw new EntityAlreadyExistsException(User.class, String.format("User with username %s already exists", updatedUser.getUsername()));
+        }
+
+        UserDTO updatedUserDTO = userMapper.updateUserDTO(updatedUser, originalUserDTO);
+
+        return userMapper.toUser(userRepository.save(updatedUserDTO));
+    }
 
     public User findByUsername(String username) {
 
@@ -84,6 +100,14 @@ public class UserService implements UserDetailsService {
         UserDTO userDTO = userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException(String.format("Could not find user with username: %s", username)));
 
+        return userMapper.toUser(userDTO);
+    }
+
+    public User findById(final Long userId) {
+
+        final UserDTO userDTO = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(User.class, userId)
+        );
         return userMapper.toUser(userDTO);
     }
 }
