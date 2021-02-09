@@ -61,16 +61,16 @@ public class CalorieService {
 
     }
 
+
     @Transactional
-    public Calorie replaceById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
+    public Calorie updateById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
 
         updatedCalorie.setUserId(userId);
         final CalorieDTO originalCalorieDTO = calorieRepository.findOneByUser(userId, calorieId).orElseThrow(
                 () -> new EntityNotFoundException(Calorie.class, calorieId)
         );
 
-        CalorieDTO updatedCalorieDTO = calorieMapper.toCalorieDTO(updatedCalorie);
-        updatedCalorieDTO.setId(originalCalorieDTO.getId());
+        CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
 
         if (originalCalorieDTO.getNumCalories() != updatedCalorieDTO.getNumCalories()) {
             saveOrUpdateCaloriesPerDay(updatedCalorie.getUserId(), updatedCalorie.getDateTime(), updatedCalorieDTO.getNumCalories() - originalCalorieDTO.getNumCalories());

@@ -1,6 +1,7 @@
 package com.client.calorieserver.configuration.exception;
 
 
+
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,8 +9,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import com.client.calorieserver.domain.dto.ErrorResponse;
-import com.client.calorieserver.domain.dto.db.CalorieDTO;
-import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.exception.ApiError;
@@ -24,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -183,8 +182,8 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    @ExceptionHandler({DisabledException.class})
-    protected ResponseEntity<Object> handleDisabledException(DisabledException ex, final HttpServletRequest request) {
+    @ExceptionHandler({AccessDeniedException.class})
+    protected ResponseEntity<Object> handleDisabledException(AccessDeniedException ex, final HttpServletRequest request) {
         logger.error("Authentication failed : {}\n", request.getRequestURI(), ex);
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.UNAUTHORIZED);
