@@ -50,6 +50,10 @@ public abstract class CalorieMapper {
     @Mapping(target = "totalCaloriesForDay", ignore = true)
     public abstract Calorie toCalorie(CreateCalorieRequest createCalorieRequest);
 
+    @Mapping(target = "withinLimit", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "totalCaloriesForDay", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract Calorie updateCalorie(UpdateCalorieRequest updateCalorieRequest, @MappingTarget Calorie originalCalorie);
 
@@ -72,6 +76,7 @@ public abstract class CalorieMapper {
     @Mapping(target = "caloriePerDayDTO", ignore = true)
     public abstract CalorieDTO toCalorieDTO(Calorie calorie);
 
+    @Mapping(target = "caloriePerDayDTO", ignore = true)
     @Mapping(source = "userId", target = "userDTO", qualifiedByName = "userIdToUserDTO")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract CalorieDTO updateCalorieDTO(Calorie calorie, @MappingTarget CalorieDTO originalCalorieDTO);

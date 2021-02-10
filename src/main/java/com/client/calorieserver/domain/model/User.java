@@ -19,7 +19,7 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private Set<Role> roles;
-    private Long expectedCaloriesPerDay;
+    private Integer expectedCaloriesPerDay;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

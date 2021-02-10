@@ -213,7 +213,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> handleAll(Exception ex, final HttpServletRequest request) {
-        logger.error(ex.getStackTrace());
         logger.error("Internal Error {}\n", request.getRequestURI(), ex.getCause() != null ? ex.getCause() : ex);
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ApiError.INTERNAL_SERVER_ERROR);

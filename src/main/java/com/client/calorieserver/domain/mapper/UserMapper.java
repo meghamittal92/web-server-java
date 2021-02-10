@@ -50,6 +50,13 @@ public abstract class UserMapper {
     @Mapping(target = "authorities", ignore = true)
     public abstract User toUser(CreateUserRequest request);
 
+    @Mapping(target = "password", qualifiedByName = "passwordToEncodedPassword")
+    @Mapping(target = "expectedCaloriesPerDay", qualifiedByName = "expectedCaloriesMapper")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    public abstract User toUser(RegisterUserRequest registerUserRequest);
+
     @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "calorieDTOS", ignore = true)
@@ -61,17 +68,27 @@ public abstract class UserMapper {
 
     public abstract List<User> toUser(List<UserDTO> userDTO);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "password", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract User updateUser(UpdateProfileRequest updateProfileRequest, @MappingTarget User user);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     @Mapping(target = "roles", qualifiedByName = "stringSetToRoleSet")
     @Mapping(target = "password", qualifiedByName = "passwordToEncodedPassword")
     @Mapping(target = "expectedCaloriesPerDay", qualifiedByName = "expectedCaloriesMapper")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract User updateUser(UpdateUserRequest updateUserRequest, @MappingTarget User user);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+
     @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
+    @Mapping(target = "calorieDTOS", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract UserDTO updateUserDTO(User updatedUser, @MappingTarget UserDTO originalUserDTO);
 
     @Named("roleDTOsToRoles")
@@ -119,7 +136,7 @@ public abstract class UserMapper {
             }
         }
         //by default give the user role to all users
-        else {
+        if(roles.isEmpty()) {
             roles.add(Role.USER);
         }
         return roles;
@@ -138,5 +155,13 @@ public abstract class UserMapper {
         return expectedCaloriesPerDay;
     }
 
+    @AfterMapping
+    public void afterMappingUser(RegisterUserRequest registerUserRequest,@MappingTarget User user)
+    {
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(Role.USER);
+
+        user.setRoles(roles);
+    }
 
 }
