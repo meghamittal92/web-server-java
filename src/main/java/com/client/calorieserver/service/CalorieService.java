@@ -50,7 +50,7 @@ public class CalorieService {
         saveOrUpdateCaloriesPerDay(calorie.getUserId(), calorie.getDateTime(), calorie.getNumCalories());
         final CalorieDTO calorieDTO = calorieRepository.save(calorieMapper.toCalorieDTO(calorie));
 
-
+        calorieRepository.flushAndRefresh(calorieDTO);
         return calorieMapper.toCalorie(calorieDTO);
     }
 
@@ -65,12 +65,14 @@ public class CalorieService {
         CalorieDTO updatedCalorieDTO = calorieMapper.toCalorieDTO(updatedCalorie);
         updatedCalorie.setId(originalCalorieDTO.getId());
 
-        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalCalorieDTO.getDateTime(),  -1 * originalCalorieDTO.getNumCalories());
-        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(),  updatedCalorieDTO.getNumCalories());
+        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalCalorieDTO.getDateTime(), -1 * originalCalorieDTO.getNumCalories());
+        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(), updatedCalorieDTO.getNumCalories());
 
-
-        return calorieMapper.toCalorie(calorieRepository.save(updatedCalorieDTO));
+        updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
+        calorieRepository.flushAndRefresh(updatedCalorieDTO);
+        return calorieMapper.toCalorie(updatedCalorieDTO);
     }
+
     @Transactional
     public Calorie updateById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
 
@@ -84,11 +86,13 @@ public class CalorieService {
 
         CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
 
-        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime,  -1 * originalCalories);
-        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(),  updatedCalorieDTO.getNumCalories());
+        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime, -1 * originalCalories);
+        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(), updatedCalorieDTO.getNumCalories());
 
 
-        return calorieMapper.toCalorie(calorieRepository.save(updatedCalorieDTO));
+        updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
+        calorieRepository.flushAndRefresh(updatedCalorieDTO);
+        return calorieMapper.toCalorie(updatedCalorieDTO);
     }
 
     @Transactional
@@ -103,11 +107,13 @@ public class CalorieService {
 
         CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
 
-        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime,  -1 * originalCalories);
-        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(),  updatedCalorieDTO.getNumCalories());
+        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime, -1 * originalCalories);
+        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(), updatedCalorieDTO.getNumCalories());
 
 
-        return calorieMapper.toCalorie(calorieRepository.save(updatedCalorieDTO));
+        updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
+        calorieRepository.flushAndRefresh(updatedCalorieDTO);
+        return calorieMapper.toCalorie(updatedCalorieDTO);
     }
 
     @Transactional

@@ -10,6 +10,7 @@ import com.client.calorieserver.domain.exception.InternalException;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.CaloriePerDayRepository;
+import com.client.calorieserver.repository.CalorieRepository;
 import com.client.calorieserver.repository.UserRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ import java.util.List;
 public abstract class CalorieMapper {
 
     private UserRepository userRepository;
-    private CaloriePerDayRepository caloriePerDayRepository;
     private CalorieAccessor calorieAccessor;
+
 
     @Autowired
     public void setCalorieAccessor(final CalorieAccessor calorieAccessor) {
@@ -34,10 +35,6 @@ public abstract class CalorieMapper {
         this.userRepository = userRepository;
     }
 
-    @Autowired
-    public void setCaloriePerDayRepository(final CaloriePerDayRepository caloriePerDayRepository) {
-        this.caloriePerDayRepository = caloriePerDayRepository;
-    }
 
     @Mapping(target = "withinLimit", ignore = true)
     @Mapping(target = "id", ignore = true)
@@ -91,16 +88,8 @@ public abstract class CalorieMapper {
     }
 
     @AfterMapping
-    public void afterMappingCalorieDTO(Calorie calorie, @MappingTarget CalorieDTO calorieDTO) {
-        final UserDay userDay = new UserDay(calorieDTO.getUserDTO().getId(), calorie.getDateTime().toLocalDate());
-
-        calorieDTO.setCaloriePerDayDTO(caloriePerDayRepository.findById(userDay).orElseThrow(
-                () -> new InternalException
-                        (String.format("CaloriePerDay does not exist for user %s and day %s ", userDay.getUserId(), userDay.getDate()))));
-    }
-
-    @AfterMapping
     public void afterMappingCalorie(CalorieDTO calorieDTO, @MappingTarget Calorie calorie) {
+
         calorie.setTotalCaloriesForDay(calorieDTO.getCaloriePerDayDTO().getTotalCalories());
         if (calorie.getTotalCaloriesForDay() <= calorieDTO.getUserDTO().getExpectedCaloriesPerDay())
             calorie.setWithinLimit(true);

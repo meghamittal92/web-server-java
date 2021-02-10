@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Repository for User objects.
  */
-public interface UserRepository extends PagingAndSortingRepository<UserDTO, Long> {
+public interface UserRepository extends CustomRepository<UserDTO, Long>  {
 
 
     public Optional<UserDTO> findByUsername(@Param("username") String username);

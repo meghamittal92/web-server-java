@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface CalorieRepository extends PagingAndSortingRepository<CalorieDTO, Long>, JpaSpecificationExecutor<CalorieDTO> {
+public interface CalorieRepository extends CustomRepository<CalorieDTO, Long>, JpaSpecificationExecutor<CalorieDTO> {
 
     Page<CalorieDTO> findByUserId(@Param("userId") Long userId, final Pageable pageable);
 
