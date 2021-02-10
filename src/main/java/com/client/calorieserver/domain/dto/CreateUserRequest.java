@@ -1,6 +1,7 @@
 package com.client.calorieserver.domain.dto;
 
 
+import com.client.calorieserver.domain.validator.UsernameConstraint;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Data
 public class CreateUserRequest {
 
-    //TODO custom validator
+    @UsernameConstraint
     @NotBlank
     private String username;
 
@@ -21,7 +22,6 @@ public class CreateUserRequest {
     private String password;
 
 
-    //TODO custom validator to check if role names exist
     private Set<String> roles;
 
     private Integer expectedCaloriesPerDay;

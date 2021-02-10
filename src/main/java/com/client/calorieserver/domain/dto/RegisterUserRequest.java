@@ -1,5 +1,6 @@
 package com.client.calorieserver.domain.dto;
 
+import com.client.calorieserver.domain.validator.UsernameConstraint;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -7,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class RegisterUserRequest {
 
-    //TODO custom validator
+    @UsernameConstraint
     @NotBlank
     private String username;
 
