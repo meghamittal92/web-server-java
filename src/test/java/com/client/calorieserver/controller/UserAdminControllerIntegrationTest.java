@@ -39,7 +39,7 @@ public class UserAdminControllerIntegrationTest {
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setUsername("userName");
         createUserRequest.setPassword("testPasssword");
-        MvcResult result = mockMvc.perform(post("/api/v1/users")
+        MvcResult result = mockMvc.perform(post("/api/v1/public/register/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest)))
                 .andExpect(status().is2xxSuccessful())
