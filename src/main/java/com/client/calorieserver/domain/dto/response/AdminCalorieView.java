@@ -1,4 +1,4 @@
-package com.client.calorieserver.domain.dto;
+package com.client.calorieserver.domain.dto.response;
 
 import com.client.calorieserver.domain.mapper.CustomDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

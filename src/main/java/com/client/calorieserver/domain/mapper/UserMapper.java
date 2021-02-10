@@ -1,12 +1,16 @@
 package com.client.calorieserver.domain.mapper;
 
-import com.client.calorieserver.domain.dto.*;
 import com.client.calorieserver.domain.dto.db.RoleDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
+import com.client.calorieserver.domain.dto.request.CreateUserRequest;
+import com.client.calorieserver.domain.dto.request.RegisterUserRequest;
+import com.client.calorieserver.domain.dto.request.UpdateProfileRequest;
+import com.client.calorieserver.domain.dto.request.UpdateUserRequest;
+import com.client.calorieserver.domain.dto.response.ProfileView;
+import com.client.calorieserver.domain.dto.response.UserView;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
-import lombok.Setter;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

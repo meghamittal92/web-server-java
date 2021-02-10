@@ -1,4 +1,4 @@
-package com.client.calorieserver.domain.dto;
+package com.client.calorieserver.domain.dto.response;
 
 import com.client.calorieserver.configuration.Constants;
 import com.fasterxml.jackson.annotation.JsonFormat;

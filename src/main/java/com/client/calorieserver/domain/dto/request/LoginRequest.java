@@ -1,4 +1,4 @@
-package com.client.calorieserver.domain.dto;
+package com.client.calorieserver.domain.dto.request;
 
 import lombok.Data;
 

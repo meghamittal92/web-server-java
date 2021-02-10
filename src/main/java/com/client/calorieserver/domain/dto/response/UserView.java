@@ -1,4 +1,4 @@
-package com.client.calorieserver.domain.dto;
+package com.client.calorieserver.domain.dto.response;
 
 import com.client.calorieserver.domain.model.Role;
 import lombok.Data;

@@ -1,12 +1,13 @@
 package com.client.calorieserver.controller;
 
 import com.client.calorieserver.configuration.security.JWTUtil;
-import com.client.calorieserver.domain.dto.*;
+import com.client.calorieserver.domain.dto.request.LoginRequest;
+import com.client.calorieserver.domain.dto.request.RegisterUserRequest;
+import com.client.calorieserver.domain.dto.response.ProfileView;
 import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.type.filter.RegexPatternTypeFilter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

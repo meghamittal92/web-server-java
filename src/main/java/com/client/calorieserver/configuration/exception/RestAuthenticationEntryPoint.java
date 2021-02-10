@@ -1,10 +1,9 @@
 package com.client.calorieserver.configuration.exception;
 
-import com.client.calorieserver.domain.dto.ErrorResponse;
+import com.client.calorieserver.domain.dto.response.ErrorResponse;
 import com.client.calorieserver.domain.exception.ApiError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;

@@ -1,33 +1,28 @@
-package com.client.calorieserver.domain.dto;
-
+package com.client.calorieserver.domain.dto.request;
 
 import com.client.calorieserver.domain.validator.PasswordConstraint;
 import com.client.calorieserver.domain.validator.UsernameConstraint;
+import com.sun.istack.Nullable;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
-/**
- * Request object to Create a new user
- */
 @Data
-public class CreateUserRequest {
+public class UpdateUserRequest {
+
 
     @UsernameConstraint
-    @NotBlank
     private String username;
 
     @PasswordConstraint
-    @NotBlank
     private String password;
-
-    @Email
-    @NotBlank
-    private String email;
-
     private Set<String> roles;
-
+    @Min(0)
     private Integer expectedCaloriesPerDay;
+    @Email
+    private String email;
 }

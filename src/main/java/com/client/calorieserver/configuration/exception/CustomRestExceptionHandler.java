@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import com.client.calorieserver.domain.dto.ErrorResponse;
+import com.client.calorieserver.domain.dto.response.ErrorResponse;
 import com.client.calorieserver.domain.exception.*;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
