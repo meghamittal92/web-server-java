@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class UpdateProfileRequest {
 
-    private Long expectedCaloriesPerDay;
+    private Integer expectedCaloriesPerDay;
 }

@@ -7,5 +7,5 @@ import lombok.Data;
 public class ProfileView {
 
     private String username;
-    private Long expectedCaloriesPerDay;
+    private Integer expectedCaloriesPerDay;
 }

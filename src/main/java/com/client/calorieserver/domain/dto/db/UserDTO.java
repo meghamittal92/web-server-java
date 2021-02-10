@@ -28,7 +28,6 @@ public class UserDTO {
     @Column(name = "expected_calories_per_day")
     private Integer expectedCaloriesPerDay;
 
-
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",

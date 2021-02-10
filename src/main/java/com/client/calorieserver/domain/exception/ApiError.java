@@ -21,7 +21,8 @@ public enum ApiError {
 
     UNAUTHORIZED("E0011", "Unauthorized"),
     BAD_CREDENTIALS("E0012", "Bad Credentials"),
-    INVALID_SEARCH_PARAMETER("E0013", "Invalid search parameters");
+    INVALID_SEARCH_PARAMETER("E0013", "Invalid search parameters"),
+    CALORIE_FETCH_ERROR("E0014", "Unable to fetch calories. Please enter manually");
 
 
     private final String errorCode;

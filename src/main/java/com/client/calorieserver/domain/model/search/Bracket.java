@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum Bracket {
     LEFT_PARANTHESIS("("),
-    RIGHT_PARANTHESIS("(");
+    RIGHT_PARANTHESIS(")");
 
     private static final Map<String, Bracket> BRACKET_MAP;
     private final String name;

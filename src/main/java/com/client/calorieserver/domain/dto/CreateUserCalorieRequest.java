@@ -18,8 +18,7 @@ public class CreateUserCalorieRequest {
     @NotNull
     LocalDateTime dateTime;
 
-    @NotNull
-    int numCalories;
+    Integer numCalories;
 
     @NotEmpty
     String mealDetails;

@@ -8,10 +8,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum RelationalOperator {
 
-    EQUAL(":"),
-    NOT_EQUAL("!:"),
+    EQUAL("=="),
+    NOT_EQUAL("!="),
     GREATER_THAN(">"),
-    LESS_THAN("<");
+    GREATER_THAN_EQUAL_TO(">="),
+    LESS_THAN("<"),
+    LESS_THAN_EQUAL_TO("=<"),
+    LIKE("~");
 
     private static final Map<String, RelationalOperator> RELATIONAL_OPERATOR_MAP;
     private final String name;
