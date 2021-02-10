@@ -13,7 +13,7 @@ public enum RelationalOperator {
     GREATER_THAN(">"),
     GREATER_THAN_EQUAL_TO(">="),
     LESS_THAN("<"),
-    LESS_THAN_EQUAL_TO("=<"),
+    LESS_THAN_EQUAL_TO("<="),
     LIKE("~");
 
     private static final Map<String, RelationalOperator> RELATIONAL_OPERATOR_MAP;
