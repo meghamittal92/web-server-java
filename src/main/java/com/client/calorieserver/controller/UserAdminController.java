@@ -34,7 +34,6 @@ public class UserAdminController {
 
     @GetMapping
     public Page<UserView> findAll(final Pageable pageable) {
-
         return userService.findAll(pageable).map(userMapper::toUserView);
     }
 

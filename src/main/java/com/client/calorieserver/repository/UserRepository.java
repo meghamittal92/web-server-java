@@ -16,4 +16,8 @@ public interface UserRepository extends PagingAndSortingRepository<UserDTO, Long
     public Optional<UserDTO> findByUsername(@Param("username") String username);
 
     public boolean existsByUsername(@Param("username") String username);
+
+    public void deleteById(@Param("id") Long userId);
+
+    public Optional<UserDTO> findById(@Param("id") Long userId);
 }

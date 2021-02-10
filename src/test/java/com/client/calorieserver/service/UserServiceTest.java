@@ -171,6 +171,21 @@ public class UserServiceTest {
         Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(user);
         userService.loadUserByUsername("test");
         Mockito.verify(userMapper).toUser(Mockito.any(UserDTO.class));
+    }
 
+    @Test
+    public void findAllUsers(){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername("test");
+        userDTO.setPassword("password");
+
+        User user = new User();
+        user.setUsername("test");
+        user.setPassword("password");
+
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(userDTO));
+        Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(user);
+        userService.loadUserByUsername("test");
+        Mockito.verify(userMapper).toUser(Mockito.any(UserDTO.class));
     }
 }

@@ -21,6 +21,8 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -30,9 +32,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.util.LinkedMultiValueMap;
 
 import javax.servlet.ServletContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -115,13 +119,49 @@ public class UserControllerTest {
 
     @Test
     void getUsers() throws Exception{
+        LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("page","0");
+        requestParams.add("size", "2");
+        List<User> users = new ArrayList<>();
+        User user = new User();
+        user.setUsername("test");
+        user.setPassword("password");
+        user.setId(12L);
+        users.add(user);
+
+        user = new User();
+        user.setUsername("test1");
+        user.setPassword("password1");
+        user.setId(13L);
+        users.add(user);
+
+
+        List<UserView> userViews = new ArrayList<>();
+        UserView userView = new UserView();
+        userView.setUsername("test");
+        userView.setId(12L);
+        userViews.add(userView);
+
+        userView = new UserView();
+        userView.setUsername("test1");
+        userView.setId(13L);
+        userViews.add(userView);
+
+
+        Page<User> pagedUsers = new PageImpl<User>(users);
+
+        Mockito.when(userService.findAll(Mockito.any(Pageable.class))).thenReturn(pagedUsers);
+        Mockito.when(userMapper.toUserView(ArgumentMatchers.eq(users.get(0)))).thenReturn(userViews.get(0));
+        Mockito.when(userMapper.toUserView(ArgumentMatchers.eq(users.get(1)))).thenReturn(userViews.get(1));
         MvcResult result = mockMvc.perform(get("/api/v1/users")
+                .params(requestParams)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
+
         Mockito.verify(userService).findAll(Mockito.any(Pageable.class));
-        Mockito.verify(userMapper).toUserView(ArgumentMatchers.anyList());
+        Mockito.verify(userMapper, Mockito.atLeast(2)).toUserView(Mockito.any(User.class));
     }
 
     @Test

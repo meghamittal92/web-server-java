@@ -37,7 +37,7 @@ dependencies {
 
 	annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
 	compile group: 'com.google.guava', name: 'guava', version: '21.0'
-
+	testCompile group: "org.dbunit", name: "dbunit", version: "2.4.7"
 }
 
 test {
