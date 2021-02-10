@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -117,7 +118,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
     @Test
     void UpdateCalorie() throws Exception{
         String token = createUser("user1", "password1", 10L);
-        Map<String, String> params = generateCalorieRequest(1, LocalDateTime.now(), "detail_1");
+        Map<String, String> params = generateCalorieRequest(5, LocalDateTime.now(), "detail_1");
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
@@ -125,11 +126,11 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 1;
+        assert jsonObject.getInt("numCalories") == 5;
         assert jsonObject.getBoolean("withinLimit");
         int id = jsonObject.getInt("id");
 
-        Map<String, String> newParams = generateCalorieRequest(11, LocalDateTime.now(), "detail_2");
+        Map<String, String> newParams = generateCalorieRequest(9, LocalDateTime.now().plusDays(2), "detail_2");
         result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newParams))
@@ -138,8 +139,8 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andReturn();
 
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 11L;
-        assert !jsonObject.getBoolean("withinLimit");
+        assert jsonObject.getInt("numCalories") == 9;
+        assert jsonObject.getBoolean("withinLimit");
         int newId = jsonObject.getInt("id");
 
         params.put("dateTime", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now().plusDays(2)));
@@ -150,8 +151,8 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 1;
-        assert jsonObject.getBoolean("withinLimit");
+        assert jsonObject.getInt("numCalories") == 5;
+        assert !jsonObject.getBoolean("withinLimit");
 
         result = mockMvc.perform(get("/api/v1/profile/calories/"+newId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -159,15 +160,15 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 11L;
-        assert jsonObject.getBoolean("withinLimit");
+        assert jsonObject.getInt("numCalories") == 9L;
+        assert !jsonObject.getBoolean("withinLimit");
     }
 
 
     @Test
     void ReplaceCalorie() throws Exception{
         String token = createUser("user1", "password1", 10L);
-        Map<String, String> params = generateCalorieRequest(1, LocalDateTime.now(), "detail_1");
+        Map<String, String> params = generateCalorieRequest(5, LocalDateTime.now(), "detail_1");
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
@@ -175,11 +176,11 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 1;
+        assert jsonObject.getInt("numCalories") == 5;
         assert jsonObject.getBoolean("withinLimit");
         int id = jsonObject.getInt("id");
 
-        Map<String, String> newParams = generateCalorieRequest(11, LocalDateTime.now(), "detail_2");
+        Map<String, String> newParams = generateCalorieRequest(9, LocalDateTime.now(), "detail_2");
         result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newParams))
@@ -188,7 +189,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andReturn();
 
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 11L;
+        assert jsonObject.getInt("numCalories") == 9L;
         assert !jsonObject.getBoolean("withinLimit");
         int newId = jsonObject.getInt("id");
 
@@ -200,7 +201,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 1;
+        assert jsonObject.getInt("numCalories") == 5;
         assert jsonObject.getBoolean("withinLimit");
 
         result = mockMvc.perform(get("/api/v1/profile/calories/"+newId)
@@ -209,7 +210,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getInt("numCalories") == 11L;
+        assert jsonObject.getInt("numCalories") == 9L;
         assert jsonObject.getBoolean("withinLimit");
     }
 
@@ -262,7 +263,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andReturn();
         calories.add(params);
 
-        params = generateCalorieRequest(15, LocalDateTime.now().plusDays(3), "detail_5");
+        params = generateCalorieRequest(20, LocalDateTime.now().plusDays(3), "detail_5");
         mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
@@ -271,7 +272,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andReturn();
         calories.add(params);
 
-        params = generateCalorieRequest(15, LocalDateTime.now().plusDays(3).plusSeconds(2), "detail_6");
+        params = generateCalorieRequest(25, LocalDateTime.now().plusDays(3).plusSeconds(2), "detail_6");
         mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
@@ -286,8 +287,13 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("@@@@@"+calories.size());
+        System.out.println("@@@@@"+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == calories.size());
+
+
+        for(Map<String, String> param: calories){
+            System.out.println("@@@@@: "+param.get("dateTime"));
+        }
 
         result = mockMvc.perform(get("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -299,27 +305,66 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
         System.out.println("@@@@@"+calories.size());
         assert (jsonObject.getJSONArray("content").length() == 6);
 
-        String dateTimeFilter = DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now().plusDays(1));
+
         result = mockMvc.perform(get("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
-                .queryParam("search", "datetime<="+dateTimeFilter+"numCalories>=5")
+                .queryParam("search", "dateTime<="+calories.get(4).get("dateTime")+" AND numCalories>=5")
                 .header("authorization", token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("@@@@@"+calories.size());
+        System.out.println("####: "+result.getResponse().getContentAsString());
+        assert (jsonObject.getJSONArray("content").length() == 4);
+
+        result = mockMvc.perform(get("/api/v1/profile/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .queryParam("search", "numCalories<10 AND dateTime<="+calories.get(4).get("dateTime")+" AND numCalories>=5")
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        System.out.println("####: "+result.getResponse().getContentAsString());
+        assert (jsonObject.getJSONArray("content").length() == 1);
+
+        result = mockMvc.perform(get("/api/v1/profile/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .queryParam("search", "numCalories>=5 AND dateTime<="+calories.get(5).get("dateTime")+" OR numCalories>=10")
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        System.out.println("####: "+result.getResponse().getContentAsString());
+        assert (jsonObject.getJSONArray("content").length() == 6);
+
+        result = mockMvc.perform(get("/api/v1/profile/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .queryParam("search", "numCalories<=10 AND dateTime<="+calories.get(5).get("dateTime")+" OR numCalories>=10")
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        System.out.println("####: "+result.getResponse().getContentAsString());
+        assert (jsonObject.getJSONArray("content").length() == 4);
+
+        result = mockMvc.perform(get("/api/v1/profile/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .queryParam("search", "numCalories<=10 AND dateTime>="+calories.get(5).get("dateTime")+" OR numCalories>=10")
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        System.out.println("####: "+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 2);
+
     }
 
 
     private Map<String, String> generateCalorieRequest(int calories, LocalDateTime time, String details){
         Map<String, String> params = new HashMap<>();
         params.put("numCalories",String.valueOf(calories));
-        params.put("dateTime", DateTimeFormatter.ISO_DATE_TIME.format(time));
+        params.put("dateTime", time.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
         params.put("mealDetails", details);
         return params;
     }
-
-
 
 }
