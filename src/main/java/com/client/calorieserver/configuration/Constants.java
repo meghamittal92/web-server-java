@@ -9,6 +9,6 @@ public final class Constants {
     }
 
     public static class DateConstants {
-        public static final String DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm:ss";
+        public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     }
 }

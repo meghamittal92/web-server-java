@@ -1,5 +1,6 @@
 package com.client.calorieserver.util;
 
+import com.client.calorieserver.configuration.Constants;
 import com.client.calorieserver.domain.dto.db.*;
 import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
 import com.client.calorieserver.domain.model.search.CalorieSearchKey;
@@ -41,7 +42,7 @@ public class CalorieDTOSpecification implements Specification<CalorieDTO> {
                 }
 
             } else if (root.get(calorieSearchKey.getDbColumnName()).getJavaType().isAssignableFrom(LocalDateTime.class)) {
-                LocalDateTime value = LocalDateTime.parse(criteria.getValue().toString(), DateTimeFormatter.ISO_DATE_TIME);
+                LocalDateTime value = LocalDateTime.parse(criteria.getValue().toString(), DateTimeFormatter.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT));
                 switch (criteria.getOperator()) {
                     case EQUAL:
                         return builder.equal(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Timestamp.class), java.sql.Timestamp.valueOf(value));
