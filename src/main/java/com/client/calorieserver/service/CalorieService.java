@@ -1,9 +1,7 @@
 package com.client.calorieserver.service;
 
-import com.client.calorieserver.domain.dto.CalorieView;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.CaloriePerDayDTO;
-import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.db.UserDay;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
@@ -30,7 +28,7 @@ public class CalorieService {
 
     public Page<Calorie> findAllByUser(final Long userId, final Pageable pageable) {
 
-        final Page<CalorieDTO> calorieDTOS = calorieRepository.findAllByUser(userId, pageable);
+        final Page<CalorieDTO> calorieDTOS = calorieRepository.findByUserId(userId, pageable);
 
         return calorieDTOS.map(calorieMapper::toCalorie);
 
@@ -38,35 +36,45 @@ public class CalorieService {
 
     public Calorie findOneByUser(final Long userId, final Long calorieId) {
 
-        final CalorieDTO calorieDTO = calorieRepository.findOneByUser(userId, calorieId).orElseThrow(
+        final CalorieDTO calorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
                 () -> new EntityNotFoundException(Calorie.class, calorieId)
         );
-        ;
+
         return calorieMapper.toCalorie(calorieDTO);
 
     }
 
     @Transactional
-    public Calorie createCalorieForUser(final Long userId, final Calorie calorie) {
-
-
-        calorie.setUserId(userId);
+    public Calorie createCalorie(Calorie calorie) {
 
         saveOrUpdateCaloriesPerDay(calorie.getUserId(), calorie.getDateTime(), calorie.getNumCalories());
         final CalorieDTO calorieDTO = calorieRepository.save(calorieMapper.toCalorieDTO(calorie));
 
 
         return calorieMapper.toCalorie(calorieDTO);
-
-
     }
-
 
     @Transactional
     public Calorie updateById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
 
         updatedCalorie.setUserId(userId);
-        final CalorieDTO originalCalorieDTO = calorieRepository.findOneByUser(userId, calorieId).orElseThrow(
+        final CalorieDTO originalCalorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
+                () -> new EntityNotFoundException(Calorie.class, calorieId)
+        );
+
+        CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
+
+        if (originalCalorieDTO.getNumCalories() != updatedCalorieDTO.getNumCalories()) {
+            saveOrUpdateCaloriesPerDay(updatedCalorie.getUserId(), updatedCalorie.getDateTime(), updatedCalorieDTO.getNumCalories() - originalCalorieDTO.getNumCalories());
+        }
+
+        return calorieMapper.toCalorie(calorieRepository.save(updatedCalorieDTO));
+    }
+
+    @Transactional
+    public Calorie updateById(final Long calorieId, final Calorie updatedCalorie) {
+
+        final CalorieDTO originalCalorieDTO = calorieRepository.findById(calorieId).orElseThrow(
                 () -> new EntityNotFoundException(Calorie.class, calorieId)
         );
 
@@ -82,12 +90,23 @@ public class CalorieService {
     @Transactional
     public void deleteById(final Long userId, final Long calorieId) {
 
-        CalorieDTO calorieDTO = calorieRepository.findOneByUser(userId, calorieId).orElseThrow(
+        CalorieDTO calorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
                 () -> new EntityNotFoundException(Calorie.class, calorieId)
         );
 
         saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(), -1 * calorieDTO.getNumCalories());
-        calorieRepository.deleteOneByUserId(userId, calorieId);
+        calorieRepository.deleteByUserIdAndId(userId, calorieId);
+    }
+
+    @Transactional
+    public void deleteById(final Long calorieId) {
+
+        CalorieDTO calorieDTO = calorieRepository.findById(calorieId).orElseThrow(
+                () -> new EntityNotFoundException(Calorie.class, calorieId)
+        );
+
+        saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(), -1 * calorieDTO.getNumCalories());
+        calorieRepository.deleteById(calorieId);
     }
 
     private void saveOrUpdateCaloriesPerDay(final Long userId, final LocalDateTime dateTime, final int deltaCalories) {
@@ -116,4 +135,14 @@ public class CalorieService {
 
         return calorieDTOS.map(calorieMapper::toCalorie);
     }
+
+    public Calorie findById(Long calorieId) {
+
+        final CalorieDTO calorieDTO = calorieRepository.findById(calorieId).orElseThrow(
+                () -> new EntityNotFoundException(Calorie.class, calorieId)
+        );
+
+        return calorieMapper.toCalorie(calorieDTO);
+    }
+
 }

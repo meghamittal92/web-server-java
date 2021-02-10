@@ -14,17 +14,13 @@ import java.util.Optional;
 
 public interface CalorieRepository extends PagingAndSortingRepository<CalorieDTO, Long>, JpaSpecificationExecutor<CalorieDTO> {
 
+    Page<CalorieDTO> findByUserId(@Param("userId") Long userId, final Pageable pageable);
 
-    @Query("SELECT c FROM CalorieDTO c WHERE c.userDTO.id = :userId")
-    Page<CalorieDTO> findAllByUser(@Param("userId") Long userId, final Pageable pageable);
 
-    @Query("SELECT c FROM CalorieDTO c WHERE c.userDTO.id = :userId AND c.id = :calorieId")
-    Optional<CalorieDTO> findOneByUser(@Param("userId") Long userId, @Param("calorieId") Long calorieId);
-
+    Optional<CalorieDTO> findByUserIdAndId(@Param("userId") Long userId, @Param("id") Long calorieId);
 
     @Modifying
-    @Query("DELETE FROM CalorieDTO c WHERE c.userDTO.id = :userId AND c.id = :calorieId")
-    void deleteOneByUserId(@Param("userId") Long userId, @Param("calorieId") Long calorieId);
+    void deleteByUserIdAndId(@Param("userId") Long userId, @Param("id") Long calorieId);
 
 
 }

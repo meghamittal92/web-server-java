@@ -5,13 +5,14 @@ import com.client.calorieserver.domain.mapper.CustomDateDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Data
-public class CreateCalorieRequest {
 
+@Data
+public class CreateUserCalorieRequest {
 
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @NotNull
@@ -22,7 +23,4 @@ public class CreateCalorieRequest {
 
     @NotEmpty
     String mealDetails;
-
-    @NotNull
-    Long userId;
 }

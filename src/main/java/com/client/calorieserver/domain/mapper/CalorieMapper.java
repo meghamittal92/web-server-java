@@ -1,8 +1,6 @@
 package com.client.calorieserver.domain.mapper;
 
-import com.client.calorieserver.domain.dto.CalorieView;
-import com.client.calorieserver.domain.dto.CreateCalorieRequest;
-import com.client.calorieserver.domain.dto.UpdateCalorieRequest;
+import com.client.calorieserver.domain.dto.*;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.db.UserDay;
@@ -40,14 +38,23 @@ public abstract class CalorieMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "totalCaloriesForDay", ignore = true)
+    public abstract Calorie toCalorie(CreateUserCalorieRequest createUserCalorieRequest);
+
+    @Mapping(target = "withinLimit", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "totalCaloriesForDay", ignore = true)
     public abstract Calorie toCalorie(CreateCalorieRequest createCalorieRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract Calorie updateCalorie(UpdateCalorieRequest updateCalorieRequest,@MappingTarget Calorie originalCalorie);
+    public abstract Calorie updateCalorie(UpdateCalorieRequest updateCalorieRequest, @MappingTarget Calorie originalCalorie);
 
-    public abstract CalorieView toCalorieView(Calorie calorie);
+    public abstract UserCalorieView toUserCalorieView(Calorie calorie);
 
-    public abstract List<CalorieView> toCalorieView(List<Calorie> calorie);
+    public abstract AdminCalorieView toAdminCalorieView(Calorie calorie);
+
+    public abstract List<UserCalorieView> toUserCalorieView(List<Calorie> calorie);
+
+    public abstract List<AdminCalorieView> toAdminCalorieView(List<Calorie> calorie);
 
     @Mapping(source = "userDTO.id", target = "userId")
     @Mapping(target = "totalCaloriesForDay", ignore = true)
@@ -62,7 +69,7 @@ public abstract class CalorieMapper {
 
     @Mapping(source = "userId", target = "userDTO", qualifiedByName = "userIdToUserDTO")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract CalorieDTO updateCalorieDTO(Calorie calorie,@MappingTarget CalorieDTO originalCalorieDTO);
+    public abstract CalorieDTO updateCalorieDTO(Calorie calorie, @MappingTarget CalorieDTO originalCalorieDTO);
 
 
     @Named("userIdToUserDTO")
@@ -90,7 +97,6 @@ public abstract class CalorieMapper {
         else
             calorie.setWithinLimit(false);
     }
-
 
 
 }
