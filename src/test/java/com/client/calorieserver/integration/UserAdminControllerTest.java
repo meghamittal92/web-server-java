@@ -83,7 +83,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         Set<String> roles = new HashSet<>();
         roles.add("ADMIN");
         userRequest.setRoles(roles);
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
         MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +107,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         Set<String> roles = new HashSet<>();
         roles.add("ADMIN");
         userRequest.setRoles(roles);
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
         MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         CreateUserRequest userRequest = new CreateUserRequest();
         userRequest.setUsername("user1");
         userRequest.setPassword("password1");
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
         MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -174,7 +174,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         CreateUserRequest userRequest = new CreateUserRequest();
         userRequest.setUsername("user1");
         userRequest.setPassword("password1");
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
         MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -188,7 +188,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         userRequest = new CreateUserRequest();
         userRequest.setUsername("user2");
         userRequest.setPassword("password2");
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
          mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -206,7 +206,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
                 .andReturn();
 
         userRequest.setUsername("user1");
-        userRequest.setExpectedCaloriesPerDay(125L);
+        userRequest.setExpectedCaloriesPerDay(125);
         result = mockMvc.perform(put("/api/v1/users/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
@@ -227,7 +227,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         UpdateUserRequest userRequest = new UpdateUserRequest();
         userRequest.setUsername("user1");
         userRequest.setPassword("password1");
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
         MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -241,7 +241,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         userRequest = new UpdateUserRequest();
         userRequest.setUsername("user2");
         userRequest.setPassword("password2");
-        userRequest.setExpectedCaloriesPerDay(120L);
+        userRequest.setExpectedCaloriesPerDay(120);
 
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -259,7 +259,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
                 .andReturn();
 
         userRequest.setUsername("user1");
-        userRequest.setExpectedCaloriesPerDay(125L);
+        userRequest.setExpectedCaloriesPerDay(125);
         result = mockMvc.perform(patch("/api/v1/users/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))

@@ -2,6 +2,7 @@ package com.client.calorieserver.integration;
 
 import com.client.calorieserver.domain.dto.CreateUserRequest;
 import com.client.calorieserver.domain.dto.LoginRequest;
+import com.client.calorieserver.domain.dto.RegisterUserRequest;
 import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,42 +35,40 @@ public class AuthControllerTest extends BaseIntegrationTest {
 
     @Test
     void createUser() throws Exception{
-        CreateUserRequest createUserRequest = new CreateUserRequest();
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         MvcResult result = mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
-        createUserRequest.setUsername("user1");
+        registerUserRequest.setUsername("user1");
         JSONObject response = new JSONObject(result.getResponse().getContentAsString());
         assert (response.getString("errorCode").equalsIgnoreCase("E0003"));
         assert (response.getString("message").equalsIgnoreCase("invalid input"));
 
         result = mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         response = new JSONObject(result.getResponse().getContentAsString());
         assert (response.getString("errorCode").equalsIgnoreCase("E0003"));
         assert (response.getString("message").equalsIgnoreCase("invalid input"));
 
-        createUserRequest.setPassword("testPasssword");
+        registerUserRequest.setPassword("testPasssword");
         result = mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         response = new JSONObject(result.getResponse().getContentAsString());
-        assert (response.getLong("id") > 0L);
         assert (response.getString("username").equalsIgnoreCase("user1"));
-        assert (response.getJSONArray("roles").get(0).toString().equalsIgnoreCase("USER"));
 
 
-        createUserRequest.setPassword("testPasssword2");
+        registerUserRequest.setPassword("testPasssword2");
         result = mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         response = new JSONObject(result.getResponse().getContentAsString());
@@ -76,16 +77,18 @@ public class AuthControllerTest extends BaseIntegrationTest {
 
     @Test
     void login() throws Exception{
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("login_user");
-        createUserRequest.setPassword("testPasssword");
+
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setUsername("login_user");
+        registerUserRequest.setPassword("testPasssword");
+        registerUserRequest.setExpectedCaloriesPerDay(11);
         mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createUserRequest)))
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         Map<String , String> params = new HashMap<>();
-        params.put("username", createUserRequest.getUsername());
+        params.put("username", registerUserRequest.getUsername());
         params.put("password", "wrong_password");
         mockMvc.perform(post("/api/v1/public/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +96,7 @@ public class AuthControllerTest extends BaseIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        params.put("password", createUserRequest.getPassword());
+        params.put("password", registerUserRequest.getPassword());
         MvcResult result = mockMvc.perform(post("/api/v1/public/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params)))
