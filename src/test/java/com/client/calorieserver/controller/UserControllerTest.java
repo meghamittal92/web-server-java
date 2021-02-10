@@ -178,14 +178,14 @@ public class UserControllerTest {
 
     @Test
     void findUser() throws Exception{
-        MvcResult result = mockMvc.perform(get("/api/v1/users/test1")
+        MvcResult result = mockMvc.perform(get("/api/v1/users/12")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(""))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
-        ArgumentCaptor<String> idCapture = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(userService).findByUsername(idCapture.capture());
-        assert (idCapture.getValue().equalsIgnoreCase("test1"));
+        ArgumentCaptor<Long> idCapture = ArgumentCaptor.forClass(Long.class);
+        Mockito.verify(userService).findById(idCapture.capture());
+        assert (idCapture.getValue() == 12);
     }
 
     @Test

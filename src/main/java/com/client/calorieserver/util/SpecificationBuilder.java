@@ -71,7 +71,7 @@ public class SpecificationBuilder<U> {
         final List<Specification<U>> specs = params.stream()
                 .map(converter)
                 .collect(Collectors.toCollection(ArrayList::new));
-        Specification specification = specStack.isEmpty() ? specs.get(0) : specStack.pop();
+        Specification specification = specStack.isEmpty() ? (specs.isEmpty() ? null : specs.get(0)) : specStack.pop();
 
         for (final Filter filter : this.params) {
             specification = Specification.where(specification).and(converter.apply(filter));

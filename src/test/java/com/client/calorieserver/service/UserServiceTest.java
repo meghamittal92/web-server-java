@@ -114,8 +114,8 @@ public class UserServiceTest {
     @Test
     public void findByUserNameNoEntity(){
         Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            userService.findByUsername("test");
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+            userService.loadUserByUsername("test");
         });
     }
 
@@ -126,7 +126,7 @@ public class UserServiceTest {
         userDTO.setPassword("password");
         Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(userDTO));
         Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(new User());
-        userService.findByUsername("test");
+        userService.loadUserByUsername("test");
         Mockito.verify(userMapper).toUser(Mockito.any(UserDTO.class));
     }
 

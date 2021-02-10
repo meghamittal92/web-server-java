@@ -28,7 +28,8 @@ public class UserDTO {
     @Column(name = "expected_calories_per_day")
     private Integer expectedCaloriesPerDay;
 
-    @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
@@ -37,7 +38,7 @@ public class UserDTO {
                     name = "role_id", referencedColumnName = "id"))
     private Set<RoleDTO> roleDTOs;
 
-    @OneToMany(mappedBy = "userDTO")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDTO")
     private Set<CalorieDTO> calorieDTOS;
 
 }

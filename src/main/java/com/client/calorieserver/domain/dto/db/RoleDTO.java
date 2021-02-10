@@ -17,6 +17,7 @@ public class RoleDTO {
     private Long id;
 
     private String name;
+
     @ManyToMany(mappedBy = "roleDTOs")
     private Collection<UserDTO> userDTOS;
 

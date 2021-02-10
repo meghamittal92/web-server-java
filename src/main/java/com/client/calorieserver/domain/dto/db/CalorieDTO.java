@@ -30,12 +30,12 @@ public class CalorieDTO {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id", referencedColumnName = "id")
     private UserDTO userDTO;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.LAZY)
     @JoinColumnsOrFormulas(
             {
                     @JoinColumnOrFormula(column = @JoinColumn(insertable = false, updatable = false, name = "user_id", referencedColumnName = "user_id")),
