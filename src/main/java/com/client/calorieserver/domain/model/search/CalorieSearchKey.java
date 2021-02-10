@@ -12,6 +12,7 @@ public enum CalorieSearchKey {
     userId("userId", CalorieDTO_.USER_ID),
     dateTime("dateTime", CalorieDTO_.DATE_TIME),
     numCalories("numCalories", CalorieDTO_.NUM_CALORIES),
+    mealDetails("mealDetails", CalorieDTO_.MEAL_DETAILS),
     withinLimit("withinLimit", "");
 
     private static final Map<String, CalorieSearchKey> CALORIE_SEARCH_KEY_MAP;

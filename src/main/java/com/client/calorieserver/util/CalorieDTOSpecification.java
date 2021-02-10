@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class CalorieDTOSpecification implements Specification<CalorieDTO> {
 
     private Filter criteria;
+    private static final String PERCENT = "%";
 
     public CalorieDTOSpecification(final Filter criteria) {
         super();
@@ -85,6 +86,10 @@ public class CalorieDTOSpecification implements Specification<CalorieDTO> {
                         return builder.lessThanOrEqualTo(root.get(calorieSearchKey.getDbColumnName()), castToRequiredType(
                                 root.get(calorieSearchKey.getDbColumnName()).getJavaType(),
                                 criteria.getValue()).toString());
+                    case LIKE:
+                        return builder.like(root.get(calorieSearchKey.getDbColumnName()), castToRequiredType(
+                                root.get(calorieSearchKey.getDbColumnName()).getJavaType(),
+                                PERCENT + criteria.getValue()).toString() + PERCENT);
                     default:
                         throw new InvalidSearchQueryException("Unsupported relational operator");
 

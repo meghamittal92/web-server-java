@@ -1,5 +1,6 @@
 package com.client.calorieserver.util;
 
+import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
 import com.client.calorieserver.domain.model.search.Bracket;
 import com.client.calorieserver.domain.model.search.Filter;
 import com.client.calorieserver.domain.model.search.LogicalOperator;
@@ -100,8 +101,12 @@ public class SpecificationBuilder<U> {
                 } else {
 
                     Matcher matcher = SpecCriteriaRegex.matcher(token);
-                    while (matcher.find()) {
+                    if (matcher.find()) {
                         postFixExpStack.push(new Filter(matcher.group(1), matcher.group(2), matcher.group(3)));
+                    }
+                    else
+                    {
+                        throw new InvalidSearchQueryException("Expression did not match regex:" + SpecCriteriaRegex);
                     }
                 }
             });
