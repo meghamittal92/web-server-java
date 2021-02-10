@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,6 +47,33 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         assert !jsonResponse.getBoolean("withinLimit");
         assert jsonResponse.getLong("userId") == userId;
         assert jsonResponse.getInt("numCalories") == Integer.parseInt(params.get("numCalories"));
+    }
+
+    @Test
+    @Sql({"/testdata/create_admin.sql"})
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    void delete() throws Exception{
+        String token = signIn("admin", "secretpassword");
+        Long userId = createUser(token);
+        Map<String, String> params = new HashMap<>();
+        params.put("numCalories", "10");
+        params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
+        params.put("userId", userId.toString());
+        params.put("mealDetails", "first_meal");
+
+        MvcResult result = mockMvc.perform(post("/api/v1/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(params))
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(params))
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
     }
 
     private Long createUser(String token) throws Exception{
