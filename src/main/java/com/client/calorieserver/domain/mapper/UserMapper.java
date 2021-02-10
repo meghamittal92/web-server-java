@@ -6,6 +6,7 @@ import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
+import lombok.Setter;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -126,7 +127,7 @@ public abstract class UserMapper {
     public Set<Role> stringSetToRoleSet(Set<String> roleSet) {
         HashSet<Role> roles = new HashSet<>();
 
-        if (roleSet != null) {
+        if (roleSet != null && roleSet.size() > 0) {
             for (final String roleString : roleSet) {
 
                 if (Role.get(roleString) != null) {

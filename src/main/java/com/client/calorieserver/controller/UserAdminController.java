@@ -34,15 +34,13 @@ public class UserAdminController {
 
     @GetMapping
     public Page<UserView> findAll(final Pageable pageable) {
-
         return userService.findAll(pageable).map(userMapper::toUserView);
     }
 
+
     @GetMapping(path = "/{id}")
     public UserView find(@PathVariable("id") Long userId) {
-
         return userMapper.toUserView(userService.findById(userId));
-
     }
 
     @PostMapping(consumes = "application/json")

@@ -30,11 +30,20 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	compile 'com.auth0:java-jwt:3.4.0'
+
+	compile 'org.flywaydb:flyway-core'
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.junit.jupiter:junit-jupiter:5.4.0')
+
 	annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
 	compile group: 'com.google.guava', name: 'guava', version: '21.0'
+
 	compile 'org.glassfish.jersey.core:jersey-client'
 	compile 'org.glassfish.jersey.media:jersey-media-json-jackson'
 	compile 'org.glassfish.jersey.inject:jersey-hk2'
+
+	testCompile group: "org.dbunit", name: "dbunit", version: "2.4.7"
+
 }
 
 test {
