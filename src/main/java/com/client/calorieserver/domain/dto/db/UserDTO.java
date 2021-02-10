@@ -2,6 +2,8 @@ package com.client.calorieserver.domain.dto.db;
 
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import javax.persistence.*;
@@ -13,8 +15,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "users")
-@Data
-public class UserDTO {
+@Getter
+@Setter
+public class UserDTO extends  AuditableDTO<String>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
