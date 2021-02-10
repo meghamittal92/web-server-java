@@ -1,5 +1,6 @@
 package com.client.calorieserver.domain.dto;
 
+import com.client.calorieserver.domain.validator.PasswordConstraint;
 import com.client.calorieserver.domain.validator.UsernameConstraint;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ public class RegisterUserRequest {
     @NotBlank
     private String username;
 
-    //TODO custom validator
+    @PasswordConstraint
     @NotBlank
     private String password;
 
