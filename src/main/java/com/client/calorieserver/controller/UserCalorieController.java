@@ -86,6 +86,16 @@ public class UserCalorieController {
         return calorieMapper.toUserCalorieView(calorieService.updateById(userId, calorieId, updatedCalorie));
     }
 
+    @PutMapping(path = "/{id}")
+    public UserCalorieView replace(@PathVariable("id") final Long calorieId, @RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
+
+        final Long userId = fetchUserIdFromAuth();
+        Calorie updatedCalorie = calorieMapper.toCalorie(createUserCalorieRequest);
+        updatedCalorie.setUserId(userId);
+
+
+        return calorieMapper.toUserCalorieView(calorieService.replaceById(userId, calorieId, updatedCalorie));
+    }
     private Long fetchUserIdFromAuth() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ((User) auth.getPrincipal()).getId();
