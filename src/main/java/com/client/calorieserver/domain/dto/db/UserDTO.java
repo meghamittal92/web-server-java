@@ -25,7 +25,7 @@ public class UserDTO {
     private String password;
 
     @Column(name = "expected_calories_per_day")
-    private Long expectedCaloriesPerDay;
+    private Integer expectedCaloriesPerDay;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(

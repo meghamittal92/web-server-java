@@ -22,7 +22,7 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
-    private static final Long DEFAULT_EXPECTED_CALORIES = 2000L;
+    private static final Integer DEFAULT_EXPECTED_CALORIES = 2000;
 
     private RoleRepository roleRepository;
 
@@ -131,7 +131,7 @@ public abstract class UserMapper {
     }
 
     @Named("expectedCaloriesMapper")
-    public Long expectedCaloriesMapper(Long expectedCaloriesPerDay) {
+    public Integer expectedCaloriesMapper(Integer expectedCaloriesPerDay) {
         if (expectedCaloriesPerDay == null)
             expectedCaloriesPerDay = DEFAULT_EXPECTED_CALORIES;
 

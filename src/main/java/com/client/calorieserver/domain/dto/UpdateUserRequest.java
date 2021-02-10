@@ -11,5 +11,5 @@ public class UpdateUserRequest {
     private String username;
     private String password;
     private Set<String> roles;
-    private Long expectedCaloriesPerDay;
+    private Integer expectedCaloriesPerDay;
 }

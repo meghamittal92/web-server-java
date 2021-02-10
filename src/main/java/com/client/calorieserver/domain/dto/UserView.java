@@ -13,6 +13,6 @@ public class UserView {
 
     private Long id;
     private String username;
-    private Long expectedCaloriesPerDay;
+    private Integer expectedCaloriesPerDay;
     private Set<Role> roles;
 }
