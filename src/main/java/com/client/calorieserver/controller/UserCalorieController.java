@@ -64,7 +64,7 @@ public class UserCalorieController {
     public UserCalorieView create(@RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
 
         final Long userId = fetchUserIdFromAuth();
-        Calorie calorie = calorieMapper.toCalorie(createUserCalorieRequest);
+        Calorie calorie = calorieMapper.toCalorie(createUserCalorieRequest, userId);
         calorie.setUserId(userId);
         return calorieMapper.toUserCalorieView(calorieService.createCalorie(calorie));
     }
@@ -90,12 +90,12 @@ public class UserCalorieController {
     public UserCalorieView replace(@PathVariable("id") final Long calorieId, @RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
 
         final Long userId = fetchUserIdFromAuth();
-        Calorie updatedCalorie = calorieMapper.toCalorie(createUserCalorieRequest);
-        updatedCalorie.setUserId(userId);
+        Calorie updatedCalorie = calorieMapper.toCalorie(createUserCalorieRequest, userId);
 
 
         return calorieMapper.toUserCalorieView(calorieService.replaceById(userId, calorieId, updatedCalorie));
     }
+
     private Long fetchUserIdFromAuth() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ((User) auth.getPrincipal()).getId();

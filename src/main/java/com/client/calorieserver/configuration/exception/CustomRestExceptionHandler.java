@@ -1,7 +1,6 @@
 package com.client.calorieserver.configuration.exception;
 
 
-
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,10 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import com.client.calorieserver.domain.dto.ErrorResponse;
-import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
-import com.client.calorieserver.domain.exception.EntityNotFoundException;
-import com.client.calorieserver.domain.exception.ApiError;
-import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
+import com.client.calorieserver.domain.exception.*;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
 import org.apache.logging.log4j.LogManager;
@@ -207,8 +203,17 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
+    @ExceptionHandler({ExternalCalorieServiceException.class})
+    protected ResponseEntity<Object> handleCalorieServiceException(ExternalCalorieServiceException ex, final HttpServletRequest request) {
+        logger.error("Calorie Service Exception: {}\n", request.getRequestURI(), ex);
+
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.CALORIE_FETCH_ERROR);
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> handleAll(Exception ex, final HttpServletRequest request) {
+        logger.error(ex.getStackTrace());
         logger.error("Internal Error {}\n", request.getRequestURI(), ex.getCause() != null ? ex.getCause() : ex);
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ApiError.INTERNAL_SERVER_ERROR);

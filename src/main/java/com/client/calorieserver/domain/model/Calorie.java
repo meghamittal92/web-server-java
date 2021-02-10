@@ -10,9 +10,9 @@ public class Calorie {
 
     private Long id;
     LocalDateTime dateTime;
-    int numCalories;
+    Integer numCalories;
     String mealDetails;
-    int totalCaloriesForDay;
+    Integer totalCaloriesForDay;
     boolean isWithinLimit;
     Long userId;
 }

@@ -1,5 +1,6 @@
 package com.client.calorieserver.domain.mapper;
 
+import com.client.calorieserver.accessor.CalorieAccessor;
 import com.client.calorieserver.domain.dto.*;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
@@ -19,26 +20,30 @@ import java.util.List;
 public abstract class CalorieMapper {
 
     private UserRepository userRepository;
-
-
     private CaloriePerDayRepository caloriePerDayRepository;
+    private CalorieAccessor calorieAccessor;
+
+    @Autowired
+    public void setCalorieAccessor(final CalorieAccessor calorieAccessor) {
+        this.calorieAccessor = calorieAccessor;
+    }
 
     @Autowired
     public void setUserRepository
-            (UserRepository userRepository) {
+            (final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Autowired
-    public void setCaloriePerDayRepository(CaloriePerDayRepository caloriePerDayRepository) {
+    public void setCaloriePerDayRepository(final CaloriePerDayRepository caloriePerDayRepository) {
         this.caloriePerDayRepository = caloriePerDayRepository;
     }
 
     @Mapping(target = "withinLimit", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "totalCaloriesForDay", ignore = true)
-    public abstract Calorie toCalorie(CreateUserCalorieRequest createUserCalorieRequest);
+    @Mapping(source = "userId", target = "userId")
+    public abstract Calorie toCalorie(CreateUserCalorieRequest createUserCalorieRequest, final Long userId);
 
     @Mapping(target = "withinLimit", ignore = true)
     @Mapping(target = "id", ignore = true)
@@ -98,5 +103,21 @@ public abstract class CalorieMapper {
             calorie.setWithinLimit(false);
     }
 
+    @AfterMapping
+    public void afterMappingCalorie(final CreateCalorieRequest createCalorieRequest, @MappingTarget Calorie calorie) {
+        if (calorie.getNumCalories() == null) {
+            calorie.setNumCalories(calorieAccessor.getCalories(calorie.getMealDetails(), calorie.getUserId()));
+        }
+
+    }
+
+    @AfterMapping
+    public void afterMappingCalorie(final CreateUserCalorieRequest createUserCalorieRequest, @MappingTarget Calorie calorie) {
+        if (calorie.getNumCalories() == null) {
+            calorie.setNumCalories(calorieAccessor.getCalories(calorie.getMealDetails(), calorie.getUserId()));
+        }
+
+
+    }
 
 }

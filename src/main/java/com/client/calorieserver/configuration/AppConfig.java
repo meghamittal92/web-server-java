@@ -1,11 +1,13 @@
 package com.client.calorieserver.configuration;
 
 
-import com.client.calorieserver.configuration.Constants;
-import com.client.calorieserver.util.SpecificationBuilder;
+import com.client.calorieserver.accessor.CalorieAccessor;
+import com.client.calorieserver.accessor.NutritionixCalorieAccessorImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -21,6 +23,12 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @EnableSpringDataWebSupport
 public class AppConfig {
+
+    @Value("${app.nutritionix.apiKey}")
+    private String apikey;
+
+    @Value("${app.nutritionix.appId}")
+    private String appId;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,5 +50,10 @@ public class AppConfig {
     @Bean
     public ConversionService conversionService() {
         return new DefaultConversionService();
+    }
+
+    @Bean
+    public CalorieAccessor calorieAccessor() {
+        return new NutritionixCalorieAccessorImpl(apikey, appId);
     }
 }
