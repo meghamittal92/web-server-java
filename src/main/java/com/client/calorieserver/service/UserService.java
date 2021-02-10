@@ -72,14 +72,6 @@ public class UserService implements UserDetailsService {
         return userMapper.toUser(userRepository.save(updatedUserDTO));
     }
 
-    public User findByUsername(String username) {
-
-        final UserDTO userDTO = userRepository.findByUsername(username).orElseThrow(
-                () -> new EntityNotFoundException(User.class, username)
-        );
-        return userMapper.toUser(userDTO);
-    }
-
     public Page<User> findAll(final Pageable pageable) {
 
         return userRepository.findAll(pageable).map(userMapper::toUser);

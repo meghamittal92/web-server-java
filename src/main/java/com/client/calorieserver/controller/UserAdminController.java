@@ -38,10 +38,10 @@ public class UserAdminController {
         return userService.findAll(pageable).map(userMapper::toUserView);
     }
 
-    @GetMapping(path = "/{username}")
-    public UserView find(@PathVariable("username") String username) {
+    @GetMapping(path = "/{id}")
+    public UserView find(@PathVariable("id") Long userId) {
 
-        return userMapper.toUserView(userService.findByUsername(username));
+        return userMapper.toUserView(userService.findById(userId));
 
     }
 

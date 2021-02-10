@@ -22,8 +22,9 @@ public class EntityNotFoundException extends RuntimeException {
 
     }
 
-    public EntityNotFoundException(Class<?> clazz, String id) {
-        super(String.format("Entity %s with id %s already exists", clazz.getSimpleName(), id));
+    public EntityNotFoundException(Class<?> clazz, String message) {
+        super(message);
+        this.entityClass = clazz;
     }
 
 }
