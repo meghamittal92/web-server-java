@@ -40,17 +40,17 @@ public class CalorieDTOSpecification implements Specification<CalorieDTO> {
                 }
 
             } else if (root.get(calorieSearchKey.getDbColumnName()).getJavaType().isAssignableFrom(LocalDateTime.class)) {
-                LocalDate value = LocalDate.parse(criteria.getValue().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+                LocalDateTime value = LocalDateTime.parse(criteria.getValue().toString(), DateTimeFormatter.ISO_DATE_TIME);
                 switch (criteria.getOperator()) {
                     case EQUAL:
-                        return builder.equal(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Date.class), java.sql.Date.valueOf(value));
+                        return builder.equal(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Timestamp.class), java.sql.Timestamp.valueOf(value));
                     case NOT_EQUAL:
-                        return builder.notEqual(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Date.class), java.sql.Date.valueOf(value));
+                        return builder.notEqual(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Timestamp.class), java.sql.Timestamp.valueOf(value));
                     case GREATER_THAN:
 
-                        return builder.greaterThan(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Date.class), java.sql.Date.valueOf(value));
+                        return builder.greaterThan(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Timestamp.class), java.sql.Timestamp.valueOf(value));
                     case LESS_THAN:
-                        return builder.lessThan(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Date.class), java.sql.Date.valueOf(value));
+                        return builder.lessThan(root.get(calorieSearchKey.getDbColumnName()).as(java.sql.Timestamp.class), java.sql.Timestamp.valueOf(value));
                     default:
                         throw new InvalidSearchQueryException("Unsupported relational operator");
                 }

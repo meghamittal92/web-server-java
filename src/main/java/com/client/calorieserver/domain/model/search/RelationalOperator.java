@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum RelationalOperator {
 
-    EQUAL(":"),
-    NOT_EQUAL("!:"),
+    EQUAL("=="),
+    NOT_EQUAL("!="),
     GREATER_THAN(">"),
     LESS_THAN("<");
 
