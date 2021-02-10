@@ -33,6 +33,9 @@ public class UserService implements UserDetailsService {
             throw new EntityAlreadyExistsException(User.class, String.format("User with name %s already exists", user.getUsername()));
         }
 
+        if (userRepository.existsByEmail(user.getEmail()))
+            throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", user.getEmail()));
+
         final UserDTO userDTO = userRepository.save(userMapper.toUserDTO(user));
         return userMapper.toUser(userDTO);
     }
@@ -47,6 +50,11 @@ public class UserService implements UserDetailsService {
         if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
             if (userRepository.existsByUsername(updatedUser.getUsername()))
                 throw new EntityAlreadyExistsException(User.class, String.format("User with username %s already exists", updatedUser.getUsername()));
+        }
+
+        if (!updatedUser.getEmail().equals(originalUserDTO.getEmail())) {
+            if (userRepository.existsByEmail(updatedUser.getEmail()))
+                throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", updatedUser.getEmail()));
         }
 
         UserDTO updatedUserDTO = userMapper.toUserDTO(updatedUser);
@@ -65,6 +73,11 @@ public class UserService implements UserDetailsService {
         if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
             if (userRepository.existsByUsername(updatedUser.getUsername()))
                 throw new EntityAlreadyExistsException(User.class, String.format("User with username %s already exists", updatedUser.getUsername()));
+        }
+
+        if (!updatedUser.getEmail().equals(originalUserDTO.getEmail())) {
+            if (userRepository.existsByEmail(updatedUser.getEmail()))
+                throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", updatedUser.getEmail()));
         }
 
         UserDTO updatedUserDTO = userMapper.updateUserDTO(updatedUser, originalUserDTO);

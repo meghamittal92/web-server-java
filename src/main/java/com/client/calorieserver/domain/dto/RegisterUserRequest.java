@@ -4,6 +4,7 @@ import com.client.calorieserver.domain.validator.PasswordConstraint;
 import com.client.calorieserver.domain.validator.UsernameConstraint;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -18,4 +19,8 @@ public class RegisterUserRequest {
     private String password;
 
     private Integer expectedCaloriesPerDay;
+
+    @Email
+    @NotBlank
+    private String email;
 }

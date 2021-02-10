@@ -15,4 +15,5 @@ public class UserView {
     private String username;
     private Integer expectedCaloriesPerDay;
     private Set<Role> roles;
+    private String email;
 }
