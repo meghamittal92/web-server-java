@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Mapper to convert between User model to DTO objects.
  */
-@Mapper(componentModel = "spring")
+//@Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
     private static final Integer DEFAULT_EXPECTED_CALORIES = 2000;

@@ -29,7 +29,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    void initController(){
+    void init(){
         MockitoAnnotations.openMocks(this);
         userService = new UserService(userRepository, userMapper);
     }

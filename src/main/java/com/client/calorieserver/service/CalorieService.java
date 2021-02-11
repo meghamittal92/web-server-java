@@ -133,7 +133,6 @@ public class CalorieService {
         CalorieDTO calorieDTO = calorieRepository.findById(calorieId).orElseThrow(
                 () -> new EntityNotFoundException(Calorie.class, calorieId)
         );
-
         saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(), -1 * calorieDTO.getNumCalories());
         calorieRepository.deleteById(calorieId);
     }
@@ -146,7 +145,6 @@ public class CalorieService {
             caloriePerDayDTO = caloriePerDayDTOOptional.get();
 
             caloriePerDayDTO.setTotalCalories(caloriePerDayDTO.getTotalCalories() + deltaCalories);
-
 
         } else {
             caloriePerDayDTO = new CaloriePerDayDTO();

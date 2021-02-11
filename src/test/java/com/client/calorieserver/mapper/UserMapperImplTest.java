@@ -4,11 +4,15 @@ package com.client.calorieserver.mapper;
 import com.client.calorieserver.domain.dto.db.RoleDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.request.CreateUserRequest;
+import com.client.calorieserver.domain.dto.request.UpdateProfileRequest;
+import com.client.calorieserver.domain.dto.request.UpdateUserRequest;
+import com.client.calorieserver.domain.dto.response.ProfileView;
 import com.client.calorieserver.domain.dto.response.UserView;
-import com.client.calorieserver.domain.mapper.UserMapperImpl;
+import com.client.calorieserver.domain.mapper.UserMapperNew;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
+import com.client.calorieserver.utils.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -20,7 +24,7 @@ import java.util.*;
 
 public class UserMapperImplTest {
 
-    private UserMapperImpl userMapper;
+    private UserMapperNew userMapper;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
@@ -29,23 +33,55 @@ public class UserMapperImplTest {
     @BeforeEach
     void init(){
         MockitoAnnotations.openMocks(this);
-        userMapper = new UserMapperImpl();
+        userMapper = new UserMapperNew();
         userMapper.setPasswordEncoder(passwordEncoder);
         userMapper.setRoleRepository(roleRepository);
     }
 
     @Test
     void toUserView(){
-        User user = generateUser("test_user", "test_pass", 12L);
+        assert (userMapper.toUserView((User) null) == null);
+        User user = generateUser(TestData.default_username,
+                TestData.default_password,  TestData.default_email,12L);
         UserView userView = userMapper.toUserView(user);
         assert (userView.getUsername().equals(user.getUsername()));
         assert (userView.getId().equals(user.getId()));
     }
 
     @Test
+    void toProfileUserView(){
+        assert (userMapper.toProfileView((User) null) == null);
+        User user = generateUser(TestData.default_username,
+                TestData.default_password,  TestData.default_email,12L);
+        ProfileView userView = userMapper.toProfileView(user);
+        assert (userView.getUsername().equals(user.getUsername()));
+        assert (userView.getEmail().equals(user.getEmail()));
+    }
+
+    @Test
+    void UpdateUser(){
+        User user = generateUser(TestData.default_username,
+                TestData.default_password,  TestData.default_email,12L);
+        user.setRoles(null);
+        assert userMapper.updateUser((UpdateProfileRequest) null, user) == null;
+ ;
+        UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+        updateUserRequest.setUsername("new_username");
+        updateUserRequest.setPassword("new_password");
+        updateUserRequest.setEmail("new_email@gmail.com");
+        Mockito.when(passwordEncoder.encode(Mockito.anyString())).thenReturn("new_password");
+        userMapper.updateUser(updateUserRequest, user);
+        assert user.getUsername().equalsIgnoreCase(updateUserRequest.getUsername());
+        assert user.getEmail().equalsIgnoreCase(updateUserRequest.getEmail());
+        assert user.getPassword().equalsIgnoreCase(updateUserRequest.getPassword());
+    }
+
+    @Test
     void toUserListView(){
-        User user1 = generateUser("test_user1", "test_pass1", 12L);
-        User user2 = generateUser("test_user2", "test_pass2", 13L);
+        User user1 = generateUser("test_user1", "test_pass1",
+                "test1@gmail.com", 12L);
+        User user2 = generateUser("test_user2", "test_pass2",
+                "test2@gmail.com", 13L);
         List<User> users = List.of(user1, user2);
         List<UserView> userViews = userMapper.toUserView(users);
         assert (userViews.get(0).getUsername().equals(user1.getUsername()));
@@ -56,11 +92,11 @@ public class UserMapperImplTest {
 
     @Test
     void toUser(){
-        Set<String> roles = new HashSet<>();
-        roles.add("xyz");
+        Set<String> roles = new HashSet<>(Arrays.asList(TestData.default_roles));
         CreateUserRequest userRequest = new CreateUserRequest();
-        userRequest.setUsername("test");
-        userRequest.setPassword("password");
+        userRequest.setUsername(TestData.default_username);
+        userRequest.setPassword(TestData.default_password);
+        userRequest.setEmail(TestData.default_email);
         userRequest.setRoles(roles);
         Mockito.when(passwordEncoder.encode(Mockito.anyString())).thenReturn("encodedPassword");
         User user = userMapper.toUser(userRequest);
@@ -71,7 +107,8 @@ public class UserMapperImplTest {
 
     @Test
     void toUserDTO(){
-        User user = generateUser("test", "password", 12L);
+        User user = generateUser(TestData.default_username, TestData.default_password,
+                TestData.default_email, 1L);
         Set<Role> roles = new HashSet<>();
         roles.add(Role.USER);
         user.setRoles(roles);
@@ -83,6 +120,34 @@ public class UserMapperImplTest {
         assert (userDTO.getUsername().equalsIgnoreCase(user.getUsername()));
         assert (userDTO.getPassword().equalsIgnoreCase(user.getPassword()));
         assert (userDTO.getRoleDTOs().contains(roleDTO));
+    }
+
+    @Test
+    void updateUserDTO(){
+        User user = generateUser(TestData.default_username, TestData.default_password,
+                TestData.default_email, 1L);
+        user.setExpectedCaloriesPerDay(10);
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(2L);
+        userDTO.setUsername("old_user_name");
+        userDTO.setPassword("old_password");
+        userDTO.setEmail("old_email@gmail.com");
+        userDTO.setExpectedCaloriesPerDay(1);
+
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setName(Role.USER.getName());
+
+        Mockito.when(roleRepository.findByName(Mockito.anyString())).thenReturn(Optional.of(roleDTO));
+        Mockito.when(passwordEncoder.encode(Mockito.anyString())).thenReturn(user.getPassword());
+
+        assert userMapper.updateUserDTO(null, userDTO) == null;
+        UserDTO updated = userMapper.updateUserDTO(user, userDTO);
+        assert updated.getUsername().equalsIgnoreCase(user.getUsername());
+        assert updated.getPassword().equalsIgnoreCase(user.getPassword());
+        assert updated.getEmail().equalsIgnoreCase(user.getEmail());
+        assert updated.getId() == 1L;
+        assert updated.getExpectedCaloriesPerDay() == 10;
     }
 
     @Test
@@ -211,11 +276,12 @@ public class UserMapperImplTest {
         }
     }
 
-    private User generateUser(String name, String password, Long id){
+    private User generateUser(String name, String password, String email, Long id){
         User user = new User();
         user.setUsername(name);
         user.setPassword(password);
         user.setId(id);
+        user.setEmail(email);
         user.setRoles(Set.of(Role.USER));
         return user;
     }
