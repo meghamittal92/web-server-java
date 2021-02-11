@@ -11,6 +11,8 @@ import com.client.calorieserver.domain.dto.response.ErrorResponse;
 import com.client.calorieserver.domain.exception.*;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.TypeMismatchException;
@@ -77,11 +79,25 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
+    @ExceptionHandler({JsonMappingException.class})
+    protected ResponseEntity<Object> handleJsonMappingException(final JsonMappingException ex, final WebRequest request) {
+
+        ex.getPath();
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT);
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        final String details = ex.getLocalizedMessage().substring(0, ex.getLocalizedMessage().indexOf(";"));
+        Throwable cause = ex.getCause();
+        String details = "";
+        if(cause instanceof UnrecognizedPropertyException)
+        {
+
+          details = String.format("Unrecognized field %s. Known fields: %s",((UnrecognizedPropertyException) cause).getPropertyName() , ((UnrecognizedPropertyException) cause).getKnownPropertyIds());
+        }
+
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT, List.of(details));
         return handleExceptionInternal(ex, errorResponse, headers, errorResponse.getStatus(), request);
     }
@@ -234,7 +250,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ErrorResponse buildErrorResponse(HttpStatus httpStatus, ApiError apiError, List<String> details) {
 
-
+        if(details.isEmpty())
+            return buildErrorResponse(httpStatus, apiError);
+        else
         return new ErrorResponse(httpStatus, apiError.getErrorMessage(), apiError.getErrorCode(), details);
 
     }
