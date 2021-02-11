@@ -15,6 +15,7 @@ import com.client.calorieserver.repository.UserRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.awt.*;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
