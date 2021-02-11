@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class JWTAuthorizationFilterTest {
 
-    private final static String token="Bearer ";
+    private final static String token="Bearer token";
     private final static String username="test_user";
     private final static String password="test_password";
     JWTAuthorizationFilter jwtAuthorizationFilter;
@@ -79,6 +79,7 @@ public class JWTAuthorizationFilterTest {
         Mockito.when(userDetailsService.loadUserByUsername(Mockito.anyString())).thenReturn(user);
         jwtAuthorizationFilter.doFilter(request, response, chain);
         Mockito.verify(jwtUtil).getUserNameFromJwtToken(argumentCaptor.capture());
+        assert argumentCaptor.getValue().equalsIgnoreCase("token");
     }
     
     private User createUser(){
