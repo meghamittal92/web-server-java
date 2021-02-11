@@ -2,6 +2,7 @@ package com.client.calorieserver.repository;
 
 import com.client.calorieserver.domain.dto.db.UserDTO;
 
+import com.client.calorieserver.domain.dto.db.UserDTO_;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 
@@ -13,12 +14,12 @@ import java.util.Optional;
 public interface UserRepository extends CustomRepository<UserDTO, Long> , JpaSpecificationExecutor<UserDTO> {
 
 
-    public Optional<UserDTO> findByUsername(@Param("username") String username);
+    public Optional<UserDTO> findByUsername(@Param(UserDTO_.USERNAME) String username);
 
-    public boolean existsByUsername(@Param("username") String username);
-    public boolean existsByEmail(@Param("email") String email);
+    public boolean existsByUsername(@Param(UserDTO_.USERNAME) String username);
+    public boolean existsByEmail(@Param(UserDTO_.EMAIL) String email);
 
-    public void deleteById(@Param("id") Long userId);
+    public void deleteById(@Param(UserDTO_.ID) Long userId);
 
-    public Optional<UserDTO> findById(@Param("id") Long userId);
+    public Optional<UserDTO> findById(@Param(UserDTO_.ID) Long userId);
 }
