@@ -2,14 +2,12 @@ package com.client.calorieserver.integration;
 
 import com.client.calorieserver.configuration.TestAuditingConfiguration;
 import com.client.calorieserver.configuration.TestPersistenceConfiguration;
-import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
 import com.client.calorieserver.domain.model.search.*;
 import com.client.calorieserver.repository.UserRepository;
-import com.client.calorieserver.util.CalorieDTOSpecification;
-import com.client.calorieserver.util.SpecificationBuilder;
-import com.client.calorieserver.util.UserDTOSpecification;
+import com.client.calorieserver.util.search.SpecificationBuilder;
+import com.client.calorieserver.util.search.UserDTOSpecification;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

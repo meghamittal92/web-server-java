@@ -1,4 +1,4 @@
-package com.client.calorieserver.util;
+package com.client.calorieserver.util.search;
 
 import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
 import com.client.calorieserver.domain.model.search.Bracket;

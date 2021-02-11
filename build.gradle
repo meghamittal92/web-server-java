@@ -41,7 +41,6 @@ dependencies {
 	compile 'org.glassfish.jersey.media:jersey-media-json-jackson'
 	compile 'org.glassfish.jersey.inject:jersey-hk2'
 
-	testCompile group: "org.dbunit", name: "dbunit", version: "2.4.7"
 	testCompile("org.junit.jupiter:junit-jupiter-params:5.7.0")
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.junit.jupiter:junit-jupiter:5.4.0')

@@ -20,6 +20,10 @@ import java.util.Optional;
 
 public class UserServiceTest {
 
+    private static final String username = "test_user";
+    private static final String password = "test_password";
+    private static final String email = "test_email@gmail.com";
+
     private UserService userService;
 
     @Mock
@@ -29,7 +33,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    void initController(){
+    void init(){
         MockitoAnnotations.openMocks(this);
         userService = new UserService(userRepository, userMapper);
     }
@@ -48,20 +52,27 @@ public class UserServiceTest {
 
     @Test
     public void createUser(){
-        User user = new User();
-        user.setUsername("test1");
-        user.setPassword("password");
+        User user = generateUser();
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(user.getUsername());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setId(12L);
+        UserDTO userDTO = generateUserDTO();
 
-        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(true);
         Mockito.when(userMapper.toUserDTO(Mockito.any(User.class))).thenReturn(userDTO);
         Mockito.when(userRepository.save(Mockito.any(UserDTO.class))).thenReturn(userDTO);
         Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(user);
 
+        Assertions.assertThrows(EntityAlreadyExistsException.class, () -> {
+            User savedUser = userService.create(user);
+
+        });
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
+        Assertions.assertThrows(EntityAlreadyExistsException.class, () -> {
+            User savedUser = userService.create(user);
+        });
+
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
         User savedUser = userService.create(user);
         Assertions.assertEquals(savedUser.getUsername(), user.getUsername());
         Assertions.assertEquals(savedUser.getPassword(), user.getPassword());
@@ -96,19 +107,34 @@ public class UserServiceTest {
 
     @Test
     public void replaceById(){
-        User user = new User();
-        user.setUsername("test1");
-        user.setPassword("password");
+        User user = generateUser();
+        user.setUsername("test_user_1");
+        user.setEmail("newemail@gmail.com");
 
-        UserDTO original = new UserDTO();
-        original.setUsername("test");
-        original.setPassword("password");
-        user.setEmail("test1@gmail.com");
+        UserDTO original = generateUserDTO();
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+        Assertions.assertThrows(EntityNotFoundException.class, () ->{
+            userService.replaceById(12L ,user);
+        });
 
         Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(original));
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(true);
+        Assertions.assertThrows(EntityAlreadyExistsException.class, () ->{
+            userService.replaceById(12L ,user);
+        });
+
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
+
+        Assertions.assertThrows(EntityAlreadyExistsException.class, () ->{
+            userService.replaceById(12L ,user);
+        });
+        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
         Mockito.when(userMapper.toUserDTO(Mockito.any(User.class))).thenReturn(original);
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(original);
         Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(user);
+        original.setUsername(user.getUsername());
+        original.setEmail(user.getEmail());
         userService.replaceById(12L ,user);
         Mockito.verify(userMapper).toUser(Mockito.any(UserDTO.class));
     }
@@ -190,4 +216,67 @@ public class UserServiceTest {
         userService.loadUserByUsername("test");
         Mockito.verify(userMapper).toUser(Mockito.any(UserDTO.class));
     }
+
+    @Test
+    public void updateById(){
+        User user = generateUser();
+        user.setUsername("test_user_1");
+        user.setEmail("newemail@gmail.com");
+
+        UserDTO original = generateUserDTO();
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+        Assertions.assertThrows(EntityNotFoundException.class, () ->{
+            userService.updateById(12L ,user);
+        });
+
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(original));
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(true);
+        Assertions.assertThrows(EntityAlreadyExistsException.class, () ->{
+            userService.updateById(12L ,user);
+        });
+
+        Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
+
+        Assertions.assertThrows(EntityAlreadyExistsException.class, () ->{
+            userService.updateById(12L ,user);
+        });
+        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
+        Mockito.when(userMapper.toUserDTO(Mockito.any(User.class))).thenReturn(original);
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(original);
+        Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(user);
+        original.setUsername(user.getUsername());
+        original.setEmail(user.getEmail());
+        userService.updateById(12L ,user);
+        Mockito.verify(userMapper).toUser(Mockito.any(UserDTO.class));
+    }
+
+    @Test
+    public void findById(){
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            userService.findById(12L);
+        });
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(generateUserDTO()));
+        Mockito.when(userMapper.toUser(Mockito.any(UserDTO.class))).thenReturn(generateUser());
+        userService.findById(12L);
+    }
+
+    private User generateUser(){
+        User user = new User();
+        user.setPassword(password);
+        user.setUsername(username);
+        user.setEmail(email);
+        return user;
+    }
+
+    private UserDTO generateUserDTO(){
+        UserDTO user = new UserDTO();
+        user.setPassword(password);
+        user.setUsername(username);
+        user.setEmail(email);
+        return user;
+    }
+
+
 }

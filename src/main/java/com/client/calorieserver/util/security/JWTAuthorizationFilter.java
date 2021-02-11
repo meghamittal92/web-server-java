@@ -1,9 +1,8 @@
-package com.client.calorieserver.configuration.security;
+package com.client.calorieserver.util.security;
 
 import com.client.calorieserver.configuration.Constants;
 import com.client.calorieserver.domain.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

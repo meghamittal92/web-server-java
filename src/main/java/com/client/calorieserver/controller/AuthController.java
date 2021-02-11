@@ -1,6 +1,6 @@
 package com.client.calorieserver.controller;
 
-import com.client.calorieserver.configuration.security.JWTUtil;
+import com.client.calorieserver.util.security.JWTUtil;
 import com.client.calorieserver.domain.dto.request.LoginRequest;
 import com.client.calorieserver.domain.dto.request.RegisterUserRequest;
 import com.client.calorieserver.domain.dto.response.ProfileView;
