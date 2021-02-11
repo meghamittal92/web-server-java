@@ -1,8 +1,8 @@
 package com.client.calorieserver.controller;
 
-import com.client.calorieserver.domain.dto.UserCalorieView;
-import com.client.calorieserver.domain.dto.CreateUserCalorieRequest;
-import com.client.calorieserver.domain.dto.UpdateCalorieRequest;
+import com.client.calorieserver.domain.dto.response.UserCalorieView;
+import com.client.calorieserver.domain.dto.request.CreateUserCalorieRequest;
+import com.client.calorieserver.domain.dto.request.UpdateCalorieRequest;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
 import com.client.calorieserver.domain.model.Calorie;

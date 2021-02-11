@@ -1,6 +1,8 @@
 package com.client.calorieserver.domain.dto.db;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -11,8 +13,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "calories")
-@Data
-public class CalorieDTO {
+@Getter
+@Setter
+public class CalorieDTO extends AuditableDTO<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

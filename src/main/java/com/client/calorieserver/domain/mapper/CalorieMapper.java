@@ -1,16 +1,16 @@
 package com.client.calorieserver.domain.mapper;
 
 import com.client.calorieserver.accessor.CalorieAccessor;
-import com.client.calorieserver.domain.dto.*;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
-import com.client.calorieserver.domain.dto.db.UserDay;
+import com.client.calorieserver.domain.dto.request.CreateCalorieRequest;
+import com.client.calorieserver.domain.dto.request.CreateUserCalorieRequest;
+import com.client.calorieserver.domain.dto.request.UpdateCalorieRequest;
+import com.client.calorieserver.domain.dto.response.AdminCalorieView;
+import com.client.calorieserver.domain.dto.response.UserCalorieView;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
-import com.client.calorieserver.domain.exception.InternalException;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
-import com.client.calorieserver.repository.CaloriePerDayRepository;
-import com.client.calorieserver.repository.CalorieRepository;
 import com.client.calorieserver.repository.UserRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;

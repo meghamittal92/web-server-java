@@ -20,6 +20,7 @@ public class User implements UserDetails {
     private String password;
     private Set<Role> roles;
     private Integer expectedCaloriesPerDay;
+    private String email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

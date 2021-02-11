@@ -16,6 +16,7 @@ public interface UserRepository extends CustomRepository<UserDTO, Long>  {
     public Optional<UserDTO> findByUsername(@Param("username") String username);
 
     public boolean existsByUsername(@Param("username") String username);
+    public boolean existsByEmail(@Param("email") String email);
 
     public void deleteById(@Param("id") Long userId);
 

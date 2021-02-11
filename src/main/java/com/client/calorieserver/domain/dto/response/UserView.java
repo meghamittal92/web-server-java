@@ -1,4 +1,4 @@
-package com.client.calorieserver.domain.dto;
+package com.client.calorieserver.domain.dto.response;
 
 import com.client.calorieserver.domain.model.Role;
 import lombok.Data;
@@ -15,4 +15,5 @@ public class UserView {
     private String username;
     private Integer expectedCaloriesPerDay;
     private Set<Role> roles;
+    private String email;
 }

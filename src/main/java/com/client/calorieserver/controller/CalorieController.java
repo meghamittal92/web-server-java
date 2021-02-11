@@ -1,11 +1,12 @@
 package com.client.calorieserver.controller;
 
-import com.client.calorieserver.domain.dto.*;
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
+import com.client.calorieserver.domain.dto.request.CreateCalorieRequest;
+import com.client.calorieserver.domain.dto.request.UpdateCalorieRequest;
+import com.client.calorieserver.domain.dto.response.AdminCalorieView;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
 import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.Role;
-import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.util.CalorieDTOSpecification;
 import com.client.calorieserver.util.SpecificationBuilder;
 import com.client.calorieserver.service.CalorieService;
@@ -13,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
