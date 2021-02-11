@@ -1,6 +1,5 @@
 package com.client.calorieserver.domain.dto.db;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.*;

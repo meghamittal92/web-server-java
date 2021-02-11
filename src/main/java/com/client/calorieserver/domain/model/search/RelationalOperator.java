@@ -1,7 +1,6 @@
 package com.client.calorieserver.domain.model.search;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,14 +23,14 @@ public enum RelationalOperator {
         this.name = name;
     }
 
-    public String getBooleanOperatorName() {
+    public String getName() {
         return this.name;
     }
 
     static {
         Map<String, RelationalOperator> map = new ConcurrentHashMap<String, RelationalOperator>();
         for (RelationalOperator instance : RelationalOperator.values()) {
-            map.put(instance.getBooleanOperatorName().toLowerCase(), instance);
+            map.put(instance.getName().toLowerCase(), instance);
         }
         RELATIONAL_OPERATOR_MAP = Collections.unmodifiableMap(map);
     }

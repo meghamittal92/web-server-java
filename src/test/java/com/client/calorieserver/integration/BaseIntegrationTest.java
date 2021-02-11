@@ -1,13 +1,17 @@
 package com.client.calorieserver.integration;
 
+import com.client.calorieserver.configuration.db.JpaAuditingConfiguration;
 import com.client.calorieserver.domain.dto.request.CreateUserRequest;
+import com.client.calorieserver.repository.CalorieRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -28,6 +32,7 @@ public class BaseIntegrationTest {
 
     public static final String email_suffix = "@gmail.com";
     public static final String default_username = "test_user";
+    public static final Long default_expected_calories = 10L;
     public static final String default_password = "test_password$1";
     public static final String[] default_roles = {"USER"};
     protected static final String ADMIN_USERNAME = "admin";
