@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,12 +30,30 @@ public class BaseIntegrationTest {
     public static final String default_username = "test_user";
     public static final String default_password = "test_password$1";
     public static final String[] default_roles = {"USER"};
+    protected static final String ADMIN_USERNAME = "admin";
+    protected static final String ADMIN_PASSWORD = "secretpassword";
+
 
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Value("${server.request.path.users}")
+    protected String usersRequestPath;
+    @Value("${server.request.path.calories}")
+    protected String caloriesRequestPath;
+    @Value("${server.request.path.userProfile.calories}")
+    protected String userCaloriesRequestPath;
+    @Value("${server.request.path.userProfile}")
+    protected String userProfileRequestPath;
+    @Value("${server.request.path.public}")
+    protected String publicRequestPath;
+    @Value("${server.request.endpoint.registerUser}")
+    protected String registerUserEndpoint;
+    @Value("${server.request.endpoint.loginUser}")
+    protected String loginUserEndpoint;
 
     protected String registerUser(String username, String password, Long expectedCaloriesPerDay) throws Exception{
         Map<String , String> params = new HashMap<>();
@@ -85,7 +105,7 @@ public class BaseIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createUserRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         return result.getResponse().getContentAsString();

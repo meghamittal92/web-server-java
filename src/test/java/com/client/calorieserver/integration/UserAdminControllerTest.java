@@ -5,6 +5,7 @@ import com.client.calorieserver.domain.dto.request.UpdateUserRequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
@@ -27,42 +28,42 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         registerUser("user1", "password1$", 100L);
         registerUser("user2", "password2$", 200L);
         registerUser("user3", "password3$", 300L);
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/users")
+        MvcResult result = mockMvc.perform(get(usersRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("sort", "username")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject resultJson = new JSONObject(result.getResponse().getContentAsString());
         JSONArray users = resultJson.getJSONArray("content");
         assert (users.length() == 4);
-        assert (users.getJSONObject(0).getString("username").equalsIgnoreCase("admin"));
+        assert (users.getJSONObject(0).getString("username").equalsIgnoreCase(ADMIN_USERNAME));
         assert (users.getJSONObject(1).getString("username").equalsIgnoreCase("user1"));
         assert (users.getJSONObject(2).getString("username").equalsIgnoreCase("user2"));
         assert (users.getJSONObject(3).getString("username").equalsIgnoreCase("user3"));
 
-        result = mockMvc.perform(get("/api/v1/users")
+        result = mockMvc.perform(get(usersRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("page","0")
                 .queryParam("size", "2")
                 .queryParam("sort", "username")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         resultJson = new JSONObject(result.getResponse().getContentAsString());
         users = resultJson.getJSONArray("content");
         assert (users.length() == 2);
-        assert (users.getJSONObject(0).getString("username").equalsIgnoreCase("admin"));
+        assert (users.getJSONObject(0).getString("username").equalsIgnoreCase(ADMIN_USERNAME));
         assert (users.getJSONObject(1).getString("username").equalsIgnoreCase("user1"));
 
-        result = mockMvc.perform(get("/api/v1/users")
+        result = mockMvc.perform(get(usersRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("sort", "username")
                 .queryParam("page","1")
                 .queryParam("size", "2")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         resultJson = new JSONObject(result.getResponse().getContentAsString());
@@ -76,7 +77,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void createUser() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         CreateUserRequest userRequest = new CreateUserRequest();
         userRequest.setUsername(default_username);
         userRequest.setPassword("invalidpassword");
@@ -85,26 +86,26 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         userRequest.setRoles(roles);
         userRequest.setExpectedCaloriesPerDay(120);
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post(usersRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
         userRequest.setEmail(userRequest.getUsername()+email_suffix);
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post(usersRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
         userRequest.setPassword(default_password);
-        MvcResult result = mockMvc.perform(post("/api/v1/users")
+        MvcResult result = mockMvc.perform(post(usersRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -117,15 +118,15 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void findById() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 120, default_roles);
         JSONObject jsonObject = new JSONObject(response);
         int id = jsonObject.getInt("id");
 
 
-        MvcResult result = mockMvc.perform(get("/api/v1/users/"+id)
+        MvcResult result = mockMvc.perform(get(usersRequestPath + "/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -138,21 +139,21 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void deleteById() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 120, default_roles);
         JSONObject jsonObject = new JSONObject(response);
         int id = jsonObject.getInt("id");
 
 
-        mockMvc.perform(delete("/api/v1/users/"+123)
+        mockMvc.perform(delete(usersRequestPath + "/"+123)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        mockMvc.perform(delete("/api/v1/users/"+id)
+        mockMvc.perform(delete(usersRequestPath + "/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
     }
@@ -161,7 +162,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void replaceByid() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 10, default_roles);
         JSONObject jsonObject = new JSONObject(response);
         int id = jsonObject.getInt("id");
@@ -173,19 +174,19 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         userRequest.setUsername("user2");
         userRequest.setEmail("newemail@gmail.com");
 
-        mockMvc.perform(put("/api/v1/users/"+id)
+        mockMvc.perform(put(usersRequestPath + "/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
         userRequest.setUsername(default_username);
         userRequest.setExpectedCaloriesPerDay(125);
-        MvcResult result = mockMvc.perform(put("/api/v1/users/"+id)
+        MvcResult result = mockMvc.perform(put(usersRequestPath + "/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -198,7 +199,7 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void UpdateUser() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 10, default_roles);
         JSONObject jsonObject = new JSONObject(response);
         int id = jsonObject.getInt("id");
@@ -210,20 +211,20 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
         userRequest.setEmail("newemail@gmail.com");
         userRequest.setUsername("user2");
 
-        mockMvc.perform(patch("/api/v1/users/"+id)
+        mockMvc.perform(patch(usersRequestPath + "/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
 
         userRequest.setUsername(default_username);
         userRequest.setExpectedCaloriesPerDay(125);
-        MvcResult result = mockMvc.perform(patch("/api/v1/users/"+id)
+        MvcResult result = mockMvc.perform(patch(usersRequestPath + "/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 

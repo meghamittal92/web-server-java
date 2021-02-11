@@ -3,6 +3,7 @@ package com.client.calorieserver.integration;
 import com.client.calorieserver.domain.dto.request.CreateUserRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
@@ -24,7 +25,7 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void create() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 5, default_roles);
         Long userId = new JSONObject(response).getLong("id");
 
@@ -35,10 +36,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "first_meal");
 
-        MvcResult result = mockMvc.perform(post("/api/v1/calories")
+        MvcResult result = mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonResponse = new JSONObject(result.getResponse().getContentAsString());
@@ -52,7 +53,7 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void delete() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 5, default_roles);
         Long userId = new JSONObject(response).getLong("id");
 
@@ -62,24 +63,24 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "first_meal");
 
-        MvcResult result = mockMvc.perform(post("/api/v1/calories")
+        MvcResult result = mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonResult = new JSONObject(result.getResponse().getContentAsString());
         int calorieID = jsonResult.getInt("id");
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID+1)
+        mockMvc.perform(MockMvcRequestBuilders.delete(caloriesRequestPath +"/"+calorieID+1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID)
+        mockMvc.perform(MockMvcRequestBuilders.delete(caloriesRequestPath +"/"+calorieID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
     }
@@ -88,7 +89,7 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void update() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 5, default_roles);
         Long userId = new JSONObject(response).getLong("id");
 
@@ -98,10 +99,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "first_meal");
 
-        MvcResult result = mockMvc.perform(post("/api/v1/calories")
+        MvcResult result = mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonResult = new JSONObject(result.getResponse().getContentAsString());
@@ -110,10 +111,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
 
         params.put("numCalories", "5");
         params.remove("userId");
-        result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/calories/"+calorieID)
+        result = mockMvc.perform(MockMvcRequestBuilders.patch(caloriesRequestPath +"/"+calorieID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonResult = new JSONObject(result.getResponse().getContentAsString());
@@ -126,7 +127,7 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void find() throws Exception{
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 5, default_roles);
         Long userId = new JSONObject(response).getLong("id");
 
@@ -136,19 +137,19 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "first_meal");
 
-        MvcResult result = mockMvc.perform(post("/api/v1/calories")
+        MvcResult result = mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonResult = new JSONObject(result.getResponse().getContentAsString());
         int calorieID = jsonResult.getInt("id");
         assert !jsonResult.getBoolean("withinLimit");
 
-        result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/calories/"+calorieID)
+        result = mockMvc.perform(MockMvcRequestBuilders.get(caloriesRequestPath +"/"+calorieID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonResult = new JSONObject(result.getResponse().getContentAsString());
@@ -162,7 +163,7 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void findAll() throws Exception{
         List<Map<String, String>> calories = new ArrayList<>();
-        String token = signIn("admin", "secretpassword");
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 10, default_roles);
         Long userId = new JSONObject(response).getLong("id");
 
@@ -173,10 +174,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("mealDetails", "detail_1");
         calories.add(params);
 
-        mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         params = new HashMap<>();
@@ -185,10 +186,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "detail_2");
         calories.add(params);
-        mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -200,10 +201,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "detail_3");
         calories.add(params);
-         mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         params = new HashMap<>();
@@ -212,10 +213,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "detail_4");
         calories.add(params);
-          mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -225,10 +226,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "detail_5");
         calories.add(params);
-        mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         params = new HashMap<>();
@@ -237,10 +238,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "detail_6");
         calories.add(params);
-        mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         params = new HashMap<>();
@@ -249,79 +250,79 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         params.put("userId", userId.toString());
         params.put("mealDetails", "detail_7");
         calories.add(params);
-        mockMvc.perform(post("/api/v1/calories")
+        mockMvc.perform(post(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
-        MvcResult result = mockMvc.perform(get("/api/v1/calories")
+        MvcResult result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 7);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "numCalories>=5")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 6);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "dateTime<="+calories.get(4).get("dateTime")+" AND numCalories>=5")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 4);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "numCalories<10 AND dateTime<="+calories.get(4).get("dateTime")+" AND numCalories>=5")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 1);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "numCalories>=5 AND dateTime<="+calories.get(5).get("dateTime")+" OR numCalories>=10")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 6);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "numCalories<=10 AND dateTime<="+calories.get(5).get("dateTime")+" OR numCalories>=10")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 4);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "numCalories<=10 AND dateTime>="+calories.get(5).get("dateTime")+" OR numCalories>=10")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 2);
 
-        result = mockMvc.perform(get("/api/v1/calories")
+        result = mockMvc.perform(get(caloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .queryParam("search", "numCalories<=10 AND dateTime<="+calories.get(5).get("dateTime")+" OR withinLimit==true")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());

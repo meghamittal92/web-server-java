@@ -19,7 +19,7 @@ import javax.validation.Valid;
  * Controller to provide operations on {@link UserDTO} object.
  */
 @RestController
-@RequestMapping(path = "/api/v1/profile")
+@RequestMapping(path = "${server.request.path.userProfile}")
 @RequiredArgsConstructor
 @RolesAllowed({Role.RoleConstants.USER_VALUE})
 public class UserProfileController {

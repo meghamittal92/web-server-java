@@ -2,6 +2,7 @@ package com.client.calorieserver.integration;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -16,15 +17,15 @@ public class UserProfileControllerTest extends BaseIntegrationTest{
     @Test
     void readProfile() throws Exception{
         String token = registerUser("user1", "password1$", 2000L);
-        mockMvc.perform(get("/api/v1/profile")
+        mockMvc.perform(get(userProfileRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", "wrong_token"))
+                .header(HttpHeaders.AUTHORIZATION, "wrong_token"))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        MvcResult result = mockMvc.perform(get("/api/v1/profile")
+        MvcResult result = mockMvc.perform(get(userProfileRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -36,18 +37,18 @@ public class UserProfileControllerTest extends BaseIntegrationTest{
     void updateProfile() throws Exception{
         String token = registerUser("user1", "password1$", 1000L);
         Map<String, String> params = new HashMap<>();
-        mockMvc.perform(patch("/api/v1/profile")
+        mockMvc.perform(patch(userProfileRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("")
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
         params.put("expectedCaloriesPerDay", "1001");
-        MvcResult result = mockMvc.perform(patch("/api/v1/profile")
+        MvcResult result = mockMvc.perform(patch(userProfileRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
-                .header("authorization", token))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 

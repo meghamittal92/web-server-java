@@ -29,7 +29,7 @@ import javax.validation.Valid;
  * a logged in user.
  */
 @RestController
-@RequestMapping(path = "api/v1/profile/calories")
+@RequestMapping(path = "${server.request.path.userProfile.calories}")
 @RolesAllowed({Role.RoleConstants.USER_VALUE})
 @RequiredArgsConstructor
 public class UserCalorieController {

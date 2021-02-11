@@ -47,6 +47,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Value("${app.cors.allowedOrigins}")
     private List<String> allowedOrigins;
 
+    @Value("${server.request.path.public}")
+    private String publicRequestPath;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
@@ -57,7 +60,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/public/**").permitAll()
+                .antMatchers(publicRequestPath + "/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

@@ -1,8 +1,10 @@
 package com.client.calorieserver.integration;
 
 import com.client.calorieserver.domain.dto.request.RegisterUserRequest;
+import com.client.calorieserver.domain.exception.ApiError;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -16,79 +18,103 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthControllerTest extends BaseIntegrationTest {
 
     private static final String email_suffix = "@gmail.com";
+    private static final String ERROR_CODE_KEY = "errorCode";
+    private static final String MESSAGE_KEY = "message";
+    private static final String USERNAME_KEY = "username";
+    private static final String PASSWORD_KEY = "password";
+
+    private static final String TEST_USERNAME = "user1";
+    private static final String TEST_USERNAME_2 = "user2";
+    private static final String TEST_PASSWORD = "testPasssword1$";
+    private static final String TEST_PASSWORD_2 = "testPasssword1$";
+    private static final String WRONG_PASSWORD = "wrongPasssword2$";
+
+
     @Test
-    void createUser() throws Exception{
+    void createUser() throws Exception {
+        //1. Test failure without setting username and password
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-        MvcResult result = mockMvc.perform(post("/api/v1/public/register")
+        MvcResult result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
-        registerUserRequest.setUsername("user1");
         JSONObject response = new JSONObject(result.getResponse().getContentAsString());
-        assert (response.getString("errorCode").equalsIgnoreCase("E0003"));
-        assert (response.getString("message").equalsIgnoreCase("invalid input"));
+        assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorCode()));
+        assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorMessage()));
 
-        result = mockMvc.perform(post("/api/v1/public/register")
+        //2. Test failure with only username
+        registerUserRequest.setUsername(TEST_USERNAME);
+
+        result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         response = new JSONObject(result.getResponse().getContentAsString());
-        assert (response.getString("errorCode").equalsIgnoreCase("E0003"));
-        assert (response.getString("message").equalsIgnoreCase("invalid input"));
+        assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorCode()));
+        assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorMessage()));
 
-        registerUserRequest.setPassword("testPasssword1$");
-        registerUserRequest.setEmail(registerUserRequest.getUsername()+email_suffix);
-        result = mockMvc.perform(post("/api/v1/public/register")
+        //3. Test Success with username and password
+        registerUserRequest.setPassword(TEST_PASSWORD);
+        registerUserRequest.setEmail(registerUserRequest.getUsername() + email_suffix);
+        result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         response = new JSONObject(result.getResponse().getContentAsString());
-        assert (response.getString("username").equalsIgnoreCase("user1"));
+        assert (response.getString(USERNAME_KEY).equalsIgnoreCase(TEST_USERNAME));
 
 
-        registerUserRequest.setPassword("testPasssword2$");
-        result = mockMvc.perform(post("/api/v1/public/register")
+        //4. Test failure with existing user.
+        registerUserRequest.setPassword(TEST_PASSWORD_2);
+        result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
         response = new JSONObject(result.getResponse().getContentAsString());
-        assert (response.getString("message").equalsIgnoreCase("User already exists"));
+        assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.USER_ALREADY_EXISTS.getErrorCode()));
+        assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.USER_ALREADY_EXISTS.getErrorMessage()));
+
     }
 
     @Test
-    void login() throws Exception{
+    void login() throws Exception {
 
+        //1. Register User
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-        registerUserRequest.setUsername("login_user");
-        registerUserRequest.setPassword("testPasssword2$");
+        registerUserRequest.setUsername(TEST_USERNAME_2);
+        registerUserRequest.setPassword(TEST_PASSWORD);
         registerUserRequest.setExpectedCaloriesPerDay(11);
-        registerUserRequest.setEmail(registerUserRequest.getUsername()+email_suffix);
-        mockMvc.perform(post("/api/v1/public/register")
+        registerUserRequest.setEmail(registerUserRequest.getUsername() + email_suffix);
+        mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
-        Map<String , String> params = new HashMap<>();
-        params.put("username", registerUserRequest.getUsername());
-        params.put("password", "wrong_password1$");
-        mockMvc.perform(post("/api/v1/public/login")
+
+        //2. Test Failure login with Wrong Password
+        Map<String, String> params = new HashMap<>();
+        params.put(USERNAME_KEY, registerUserRequest.getUsername());
+        params.put(PASSWORD_KEY, WRONG_PASSWORD);
+        mockMvc.perform(post(publicRequestPath + loginUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        params.put("password", registerUserRequest.getPassword());
-        MvcResult result = mockMvc.perform(post("/api/v1/public/login")
+
+        //3. Test success login
+        params.put(PASSWORD_KEY, registerUserRequest.getPassword());
+        MvcResult result = mockMvc.perform(post(publicRequestPath + loginUserEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
-        assert (!result.getResponse().getHeader("authorization").isBlank());
+        assert (!result.getResponse().getHeader(HttpHeaders.AUTHORIZATION).isBlank());
 
     }
 

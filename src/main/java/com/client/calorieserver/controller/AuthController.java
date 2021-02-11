@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "api/v1/public")
+@RequestMapping(path = "${server.request.path.public}")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -28,14 +28,14 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
 
-    @PostMapping("register")
+    @PostMapping("${server.request.endpoint.registerUser}")
     public ProfileView register(@RequestBody @Valid final RegisterUserRequest registerUserRequest) {
 
         User user = userMapper.toUser(registerUserRequest);
         return userMapper.toProfileView(userService.create(user));
     }
 
-    @PostMapping("login")
+    @PostMapping("${server.request.endpoint.loginUser}")
     public ResponseEntity<ProfileView> login(@RequestBody @Valid final LoginRequest request) {
         final Authentication auth = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));

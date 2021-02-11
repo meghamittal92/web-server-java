@@ -24,7 +24,7 @@ import javax.validation.Valid;
  * entities.
  */
 @RestController
-@RequestMapping(path = "api/v1/calories")
+@RequestMapping(path = "${server.request.path.calories}")
 @RolesAllowed({Role.RoleConstants.ADMIN_VALUE})
 @RequiredArgsConstructor
 public class CalorieController {
