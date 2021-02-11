@@ -32,7 +32,8 @@ public class CustomErrorController implements ErrorController {
         if (statusCode != null) {
 
             status = HttpStatus.valueOf(Integer.valueOf(statusCode.toString()));
-            apiError = status.is4xxClientError() ? ApiError.CLIENT_ERROR : ApiError.SERVER_ERROR;
+            apiError = status.is4xxClientError() ? ApiError.CLIENT_ERROR :
+                    (status.is3xxRedirection()?ApiError.REDIRECTION:ApiError.SERVER_ERROR);
 
         }
         ErrorResponse errorResponse = new ErrorResponse(status, apiError.getErrorMessage(), apiError.getErrorCode());
