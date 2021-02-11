@@ -287,13 +287,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("@@@@@"+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == calories.size());
-
-
-        for(Map<String, String> param: calories){
-            System.out.println("@@@@@: "+param.get("dateTime"));
-        }
 
         result = mockMvc.perform(get("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -302,7 +296,6 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("@@@@@"+calories.size());
         assert (jsonObject.getJSONArray("content").length() == 6);
 
 
@@ -313,7 +306,6 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("####: "+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 4);
 
         result = mockMvc.perform(get("/api/v1/profile/calories")
@@ -323,7 +315,6 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("####: "+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 1);
 
         result = mockMvc.perform(get("/api/v1/profile/calories")
@@ -333,7 +324,6 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("####: "+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 6);
 
         result = mockMvc.perform(get("/api/v1/profile/calories")
@@ -343,7 +333,6 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("####: "+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 4);
 
         result = mockMvc.perform(get("/api/v1/profile/calories")
@@ -353,9 +342,16 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        System.out.println("####: "+result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 2);
 
+        result = mockMvc.perform(get("/api/v1/profile/calories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .queryParam("search", "numCalories<=10 AND dateTime<="+calories.get(5).get("dateTime")+" OR withinLimit==true")
+                .header("authorization", token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        assert (jsonObject.getJSONArray("content").length() == 4);
     }
 
 
