@@ -8,7 +8,8 @@ import com.client.calorieserver.domain.dto.request.UpdateProfileRequest;
 import com.client.calorieserver.domain.dto.request.UpdateUserRequest;
 import com.client.calorieserver.domain.dto.response.ProfileView;
 import com.client.calorieserver.domain.dto.response.UserView;
-import com.client.calorieserver.domain.mapper.UserMapperNew;
+import com.client.calorieserver.domain.mapper.UserMapper;
+import com.client.calorieserver.domain.mapper.UserMapperImpl;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
@@ -24,7 +25,7 @@ import java.util.*;
 
 public class UserMapperImplTest {
 
-    private UserMapperNew userMapper;
+    private UserMapperImpl userMapper;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
@@ -33,7 +34,7 @@ public class UserMapperImplTest {
     @BeforeEach
     void init(){
         MockitoAnnotations.openMocks(this);
-        userMapper = new UserMapperNew();
+        userMapper = new UserMapperImpl();
         userMapper.setPasswordEncoder(passwordEncoder);
         userMapper.setRoleRepository(roleRepository);
     }
