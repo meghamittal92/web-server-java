@@ -1,7 +1,5 @@
 package com.client.calorieserver.integration;
 
-import com.client.calorieserver.domain.dto.CreateCalorieRequest;
-import com.client.calorieserver.domain.dto.CreateUserCalorieRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -19,7 +17,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
 
     @Test
     void create() throws Exception{
-        String token = createUser("user1", "password1", 120L);
+        String token = registerUser("user1", "password1$", 120L);
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(generateCalorieRequest(
@@ -47,7 +45,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
 
     @Test
     void findById() throws Exception{
-        String token = createUser("user1", "password1", 120L);
+        String token = registerUser("user1", "password1$", 120L);
         Map<String, String> params = generateCalorieRequest(1, LocalDateTime.now(), "detail_1");
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -74,7 +72,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
 
     @Test
     void deleteById() throws Exception{
-        String token = createUser("user1", "password1", 120L);
+        String token = registerUser("user1", "password1$", 120L);
         Map<String, String> params = generateCalorieRequest(1, LocalDateTime.now(), "detail_1");
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,7 +86,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
         assert jsonObject.getBoolean("withinLimit");
         int id = jsonObject.getInt("id");
 
-        String tokenNew = createUser("user2", "password2", 50L);
+        String tokenNew = registerUser("user2", "password2$", 50L);
         params = generateCalorieRequest(100, LocalDateTime.now(), "detail_");
         result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +115,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
 
     @Test
     void UpdateCalorie() throws Exception{
-        String token = createUser("user1", "password1", 10L);
+        String token = registerUser("user1", "password1$", 10L);
         Map<String, String> params = generateCalorieRequest(5, LocalDateTime.now(), "detail_1");
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +141,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
         assert jsonObject.getBoolean("withinLimit");
         int newId = jsonObject.getInt("id");
 
-        params.put("dateTime", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now().plusDays(2)));
+        params.put("dateTime", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.SECONDS)));
         result = mockMvc.perform(patch("/api/v1/profile/calories/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
@@ -167,7 +165,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
 
     @Test
     void ReplaceCalorie() throws Exception{
-        String token = createUser("user1", "password1", 10L);
+        String token = registerUser("user1", "password1$", 10L);
         Map<String, String> params = generateCalorieRequest(5, LocalDateTime.now(), "detail_1");
         MvcResult result = mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -193,7 +191,8 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
         assert !jsonObject.getBoolean("withinLimit");
         int newId = jsonObject.getInt("id");
 
-        params.put("dateTime", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now().plusDays(2)));
+        params.put("dateTime", DateTimeFormatter.ISO_DATE_TIME.format(
+                LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.SECONDS)));
         result = mockMvc.perform(put("/api/v1/profile/calories/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params))
@@ -217,7 +216,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
     @Test
     void findAll() throws Exception{
         List<Map<String, String>> calories = new ArrayList<>();
-        String token = createUser("user1", "password1", 10L);
+        String token = registerUser("user1", "password1$", 10L);
         Map<String, String> params = generateCalorieRequest(1, LocalDateTime.now(), "detail_1");
          mockMvc.perform(post("/api/v1/profile/calories")
                 .contentType(MediaType.APPLICATION_JSON)

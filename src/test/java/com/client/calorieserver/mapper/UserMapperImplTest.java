@@ -1,22 +1,19 @@
 package com.client.calorieserver.mapper;
 
-import com.client.calorieserver.domain.dto.CreateUserRequest;
-import com.client.calorieserver.domain.dto.UserView;
+
 import com.client.calorieserver.domain.dto.db.RoleDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
-import com.client.calorieserver.domain.mapper.UserMapper;
+import com.client.calorieserver.domain.dto.request.CreateUserRequest;
+import com.client.calorieserver.domain.dto.response.UserView;
 import com.client.calorieserver.domain.mapper.UserMapperImpl;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.RoleRepository;
-import com.client.calorieserver.repository.UserRepository;
-import com.client.calorieserver.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;

@@ -1,31 +1,13 @@
 package com.client.calorieserver.integration;
 
-import com.client.calorieserver.domain.dto.CreateUserRequest;
-import com.client.calorieserver.domain.dto.LoginRequest;
-import com.client.calorieserver.domain.dto.RegisterUserRequest;
-import com.client.calorieserver.domain.mapper.UserMapper;
-import com.client.calorieserver.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.client.calorieserver.domain.dto.request.RegisterUserRequest;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.event.annotation.AfterTestClass;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class AuthControllerTest extends BaseIntegrationTest {
 
+    private static final String email_suffix = "@gmail.com";
     @Test
     void createUser() throws Exception{
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
@@ -55,7 +38,8 @@ public class AuthControllerTest extends BaseIntegrationTest {
         assert (response.getString("errorCode").equalsIgnoreCase("E0003"));
         assert (response.getString("message").equalsIgnoreCase("invalid input"));
 
-        registerUserRequest.setPassword("testPasssword");
+        registerUserRequest.setPassword("testPasssword1$");
+        registerUserRequest.setEmail(registerUserRequest.getUsername()+email_suffix);
         result = mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
@@ -65,7 +49,7 @@ public class AuthControllerTest extends BaseIntegrationTest {
         assert (response.getString("username").equalsIgnoreCase("user1"));
 
 
-        registerUserRequest.setPassword("testPasssword2");
+        registerUserRequest.setPassword("testPasssword2$");
         result = mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
@@ -80,8 +64,9 @@ public class AuthControllerTest extends BaseIntegrationTest {
 
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setUsername("login_user");
-        registerUserRequest.setPassword("testPasssword");
+        registerUserRequest.setPassword("testPasssword2$");
         registerUserRequest.setExpectedCaloriesPerDay(11);
+        registerUserRequest.setEmail(registerUserRequest.getUsername()+email_suffix);
         mockMvc.perform(post("/api/v1/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerUserRequest)))
@@ -89,7 +74,7 @@ public class AuthControllerTest extends BaseIntegrationTest {
                 .andReturn();
         Map<String , String> params = new HashMap<>();
         params.put("username", registerUserRequest.getUsername());
-        params.put("password", "wrong_password");
+        params.put("password", "wrong_password1$");
         mockMvc.perform(post("/api/v1/public/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(params)))

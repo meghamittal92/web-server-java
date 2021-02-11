@@ -15,7 +15,7 @@ public class UserProfileControllerTest extends BaseIntegrationTest{
 
     @Test
     void readProfile() throws Exception{
-        String token = createUser("user1", "password1", 2000L);
+        String token = registerUser("user1", "password1$", 2000L);
         mockMvc.perform(get("/api/v1/profile")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("authorization", "wrong_token"))
@@ -34,7 +34,7 @@ public class UserProfileControllerTest extends BaseIntegrationTest{
 
     @Test
     void updateProfile() throws Exception{
-        String token = createUser("user1", "password1", 1000L);
+        String token = registerUser("user1", "password1$", 1000L);
         Map<String, String> params = new HashMap<>();
         mockMvc.perform(patch("/api/v1/profile")
                 .contentType(MediaType.APPLICATION_JSON)

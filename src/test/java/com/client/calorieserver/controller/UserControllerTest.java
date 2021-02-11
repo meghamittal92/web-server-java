@@ -1,50 +1,34 @@
 package com.client.calorieserver.controller;
 
 import com.client.calorieserver.configuration.TestConfiguration;
-import com.client.calorieserver.configuration.security.JWTAuthorizationFilter;
-import com.client.calorieserver.configuration.security.JWTUtil;
-import com.client.calorieserver.configuration.security.SecurityConfigurer;
-import com.client.calorieserver.domain.dto.CreateUserRequest;
-import com.client.calorieserver.domain.dto.UserView;
+import com.client.calorieserver.domain.dto.request.CreateUserRequest;
+import com.client.calorieserver.domain.dto.response.UserView;
 import com.client.calorieserver.domain.mapper.UserMapper;
-import com.client.calorieserver.domain.mapper.UserMapperImpl;
 import com.client.calorieserver.domain.model.User;
-import com.client.calorieserver.repository.*;
 import com.client.calorieserver.service.UserService;
 import com.client.calorieserver.utils.UnsecuredWebMvcTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
-
-import javax.servlet.ServletContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @UnsecuredWebMvcTest(value = UserAdminController.class)
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+@ContextConfiguration(classes = TestConfiguration.class)
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;

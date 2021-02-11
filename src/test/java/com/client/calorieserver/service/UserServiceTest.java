@@ -103,6 +103,8 @@ public class UserServiceTest {
         UserDTO original = new UserDTO();
         original.setUsername("test");
         original.setPassword("password");
+        user.setEmail("test1@gmail.com");
+
         Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(original));
         Mockito.when(userMapper.toUserDTO(Mockito.any(User.class))).thenReturn(original);
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(original);

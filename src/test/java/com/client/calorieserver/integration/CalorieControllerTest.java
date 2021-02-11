@@ -1,13 +1,11 @@
 package com.client.calorieserver.integration;
 
-import com.client.calorieserver.domain.dto.CreateCalorieRequest;
-import com.client.calorieserver.domain.dto.CreateUserRequest;
+import com.client.calorieserver.domain.dto.request.CreateUserRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,7 +25,10 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void create() throws Exception{
         String token = signIn("admin", "secretpassword");
-        Long userId = createUser(token, "user1", 5);
+        String response = createUser(token, default_username, default_password, 5, default_roles);
+        Long userId = new JSONObject(response).getLong("id");
+
+
         Map<String, String> params = new HashMap<>();
         params.put("numCalories", "10");
         params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
@@ -52,7 +53,9 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void delete() throws Exception{
         String token = signIn("admin", "secretpassword");
-        Long userId = createUser(token, "user1", 5);
+        String response = createUser(token, default_username, default_password, 5, default_roles);
+        Long userId = new JSONObject(response).getLong("id");
+
         Map<String, String> params = new HashMap<>();
         params.put("numCalories", "10");
         params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
@@ -68,13 +71,13 @@ public class CalorieControllerTest extends BaseIntegrationTest{
         JSONObject jsonResult = new JSONObject(result.getResponse().getContentAsString());
         int calorieID = jsonResult.getInt("id");
 
-        result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID+1)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID+1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("authorization", token))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("authorization", token))
                 .andExpect(status().is2xxSuccessful())
@@ -86,7 +89,9 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void update() throws Exception{
         String token = signIn("admin", "secretpassword");
-        Long userId = createUser(token, "user1", 5);
+        String response = createUser(token, default_username, default_password, 5, default_roles);
+        Long userId = new JSONObject(response).getLong("id");
+
         Map<String, String> params = new HashMap<>();
         params.put("numCalories", "10");
         params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
@@ -122,7 +127,9 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void find() throws Exception{
         String token = signIn("admin", "secretpassword");
-        Long userId = createUser(token, "user1",5);
+        String response = createUser(token, default_username, default_password, 5, default_roles);
+        Long userId = new JSONObject(response).getLong("id");
+
         Map<String, String> params = new HashMap<>();
         params.put("numCalories", "10");
         params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
@@ -156,7 +163,9 @@ public class CalorieControllerTest extends BaseIntegrationTest{
     void findAll() throws Exception{
         List<Map<String, String>> calories = new ArrayList<>();
         String token = signIn("admin", "secretpassword");
-        Long userId = createUser(token, "user1", 10);
+        String response = createUser(token, default_username, default_password, 10, default_roles);
+        Long userId = new JSONObject(response).getLong("id");
+
         Map<String, String> params = new HashMap<>();
         params.put("numCalories", "1");
         params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
@@ -183,7 +192,8 @@ public class CalorieControllerTest extends BaseIntegrationTest{
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
-        userId = createUser(token, "user2", 10);
+        response = createUser(token, "user2", default_password, 10, default_roles);
+        userId = new JSONObject(response).getLong("id");
         params = new HashMap<>();
         params.put("numCalories", "10");
         params.put("dateTime", LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_DATE_TIME));
@@ -316,27 +326,6 @@ public class CalorieControllerTest extends BaseIntegrationTest{
                 .andReturn();
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert (jsonObject.getJSONArray("content").length() == 4);
-    }
-
-
-    private Long createUser(String token, String username, Integer numCalories) throws Exception{
-        CreateUserRequest userRequest = new CreateUserRequest();
-        userRequest.setUsername(username);
-        userRequest.setPassword("password1");
-        userRequest.setExpectedCaloriesPerDay(numCalories);
-        Set<String> roles = new HashSet<>();
-        roles.add("USER");
-        userRequest.setRoles(roles);
-
-        MvcResult result = mockMvc.perform(post("/api/v1/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userRequest))
-                .header("authorization", token))
-                .andExpect(status().is2xxSuccessful())
-                .andReturn();
-        JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-        assert jsonObject.getString("username").equalsIgnoreCase(username);
-        return jsonObject.getLong("id");
     }
 
 }
