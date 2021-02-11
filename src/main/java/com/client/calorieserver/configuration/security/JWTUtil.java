@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.client.calorieserver.domain.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +49,11 @@ public class JWTUtil {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            JWT.require(Algorithm.HMAC512(jwtSecret.getBytes()))
+            System.out.println("#####");
+            DecodedJWT jwt = JWT.require(Algorithm.HMAC512(jwtSecret.getBytes()))
                     .build()
                     .verify(authToken);
+            System.out.println(jwt.getClaims());
             return true;
         } catch (SignatureVerificationException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());

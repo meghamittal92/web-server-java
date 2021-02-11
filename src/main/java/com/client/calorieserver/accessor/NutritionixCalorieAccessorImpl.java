@@ -4,6 +4,8 @@ import com.client.calorieserver.domain.exception.ExternalCalorieServiceException
 import com.client.calorieserver.domain.model.calorie.accessor.NutritionixErrorResponse;
 import com.client.calorieserver.domain.model.calorie.accessor.NutritionixRequest;
 import com.client.calorieserver.domain.model.calorie.accessor.NutritionixResponse;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.client.Client;
@@ -13,7 +15,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
+@Setter
 public class NutritionixCalorieAccessorImpl implements CalorieAccessor {
 
     private final String apikey;
