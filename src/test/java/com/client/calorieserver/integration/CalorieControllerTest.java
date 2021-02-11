@@ -67,10 +67,17 @@ public class CalorieControllerTest extends BaseIntegrationTest{
                 .header("authorization", token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
+        JSONObject jsonResult = new JSONObject(result.getResponse().getContentAsString());
+        int calorieID = jsonResult.getInt("id");
 
-        result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories")
+        result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID+1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(params))
+                .header("authorization", token))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/calories/"+calorieID)
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("authorization", token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
