@@ -21,7 +21,7 @@ public class SpecificationBuilder<U> {
     private final List<Filter> params;
     private String searchString;
     private static final Pattern SpecCriteriaRegex = Pattern.compile("^([a-zA-Z_0-9\\-]+?)(" + Joiner.on("|")
-            .join(RelationalOperator.getNames()) + ")([a-zA-Z_0-9\\-:]+?)$");
+            .join(RelationalOperator.getNames()) + ")([a-zA-Z_0-9\\-:@]+?)$");
 
     public SpecificationBuilder() {
         this.params = new ArrayList<>();

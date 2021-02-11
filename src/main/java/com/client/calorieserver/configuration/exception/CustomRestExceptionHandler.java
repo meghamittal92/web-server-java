@@ -214,7 +214,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleInvalidSearchQueryException(InvalidSearchQueryException ex, final HttpServletRequest request) {
         logger.error("Invalid search query : {}\n", request.getRequestURI(), ex);
 
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_SEARCH_PARAMETER);
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_SEARCH_PARAMETER, List.of(ex.getMessage()));
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 

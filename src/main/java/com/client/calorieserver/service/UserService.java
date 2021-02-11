@@ -1,14 +1,17 @@
 package com.client.calorieserver.service;
 
+import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.mapper.UserMapper;
+import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -89,6 +92,14 @@ public class UserService implements UserDetailsService {
 
         return userRepository.findAll(pageable).map(userMapper::toUser);
     }
+
+    public Page<User> findAll(Specification<UserDTO> spec, Pageable pageable) {
+
+        final Page<UserDTO> userDTOS = userRepository.findAll(spec, pageable);
+
+        return userDTOS.map(userMapper::toUser);
+    }
+
 
     @Transactional
     public void deleteById(Long userId) {
