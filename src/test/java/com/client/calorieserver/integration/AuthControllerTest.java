@@ -29,6 +29,9 @@ public class AuthControllerTest extends BaseIntegrationTest {
     private static final String TEST_PASSWORD_2 = "testPasssword1$";
     private static final String WRONG_PASSWORD = "wrongPasssword2$";
 
+    private static final String INVALID_USERNAME = "u!^";
+    private static final String INVALID_PASSWORD = "u!^";
+
 
     @Test
     void createUser() throws Exception {
@@ -43,7 +46,8 @@ public class AuthControllerTest extends BaseIntegrationTest {
         assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorCode()));
         assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorMessage()));
 
-        //2. Test failure with only username
+
+        // Test failure with only username
         registerUserRequest.setUsername(TEST_USERNAME);
 
         result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
@@ -54,6 +58,30 @@ public class AuthControllerTest extends BaseIntegrationTest {
         response = new JSONObject(result.getResponse().getContentAsString());
         assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorCode()));
         assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorMessage()));
+
+        // Test failure with invalid username
+        registerUserRequest.setUsername(INVALID_USERNAME);
+        result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        response = new JSONObject(result.getResponse().getContentAsString());
+        assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorCode()));
+        assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorMessage()));
+
+        // Test failure with invalid password
+        registerUserRequest.setUsername(TEST_USERNAME);
+        registerUserRequest.setPassword(INVALID_PASSWORD);
+        result = mockMvc.perform(post(publicRequestPath + registerUserEndpoint)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        response = new JSONObject(result.getResponse().getContentAsString());
+        assert (response.getString(ERROR_CODE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorCode()));
+        assert (response.getString(MESSAGE_KEY).equalsIgnoreCase(ApiError.INVALID_INPUT.getErrorMessage()));
+
 
         //3. Test Success with username and password
         registerUserRequest.setPassword(TEST_PASSWORD);

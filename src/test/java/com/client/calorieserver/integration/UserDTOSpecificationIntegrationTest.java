@@ -2,9 +2,12 @@ package com.client.calorieserver.integration;
 
 import com.client.calorieserver.configuration.TestAuditingConfiguration;
 import com.client.calorieserver.configuration.TestPersistenceConfiguration;
+import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.UserDTO;
+import com.client.calorieserver.domain.exception.InvalidSearchQueryException;
 import com.client.calorieserver.domain.model.search.*;
 import com.client.calorieserver.repository.UserRepository;
+import com.client.calorieserver.util.CalorieDTOSpecification;
 import com.client.calorieserver.util.SpecificationBuilder;
 import com.client.calorieserver.util.UserDTOSpecification;
 
@@ -36,6 +39,7 @@ import java.util.stream.Stream;
 public class UserDTOSpecificationIntegrationTest {
 
 
+    private static final String UNSUPPPORTED_KEY = "UnsupportedKey";
     @Autowired
     UserRepository userRepository;
 
@@ -97,4 +101,17 @@ public class UserDTOSpecificationIntegrationTest {
         );
     }
 
+    @Test
+    public void queryInvalidQueryException(){
+        try {
+            SpecificationBuilder<UserDTO> specBuilder = new SpecificationBuilder<UserDTO>();
+            specBuilder.with(UNSUPPPORTED_KEY, RelationalOperator.EQUAL.getName(), true);
+            Specification<UserDTO> spec = specBuilder.build(UserDTOSpecification::new);
+            this.userRepository.findAll(spec);
+        } catch (Exception e) {
+            Assertions.assertTrue(e instanceof InvalidSearchQueryException);
+        }
+
+
+    }
 }

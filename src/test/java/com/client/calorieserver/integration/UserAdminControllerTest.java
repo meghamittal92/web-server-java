@@ -138,6 +138,25 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
     @Test
     @Sql({"/testdata/create_admin.sql"})
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    void findAll() throws Exception{
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
+        String response = createUser(token, default_username, default_password, 120, default_roles);
+
+
+        MvcResult result = mockMvc.perform(get(usersRequestPath )
+                .contentType(MediaType.APPLICATION_JSON)
+                .queryParam("search", "username==" + default_username)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        assert (jsonObject.getJSONArray("content").length() == 1);
+    }
+
+    @Test
+    @Sql({"/testdata/create_admin.sql"})
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     void deleteById() throws Exception{
         String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
         String response = createUser(token, default_username, default_password, 120, default_roles);

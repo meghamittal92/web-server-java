@@ -61,8 +61,9 @@ jacocoTestReport {
 							'**/domain/exception/**',
 							'**/domain/model/**',
 							'**/repository/**',
-							'**/configuration/db**',
-							'**/configuration/Constants/**'
+							'**/configuration/**',
+							'**/controller/CustomErrorController.class',
+							'**/CalorieserverApplication.class'
 					]
 			)
 		})))
