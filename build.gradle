@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'jacoco'
 }
 
 group = 'com.client'
@@ -32,8 +33,6 @@ dependencies {
 	compile 'com.auth0:java-jwt:3.4.0'
 
 	compile 'org.flywaydb:flyway-core'
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.junit.jupiter:junit-jupiter:5.4.0')
 
 	annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
 	compile group: 'com.google.guava', name: 'guava', version: '21.0'
@@ -43,9 +42,44 @@ dependencies {
 	compile 'org.glassfish.jersey.inject:jersey-hk2'
 
 	testCompile group: "org.dbunit", name: "dbunit", version: "2.4.7"
+	testCompile("org.junit.jupiter:junit-jupiter-params:5.7.0")
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.junit.jupiter:junit-jupiter:5.4.0')
 
 }
-
+jacoco {
+	toolVersion = "0.8.5"
+	reportsDir = file("$buildDir/jacoco")
+}
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+	afterEvaluate {
+		getClassDirectories().setFrom(files(classDirectories.files.collect({
+			fileTree(dir: it,
+					exclude: [
+					        '**/dto/**',
+							'**/domain/exception/**',
+							'**/domain/model/**',
+							'**/repository/**',
+							'**/configuration/db**',
+							'**/configuration/Constants/**'
+					]
+			)
+		})))
+	}
+}
 test {
 	useJUnitPlatform()
+	ignoreFailures = true
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 1
+			}
+		}
+	}
 }

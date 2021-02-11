@@ -16,12 +16,4 @@ public class Filter {
         this.value = value;
     }
 
-    public Filter(String key, String operator, Object value) {
-        this.key = key;
-        //TO DO add null check here
-        this.operator = RelationalOperator.get(operator);
-
-        this.value = value;
-
-    }
 }

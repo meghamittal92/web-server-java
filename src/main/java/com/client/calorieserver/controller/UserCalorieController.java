@@ -9,6 +9,7 @@ import com.client.calorieserver.domain.model.Calorie;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.domain.model.search.CalorieSearchKey;
+import com.client.calorieserver.domain.model.search.Filter;
 import com.client.calorieserver.domain.model.search.RelationalOperator;
 import com.client.calorieserver.util.CalorieDTOSpecification;
 import com.client.calorieserver.util.SpecificationBuilder;
@@ -44,7 +45,7 @@ public class UserCalorieController {
 
         final Long userId = fetchUserIdFromAuth();
 
-        SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>().with(CalorieSearchKey.userId.getName(), RelationalOperator.EQUAL, userId);
+        SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>().with(new Filter(CalorieSearchKey.userId.getName(), RelationalOperator.EQUAL, userId));
         if (search != null)
             specBuilder = specBuilder.with(search);
         Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);

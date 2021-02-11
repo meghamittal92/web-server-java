@@ -27,11 +27,20 @@ public class SpecificationBuilder<U> {
         this.params = new ArrayList<>();
     }
 
-    public final SpecificationBuilder<U> with(final String key, final RelationalOperator operator, final Object value) {
+    public final SpecificationBuilder<U> with(final String key, final String operator, final Object value) {
 
+        RelationalOperator relationalOperator = RelationalOperator.get(operator);
+        if(relationalOperator != null)
+        params.add(new Filter(key, relationalOperator, value));
 
-        params.add(new Filter(key, operator, value));
+        else
+            throw new InvalidSearchQueryException(String.format("Unsuppported Operator %s:", operator));
 
+        return this;
+    }
+    public final SpecificationBuilder<U> with(final Filter filter)
+    {
+        params.add(filter);
         return this;
     }
 
@@ -72,7 +81,7 @@ public class SpecificationBuilder<U> {
         final List<Specification<U>> specs = params.stream()
                 .map(converter)
                 .collect(Collectors.toCollection(ArrayList::new));
-        Specification specification = specStack.isEmpty() ? (specs.isEmpty() ? null : specs.get(0)) : specStack.pop();
+        Specification specification = specStack.isEmpty() ? (specs.isEmpty() ? null : Specification.where(specs.get(0))) : specStack.pop();
 
         for (final Filter filter : this.params) {
             specification = Specification.where(specification).and(converter.apply(filter));
@@ -102,11 +111,11 @@ public class SpecificationBuilder<U> {
 
                     Matcher matcher = SpecCriteriaRegex.matcher(token);
                     if (matcher.find()) {
-                        postFixExpStack.push(new Filter(matcher.group(1), matcher.group(2), matcher.group(3)));
+                        postFixExpStack.push(new Filter(matcher.group(1), RelationalOperator.get(matcher.group(2)), matcher.group(3)));
                     }
                     else
                     {
-                        throw new InvalidSearchQueryException("Expression did not match regex:" + SpecCriteriaRegex);
+                        throw new InvalidSearchQueryException(String.format("Expression %s did not match regex: %s",searchString,SpecCriteriaRegex));
                     }
                 }
             });
