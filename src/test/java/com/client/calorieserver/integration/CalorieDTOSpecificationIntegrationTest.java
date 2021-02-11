@@ -26,7 +26,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -124,6 +124,14 @@ public class CalorieDTOSpecificationIntegrationTest {
         caloriePerDayRepository.save(caloriePerDayDTO2);
 
 
+    }
+
+    @AfterAll
+    public void cleanDb()
+    {
+        caloriePerDayRepository.deleteAll();
+        calorieRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

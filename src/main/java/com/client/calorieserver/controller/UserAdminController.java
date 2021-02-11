@@ -8,6 +8,8 @@ import com.client.calorieserver.domain.mapper.UserMapper;
 import com.client.calorieserver.domain.model.Role;
 import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.service.UserService;
+import com.client.calorieserver.util.SpecificationBuilder;
+import com.client.calorieserver.util.UserDTOSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,10 +33,14 @@ public class UserAdminController {
 
 
     @GetMapping
-    public Page<UserView> findAll(final Pageable pageable) {
-        return userService.findAll(pageable).map(userMapper::toUserView);
-    }
+    public Page<UserView> findAll(@RequestParam(value = "search", required = false) final String search, final Pageable pageable) {
 
+        SpecificationBuilder<UserDTO> specificationBuilder = new SpecificationBuilder<>();
+        if (search != null)
+            specificationBuilder.with(search);
+
+        return userService.findAll(specificationBuilder.build(UserDTOSpecification::new), pageable).map(userMapper::toUserView);
+    }
 
     @GetMapping(path = "/{id}")
     public UserView find(@PathVariable("id") Long userId) {
