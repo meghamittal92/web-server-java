@@ -4,9 +4,13 @@ package com.client.calorieserver.domain.dto.db;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JoinColumnOrFormula;
+import org.hibernate.annotations.JoinColumnsOrFormulas;
+import org.hibernate.annotations.JoinFormula;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 
@@ -45,5 +49,9 @@ public class UserDTO extends  AuditableDTO<String>{
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDTO")
     private Set<CalorieDTO> calorieDTOS;
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JoinColumn(insertable = false, updatable = false, name = "user_id", referencedColumnName = "id")
+    private List<CaloriePerDayDTO> caloriePerDayDTOs;
 
 }

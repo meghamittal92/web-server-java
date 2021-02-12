@@ -65,6 +65,7 @@ public abstract class UserMapper {
     @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "calorieDTOS", ignore = true)
+    @Mapping(target = "caloriePerDayDTOs", ignore = true)
     public abstract UserDTO toUserDTO(User user);
 
     @Mapping(source = "roleDTOs", target = "roles", qualifiedByName = "roleDTOsToRoles")
@@ -93,6 +94,7 @@ public abstract class UserMapper {
 
     @Mapping(source = "roles", target = "roleDTOs", qualifiedByName = "rolesToRoleDTOs")
     @Mapping(target = "calorieDTOS", ignore = true)
+    @Mapping(target = "caloriePerDayDTOs", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract UserDTO updateUserDTO(User updatedUser, @MappingTarget UserDTO originalUserDTO);
 
