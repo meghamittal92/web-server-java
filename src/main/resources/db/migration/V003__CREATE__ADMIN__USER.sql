@@ -1,2 +1,2 @@
-INSERT INTO `users` (`username`, `password`, `expected_calories_per_day`) VALUES ('admin', '$2a$10$rlo0SxBN/SiHtQWIiNPTkO4u67BAqT7C5uCruL.7uRIl7w4VpL2py', 2000);
+INSERT INTO `users` (`username`, `email`, `password`, `expected_calories_per_day`) VALUES ('admin', 'admin@admin.com', '$2a$10$rlo0SxBN/SiHtQWIiNPTkO4u67BAqT7C5uCruL.7uRIl7w4VpL2py', 2000);
 INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES ((SELECT id from users where users.username='admin'), (SELECT id from roles where name='ADMIN'));

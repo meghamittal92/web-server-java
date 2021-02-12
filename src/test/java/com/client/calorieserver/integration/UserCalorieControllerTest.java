@@ -1,5 +1,6 @@
 package com.client.calorieserver.integration;
 
+import com.client.calorieserver.domain.dto.request.CreateUserCalorieRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +35,7 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
         result = mockMvc.perform(post(userCaloriesRequestPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(generateCalorieRequest(
-                        120, LocalDateTime.now(), "detail_1")))
+                        120, LocalDateTime.now(), "detail_2")))
                 .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
@@ -42,6 +43,19 @@ public class UserCalorieControllerTest extends BaseIntegrationTest{
         jsonObject = new JSONObject(result.getResponse().getContentAsString());
         assert jsonObject.getInt("numCalories") == 120;
         assert !jsonObject.getBoolean("withinLimit");
+
+        Map<String, String> createUserCalorieRequest = generateCalorieRequest(
+                1, LocalDateTime.now().plusDays(2), "burger");
+        createUserCalorieRequest.put("numCalories", null);
+        result = mockMvc.perform(post(userCaloriesRequestPath)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createUserCalorieRequest))
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        assert jsonObject.getInt("numCalories") > 0;
     }
 
     @Test
