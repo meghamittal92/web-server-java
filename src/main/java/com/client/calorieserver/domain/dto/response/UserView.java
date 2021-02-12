@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Set;
 
 /**
- * Admin view of a user.
+ * Complete view of a user.
  */
 @Data
 public class UserView {
