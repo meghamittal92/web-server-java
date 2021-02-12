@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * Util class for operations on JWT tokens.
+ */
 @Component
 public class JWTUtil {
     private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);

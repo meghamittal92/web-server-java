@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Custom serializer for {@Link LocalDateTime} objects.
+ */
 public class CustomDateDeserializer
         extends StdDeserializer<LocalDateTime> {
 

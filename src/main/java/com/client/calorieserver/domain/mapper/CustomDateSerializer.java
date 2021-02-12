@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Custom deserializer for {@Link LocalDateTime} objects.
+ */
 public class CustomDateSerializer extends StdSerializer<LocalDateTime> {
     private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
 

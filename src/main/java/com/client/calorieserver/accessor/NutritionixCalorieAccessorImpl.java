@@ -14,6 +14,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
+/**
+ * {@link CalorieAccessor} implementation using the Nutrionix service
+ * to fetch calories.
+ */
 public class NutritionixCalorieAccessorImpl implements CalorieAccessor {
 
     private final String apikey;

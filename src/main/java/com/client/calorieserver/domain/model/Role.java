@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Roles to control access to various endpoints.
+ */
 public enum Role {
 
     USER("USER"),

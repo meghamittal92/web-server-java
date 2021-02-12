@@ -16,7 +16,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 /**
- * Controller to provide operations on {@link UserDTO} object.
+ * Controller to provide operations on user profile
+ * for a logged in user .
  */
 @RestController
 @RequestMapping(path = "${server.request.path.userProfile}")

@@ -6,6 +6,11 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Admin view of a calorie.
+ * This contains the ID of the user to which the calorie is attached
+ * apart from other calorie details.
+ */
 @Data
 public class AdminCalorieView {
     private Long id;

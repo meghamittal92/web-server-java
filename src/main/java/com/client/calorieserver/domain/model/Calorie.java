@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Domain object representing a calorie.
+ */
 @Data
 public class Calorie {
 

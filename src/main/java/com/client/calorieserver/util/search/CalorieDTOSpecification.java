@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Specification class to build JPA Specification query for CalorieDTO
+ */
 public class CalorieDTOSpecification implements Specification<CalorieDTO> {
 
     private Filter criteria;

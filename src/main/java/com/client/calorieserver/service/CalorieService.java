@@ -18,6 +18,9 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Service to provide Calorie CRUD operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class CalorieService {

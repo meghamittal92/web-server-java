@@ -7,6 +7,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 
 
+/**
+ * Request object for update profile operation.
+ */
 @Data
 public class UpdateProfileRequest {
 

@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Logical operators for search queries.
+ */
 public enum LogicalOperator {
 
     AND("AND"),

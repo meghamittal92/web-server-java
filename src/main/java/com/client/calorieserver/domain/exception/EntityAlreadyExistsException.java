@@ -3,7 +3,7 @@ package com.client.calorieserver.domain.exception;
 import lombok.Getter;
 
 /**
- * This exception is thrown when there is an attemp to create an
+ * This exception is thrown when there is an attempt to create an
  * already existing entity.
  */
 @Getter

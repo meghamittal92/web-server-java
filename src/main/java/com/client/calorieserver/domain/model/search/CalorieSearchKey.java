@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Search keys for search operation on Calories.
+ */
 public enum CalorieSearchKey {
 
     userId("userId", CalorieDTO_.USER_ID),

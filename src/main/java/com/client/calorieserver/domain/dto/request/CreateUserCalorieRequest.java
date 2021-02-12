@@ -12,6 +12,10 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 
+/**
+ * Request object for a logged in user to
+ * create his own calories.
+ */
 @Data
 public class CreateUserCalorieRequest {
 

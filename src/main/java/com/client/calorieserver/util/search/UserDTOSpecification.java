@@ -8,7 +8,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 
-
+/**
+ * Specification class to build JPA Specification query for UserDTO
+ */
 public class UserDTOSpecification implements Specification<UserDTO> {
 
     private Filter criteria;

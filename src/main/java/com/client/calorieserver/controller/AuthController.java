@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * Controller for user authentication authorization
+ * operations.
+ *
+ */
 @RestController
 @RequestMapping(path = "${server.request.path.public}")
 @RequiredArgsConstructor

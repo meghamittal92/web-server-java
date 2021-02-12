@@ -21,7 +21,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * Service for User objects
+ * ervice to provide User CRUD operations.
  */
 @Service
 @RequiredArgsConstructor

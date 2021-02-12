@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Search keys for search operation on Users.
+ */
 public enum UserSearchKey {
 
     username("username", UserDTO_.USERNAME),

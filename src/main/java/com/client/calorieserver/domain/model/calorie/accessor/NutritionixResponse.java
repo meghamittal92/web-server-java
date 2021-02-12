@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Response object from Nutrionix service.
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NutritionixResponse {

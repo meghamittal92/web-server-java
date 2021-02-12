@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Relational operators for search queries.
+ */
 public enum RelationalOperator {
 
     EQUAL("=="),

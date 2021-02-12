@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 /**
- * Request object to Create a new user
+ * Request object to Create a new user.
  */
 @Data
 public class CreateUserRequest {

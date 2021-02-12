@@ -2,6 +2,9 @@ package com.client.calorieserver.domain.exception;
 
 import lombok.Getter;
 
+/**
+ * This exception is thrown when there is an unexpected error in the server.
+ */
 @Getter
 public class InternalException extends RuntimeException {
 

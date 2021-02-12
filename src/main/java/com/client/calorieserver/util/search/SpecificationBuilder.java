@@ -16,6 +16,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Generic builder class to build JPA Specification query for any provided
+ * class using its Specification class.
+ * @param <U>
+ */
 public class SpecificationBuilder<U> {
 
     private final List<Filter> params;

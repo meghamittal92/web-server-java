@@ -8,6 +8,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * Request object to hold parameters for new
+ * user registration.
+ */
 @Data
 public class RegisterUserRequest {
 

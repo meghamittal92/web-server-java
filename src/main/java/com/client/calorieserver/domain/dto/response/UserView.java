@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Set;
 
 /**
- * Response object for User queries.
+ * Admin view of a user.
  */
 @Data
 public class UserView {

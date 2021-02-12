@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * User view of his calorie.
+ */
 @Data
 public class UserCalorieView {
 

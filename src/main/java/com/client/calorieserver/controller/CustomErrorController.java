@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Custom Error controller for the application.
+ * Note that exceptions are mapped into error responses by {@link com.client.calorieserver.configuration.exception.CustomRestExceptionHandler}
+ * This is provided to maintain error response symmetry in case of unexpected failures
+ * during exception translation or somewhere else in the filter chain.
  */
 @RestController
 @SuppressWarnings("deprecation")

@@ -9,6 +9,9 @@ import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 
+/**
+ * Request object to update an exiting calorie.
+ */
 @Data
 public class UpdateCalorieRequest {
 

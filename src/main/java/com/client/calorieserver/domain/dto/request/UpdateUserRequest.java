@@ -11,6 +11,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
+/**
+ * Request object for update user operation.
+ */
 @Data
 public class UpdateUserRequest {
 

@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * Domain object representing a User.
+ */
 @Data
 public class User implements UserDetails {
 
