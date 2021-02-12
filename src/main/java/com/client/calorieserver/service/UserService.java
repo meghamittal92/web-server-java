@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -38,7 +39,6 @@ public class UserService implements UserDetailsService {
 
         if (userRepository.existsByEmail(user.getEmail()))
             throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", user.getEmail()));
-
         final UserDTO userDTO = userRepository.save(userMapper.toUserDTO(user));
         return userMapper.toUser(userDTO);
     }
