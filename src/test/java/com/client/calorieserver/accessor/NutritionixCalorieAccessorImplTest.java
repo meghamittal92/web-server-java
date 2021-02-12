@@ -1,8 +1,8 @@
 package com.client.calorieserver.accessor;
 
 import com.client.calorieserver.domain.exception.ExternalCalorieServiceException;
-import com.client.calorieserver.domain.model.calorie.accessor.NutritionixErrorResponse;
-import com.client.calorieserver.domain.model.calorie.accessor.NutritionixResponse;
+import com.client.calorieserver.domain.dto.accessor.NutritionixErrorResponse;
+import com.client.calorieserver.domain.dto.accessor.NutritionixResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

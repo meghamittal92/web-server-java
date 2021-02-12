@@ -1,9 +1,9 @@
 package com.client.calorieserver.accessor;
 
 import com.client.calorieserver.domain.exception.ExternalCalorieServiceException;
-import com.client.calorieserver.domain.model.calorie.accessor.NutritionixErrorResponse;
-import com.client.calorieserver.domain.model.calorie.accessor.NutritionixRequest;
-import com.client.calorieserver.domain.model.calorie.accessor.NutritionixResponse;
+import com.client.calorieserver.domain.dto.accessor.NutritionixErrorResponse;
+import com.client.calorieserver.domain.dto.accessor.NutritionixRequest;
+import com.client.calorieserver.domain.dto.accessor.NutritionixResponse;
 import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 
