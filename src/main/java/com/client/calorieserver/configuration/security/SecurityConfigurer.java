@@ -28,7 +28,7 @@ import java.util.List;
 
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(
         jsr250Enabled = true,
         prePostEnabled = true
