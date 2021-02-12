@@ -2,6 +2,7 @@ package com.client.calorieserver.integration;
 
 import com.client.calorieserver.domain.dto.request.CreateUserRequest;
 import com.client.calorieserver.domain.dto.request.UpdateUserRequest;
+import com.client.calorieserver.utils.TestData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -174,6 +181,74 @@ public class UserAdminControllerTest extends BaseIntegrationTest{
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().is2xxSuccessful())
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testdata/create_admin.sql"})
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    void deleteUserWithCalorie() throws Exception{
+        String token = signIn(ADMIN_USERNAME, ADMIN_PASSWORD);
+        String response = createUser(token, default_username, default_password, 120, default_roles);
+        JSONObject jsonObject = new JSONObject(response);
+        int id = jsonObject.getInt("id");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("numCalories", TestData.default_calorie_value.toString());
+        params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                .format(DateTimeFormatter.ISO_DATE_TIME));
+        params.put("userId", String.valueOf(id));
+        params.put("mealDetails", TestData.default_calorie_detail);
+
+        MvcResult result = mockMvc.perform(post(caloriesRequestPath)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(params))
+                            .header(HttpHeaders.AUTHORIZATION, token))
+                            .andExpect(status().is2xxSuccessful())
+                            .andReturn();
+        JSONObject jsonResponse = new JSONObject(result.getResponse().getContentAsString());
+
+        String firstCalorieId = jsonResponse.getString("id");
+        assert jsonResponse.getBoolean("withinLimit");
+
+        params.put("numCalories", String.valueOf(TestData.default_calorie_value+100));
+        params.put("dateTime", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                .format(DateTimeFormatter.ISO_DATE_TIME));
+        params.put("userId", String.valueOf(id));
+        params.put("mealDetails", "second_meal");
+
+        result = mockMvc.perform(post(caloriesRequestPath)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(params))
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        jsonResponse = new JSONObject(result.getResponse().getContentAsString());
+        String secondCalorieId = jsonResponse.getString("id");
+        assert !jsonResponse.getBoolean("withinLimit");
+
+        mockMvc.perform(delete(usersRequestPath + "/"+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        mockMvc.perform(get(usersRequestPath + "/"+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(caloriesRequestPath +"/"+firstCalorieId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(caloriesRequestPath +"/"+secondCalorieId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().is4xxClientError())
                 .andReturn();
     }
 
