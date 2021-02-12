@@ -46,6 +46,8 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+        logger.error("Exception: {}\n", ex);
+
         final List<String> details = new ArrayList<String>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
             details.add(error.getField() + ": " + error.getDefaultMessage());
@@ -59,7 +61,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(final MissingServletRequestParameterException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-
+        logger.error("Exception: {}\n", ex);
         final String details = String.format("%s parameter is missing", ex.getParameterName());
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT, List.of(details));
         return handleExceptionInternal(ex, errorResponse, headers, errorResponse.getStatus(), request);
@@ -69,7 +71,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ConstraintViolationException.class})
     protected ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex, final WebRequest request) {
-
+        logger.error("Exception: {}\n", ex);
         final List<String> details = new ArrayList<String>();
         for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
             details.add(violation.getRootBeanClass().getName() + " " + violation.getPropertyPath() + ": " + violation.getMessage());
@@ -81,30 +83,32 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({JsonMappingException.class})
     protected ResponseEntity<Object> handleJsonMappingException(final JsonMappingException ex, final WebRequest request) {
-
-        ex.getPath();
+        logger.error("Exception: {}\n", ex);
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT);
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
+
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+        logger.error("Exception: {}\n", ex);
         Throwable cause = ex.getCause();
-        String details = "";
-        if(cause instanceof UnrecognizedPropertyException)
-        {
+        String details = "Error Parsing Input";
+        if (cause instanceof UnrecognizedPropertyException) {
+            details = String.format("Unrecognized field %s. Known fields: %s", ((UnrecognizedPropertyException) cause).getPropertyName(), ((UnrecognizedPropertyException) cause).getKnownPropertyIds());
+        } else if (cause instanceof JsonMappingException) {
+            final List<JsonMappingException.Reference> paths = ((JsonMappingException) cause).getPath();
+            if (!paths.isEmpty() && paths.get(0).getFieldName() != null)
+                details = String.format("Error parsing value : %s", paths.get(0).getFieldName());
 
-          details = String.format("Unrecognized field %s. Known fields: %s",((UnrecognizedPropertyException) cause).getPropertyName() , ((UnrecognizedPropertyException) cause).getKnownPropertyIds());
         }
-
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT, List.of(details));
         return handleExceptionInternal(ex, errorResponse, headers, errorResponse.getStatus(), request);
     }
 
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-
+        logger.error("Exception: {}\n", ex);
         final String errorDetail = String.format("%s  value for should be of type %s", ex.getValue(), ex.getPropertyName(), ex.getRequiredType());
 
         final ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT, List.of(errorDetail));
@@ -114,7 +118,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex, final WebRequest request) {
 
-
+        logger.error("Exception: {}\n", ex);
         final String errorDetail = String.format("% should be of type %s", ex.getName(), ex.getRequiredType().getName());
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, ApiError.INVALID_INPUT, List.of(errorDetail));
@@ -125,6 +129,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        logger.error("Exception: {}\n", ex);
         String errorDetail = String.format("No handler found for %s : %s", ex.getHttpMethod(), ex.getRequestURL());
 
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND, ApiError.HANDLER_NOT_FOUND, List.of(errorDetail));
@@ -138,6 +143,8 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
+
+        logger.error("Exception: {}\n", ex);
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getMethod());
         builder.append(
@@ -155,6 +162,8 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
+
+        logger.error("Exception: {}\n", ex);
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getContentType());
         builder.append(" media type is not supported. Supported media types are ");
@@ -168,7 +177,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({EntityAlreadyExistsException.class})
     protected ResponseEntity<Object> handleEntityAlreadyExistsException(EntityAlreadyExistsException ex) {
-
+        logger.error("Exception: {}\n", ex);
         ApiError apiError = ApiError.CLIENT_ERROR;
 
         if (User.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
@@ -180,7 +189,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({EntityNotFoundException.class})
     protected ResponseEntity<Object> handleNotFoundException(EntityNotFoundException ex) {
-
+        logger.error("Exception: {}\n", ex);
         ApiError apiError = ApiError.CLIENT_ERROR;
 
         if (User.class.getSimpleName().equals(ex.getEntityClass().getSimpleName())) {
@@ -236,7 +245,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+        logger.error("Exception: {}\n", ex);
         if (body == null) {
 
             ApiError apiError = status.is4xxClientError() ? ApiError.CLIENT_ERROR : ApiError.SERVER_ERROR;
@@ -250,10 +259,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ErrorResponse buildErrorResponse(HttpStatus httpStatus, ApiError apiError, List<String> details) {
 
-        if(details.isEmpty())
+        if (details.isEmpty())
             return buildErrorResponse(httpStatus, apiError);
         else
-        return new ErrorResponse(httpStatus, apiError.getErrorMessage(), apiError.getErrorCode(), details);
+            return new ErrorResponse(httpStatus, apiError.getErrorMessage(), apiError.getErrorCode(), details);
 
     }
 
