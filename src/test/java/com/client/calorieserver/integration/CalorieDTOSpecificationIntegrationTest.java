@@ -222,15 +222,15 @@ public class CalorieDTOSpecificationIntegrationTest {
     @ParameterizedTest
     @MethodSource("providerQueryInvalidQueryException")
     public void queryInvalidQueryException(final String key, final String operator, final Object value) {
-        try {
-            SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>();
-            specBuilder.with(key, operator, value);
-            Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
-            this.calorieRepository.findAll(spec);
-        } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidSearchQueryException);
-        }
+        SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>();
 
+        Assertions.assertThrows(InvalidSearchQueryException.class,
+                () ->
+                {
+                    specBuilder.with(key, operator, value);
+                    Specification specification = specBuilder.build(CalorieDTOSpecification::new);
+                    calorieRepository.findAll(specification);
+                });
 
     }
 
@@ -276,15 +276,15 @@ public class CalorieDTOSpecificationIntegrationTest {
     @ParameterizedTest
     @MethodSource("providerQueryWithStringInvalidQueryException")
     public void queryWithStringInvalidQueryException(final String queryString) {
-        try {
+
             SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>();
             specBuilder.with(queryString);
-            Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
-            this.calorieRepository.findAll(spec);
-        } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidSearchQueryException);
-        }
-
+            Assertions.assertThrows(InvalidSearchQueryException.class,
+                    () ->
+                    {
+                        Specification specification = specBuilder.build(CalorieDTOSpecification::new);
+                        calorieRepository.findAll(specification);
+                    });
 
     }
 

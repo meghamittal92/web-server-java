@@ -100,15 +100,15 @@ public class UserDTOSpecificationIntegrationTest {
     }
 
     @Test
-    public void queryInvalidQueryException(){
-        try {
-            SpecificationBuilder<UserDTO> specBuilder = new SpecificationBuilder<UserDTO>();
-            specBuilder.with(UNSUPPPORTED_KEY, RelationalOperator.EQUAL.getName(), true);
-            Specification<UserDTO> spec = specBuilder.build(UserDTOSpecification::new);
-            this.userRepository.findAll(spec);
-        } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidSearchQueryException);
-        }
+    public void queryInvalidQueryException() {
+
+        Assertions.assertThrows(InvalidSearchQueryException.class,
+                () -> {
+                    SpecificationBuilder<UserDTO> specBuilder = new SpecificationBuilder<UserDTO>();
+                    specBuilder.with(UNSUPPPORTED_KEY, RelationalOperator.EQUAL.getName(), true);
+                    Specification<UserDTO> spec = specBuilder.build(UserDTOSpecification::new);
+                    this.userRepository.findAll(spec);
+                });
 
 
     }
