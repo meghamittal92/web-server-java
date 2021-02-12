@@ -62,7 +62,9 @@ jacocoTestReport {
 							'**/repository/**',
 							'**/configuration/**',
 							'**/controller/CustomErrorController.class',
-							'**/CalorieserverApplication.class'
+							'**/CalorieserverApplication.class',
+							'**/domain/mapper/CalorieMapperImpl.class',
+							'**/domain/mapper/UserMapperImpl.class',
 					]
 			)
 		})))

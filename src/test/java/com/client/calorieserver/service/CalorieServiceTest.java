@@ -2,20 +2,16 @@ package com.client.calorieserver.service;
 
 import com.client.calorieserver.domain.dto.db.CalorieDTO;
 import com.client.calorieserver.domain.dto.db.CaloriePerDayDTO;
-import com.client.calorieserver.domain.dto.db.UserDTO;
 import com.client.calorieserver.domain.dto.db.UserDay;
-import com.client.calorieserver.domain.exception.EntityAlreadyExistsException;
 import com.client.calorieserver.domain.exception.EntityNotFoundException;
 import com.client.calorieserver.domain.mapper.CalorieMapper;
 import com.client.calorieserver.domain.model.Calorie;
-import com.client.calorieserver.domain.model.User;
 import com.client.calorieserver.repository.CaloriePerDayRepository;
 import com.client.calorieserver.repository.CalorieRepository;
-import com.client.calorieserver.repository.UserRepository;
+import com.client.calorieserver.utils.TestData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,12 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -42,15 +33,8 @@ public class CalorieServiceTest {
     @Mock
     CaloriePerDayRepository caloriePerDayRepository;
 
-    private static final Long default_calorie_id = 1L;
-    private static final Long default_calorie_user_id = 1L;
-    private static final LocalDateTime default_date_time = LocalDateTime.now();
-    private static final String default_calorie_detail = "first_meal";
-    private static final Integer default_calorie_value = 50;
-    private static final Integer default_calorie_per_day = 100;
-
     @BeforeEach
-    void init(){
+    void init() {
         MockitoAnnotations.openMocks(this);
         MockitoAnnotations.openMocks(this);
         calorieService = new CalorieService(calorieRepository,
@@ -58,26 +42,26 @@ public class CalorieServiceTest {
     }
 
     @Test
-    void findOneByUser(){
+    void findOneByUser() {
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong())).
                 thenReturn(Optional.empty());
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.findOneByUser(default_calorie_user_id, default_calorie_id);
+            calorieService.findOneByUser(TestData.default_calorie_user_id, TestData.default_calorie_id);
         });
-        CalorieDTO calorieDTO = getDefaultDTO();
+        CalorieDTO calorieDTO = TestData.getDefaultCalorieDTO();
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.any(), Mockito.any())).
                 thenReturn(Optional.of(calorieDTO));
-        Calorie calorie = getDefaultCalorie();
+        Calorie calorie = TestData.getDefaultCalorie();
         Mockito.when(calorieMapper.toCalorie(Mockito.any(CalorieDTO.class))).thenReturn(calorie);
-        Calorie userCalorie = calorieService.findOneByUser(default_calorie_user_id, default_calorie_id);
-        assert userCalorie.getUserId().equals(default_calorie_user_id);
-        assert userCalorie.getId().equals(default_calorie_id);
+        Calorie userCalorie = calorieService.findOneByUser(TestData.default_calorie_user_id, TestData.default_calorie_id);
+        assert userCalorie.getUserId().equals(TestData.default_calorie_user_id);
+        assert userCalorie.getId().equals(TestData.default_calorie_id);
     }
 
     @ParameterizedTest
     @MethodSource("createCalorieProvider")
-    void createCalorie(Calorie calorie, CalorieDTO calorieDTO, Optional<CaloriePerDayDTO> caloriePerDayDTO){
+    void createCalorie(Calorie calorie, CalorieDTO calorieDTO, Optional<CaloriePerDayDTO> caloriePerDayDTO) {
         ArgumentCaptor<CaloriePerDayDTO> caloriePerDayDTOArgumentCaptor = ArgumentCaptor.forClass(CaloriePerDayDTO.class);
 
         Mockito.when(calorieRepository.save(Mockito.any(CalorieDTO.class))).thenReturn(calorieDTO);
@@ -87,169 +71,135 @@ public class CalorieServiceTest {
 
         Mockito.verify(caloriePerDayRepository).save(caloriePerDayDTOArgumentCaptor.capture());
         Integer oldCalorie = 0;
-        if (caloriePerDayDTO.isPresent()){
-            oldCalorie = default_calorie_per_day;
+        if (caloriePerDayDTO.isPresent()) {
+            oldCalorie = TestData.default_calorie_per_day;
         }
-        assert caloriePerDayDTOArgumentCaptor.getValue().getTotalCalories() == (oldCalorie+default_calorie_value);
+        assert caloriePerDayDTOArgumentCaptor.getValue().getTotalCalories() == (oldCalorie + TestData.default_calorie_value);
     }
 
     @Test
-    void deleteById(){
+    void deleteById() {
         Mockito.when(calorieRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.deleteById(default_calorie_id);
+            calorieService.deleteById(TestData.default_calorie_id);
         });
-        Optional<CaloriePerDayDTO> caloriePerDayDTOOptional = Optional.of(getDefaultCaloriePerDay());
-        Mockito.when(calorieRepository.findById(Mockito.any())).thenReturn(Optional.of(getDefaultDTO()));
+        Optional<CaloriePerDayDTO> caloriePerDayDTOOptional = Optional.of(TestData.getDefaultCaloriePerDayDTO());
+        Mockito.when(calorieRepository.findById(Mockito.any())).thenReturn(Optional.of(TestData.getDefaultCalorieDTO()));
         Mockito.when(caloriePerDayRepository.findById(Mockito.any())).thenReturn(caloriePerDayDTOOptional);
         ArgumentCaptor<CaloriePerDayDTO> caloriePerDayDTOArgumentCaptor = ArgumentCaptor.forClass(CaloriePerDayDTO.class);
 
-        calorieService.deleteById(default_calorie_id);
+        calorieService.deleteById(TestData.default_calorie_id);
         Mockito.verify(caloriePerDayRepository).save(caloriePerDayDTOArgumentCaptor.capture());
-        assert caloriePerDayDTOArgumentCaptor.getValue().getTotalCalories() == (default_calorie_per_day-default_calorie_value);
+        assert caloriePerDayDTOArgumentCaptor.getValue().getTotalCalories() == (TestData.default_calorie_per_day - TestData.default_calorie_value);
     }
 
     @Test
-    void deleteUserCalorie(){
+    void deleteUserCalorie() {
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.deleteById(default_calorie_user_id, default_calorie_id);
+            calorieService.deleteById(TestData.default_calorie_user_id, TestData.default_calorie_id);
         });
-        Optional<CaloriePerDayDTO> caloriePerDayDTOOptional = Optional.of(getDefaultCaloriePerDay());
-        Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(getDefaultDTO()));
+        Optional<CaloriePerDayDTO> caloriePerDayDTOOptional = Optional.of(TestData.getDefaultCaloriePerDayDTO());
+        Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(TestData.getDefaultCalorieDTO()));
         Mockito.when(caloriePerDayRepository.findById(Mockito.any())).thenReturn(caloriePerDayDTOOptional);
         ArgumentCaptor<CaloriePerDayDTO> caloriePerDayDTOArgumentCaptor = ArgumentCaptor.forClass(CaloriePerDayDTO.class);
 
-        calorieService.deleteById(default_calorie_user_id, default_calorie_id);
+        calorieService.deleteById(TestData.default_calorie_user_id, TestData.default_calorie_id);
         Mockito.verify(caloriePerDayRepository).save(caloriePerDayDTOArgumentCaptor.capture());
-        assert caloriePerDayDTOArgumentCaptor.getValue().getTotalCalories() == (default_calorie_per_day-default_calorie_value);
+        assert caloriePerDayDTOArgumentCaptor.getValue().getTotalCalories() == (TestData.default_calorie_per_day - TestData.default_calorie_value);
     }
 
     @Test
-    void findById(){
+    void findById() {
         Mockito.when(calorieRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.findById( default_calorie_id);
+            calorieService.findById(TestData.default_calorie_id);
         });
 
-        Mockito.when(calorieRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(getDefaultDTO()));
-        Mockito.when(calorieMapper.toCalorie(Mockito.any(CalorieDTO.class))).thenReturn(getDefaultCalorie());
-        Calorie calorie = calorieService.findById(default_calorie_id);
-        assert calorie.getId().equals(getDefaultCalorie().getId());
-        assert calorie.getNumCalories().equals(getDefaultCalorie().getNumCalories());
+        Mockito.when(calorieRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(TestData.getDefaultCalorieDTO()));
+        Mockito.when(calorieMapper.toCalorie(Mockito.any(CalorieDTO.class))).thenReturn(TestData.getDefaultCalorie());
+        Calorie calorie = calorieService.findById(TestData.default_calorie_id);
+        assert calorie.getId().equals(TestData.getDefaultCalorie().getId());
+        assert calorie.getNumCalories().equals(TestData.getDefaultCalorie().getNumCalories());
     }
 
     @Test
-    void replaceById(){
+    void replaceById() {
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.replaceById( default_calorie_user_id, default_calorie_id, getDefaultCalorie());
+            calorieService.replaceById(TestData.default_calorie_user_id, TestData.default_calorie_id, TestData.getDefaultCalorie());
         });
 
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong()))
-                .thenReturn(Optional.of(getDefaultDTO()));
-        CaloriePerDayDTO caloriePerDayDTO = getDefaultCaloriePerDay();
+                .thenReturn(Optional.of(TestData.getDefaultCalorieDTO()));
+        CaloriePerDayDTO caloriePerDayDTO = TestData.getDefaultCaloriePerDayDTO();
         Mockito.when(caloriePerDayRepository.findById(Mockito.any(UserDay.class))).thenReturn(Optional.of(caloriePerDayDTO));
-        CalorieDTO updatedCalorieDTO = getDefaultDTO();
-        updatedCalorieDTO.setNumCalories(2*default_calorie_value);
+        CalorieDTO updatedCalorieDTO = TestData.getDefaultCalorieDTO();
+        updatedCalorieDTO.setNumCalories(2 * TestData.default_calorie_value);
 
         Mockito.when(calorieMapper.toCalorieDTO(Mockito.any(Calorie.class))).thenReturn(updatedCalorieDTO);
         ArgumentCaptor<CaloriePerDayDTO> caloriePerDayDTOArgumentCaptor = ArgumentCaptor.forClass(CaloriePerDayDTO.class);
 
-        calorieService.replaceById(default_calorie_user_id, default_calorie_id, getDefaultCalorie());
+        calorieService.replaceById(TestData.default_calorie_user_id, TestData.default_calorie_id, TestData.getDefaultCalorie());
         Mockito.verify(caloriePerDayRepository, Mockito.times(2)).save(caloriePerDayDTOArgumentCaptor.capture());
         List<CaloriePerDayDTO> caloriePerDayDTOS = caloriePerDayDTOArgumentCaptor.getAllValues();
-        assert caloriePerDayDTOS.get(1).getTotalCalories() == default_calorie_per_day+default_calorie_value;
+        assert caloriePerDayDTOS.get(1).getTotalCalories() == TestData.default_calorie_per_day + TestData.default_calorie_value;
     }
 
     @Test
-    void updateByUserCalorieId(){
+    void updateByUserCalorieId() {
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.updateById( default_calorie_user_id, default_calorie_id, getDefaultCalorie());
+            calorieService.updateById(TestData.default_calorie_user_id, TestData.default_calorie_id, TestData.getDefaultCalorie());
         });
 
         Mockito.when(calorieRepository.findByUserIdAndId(Mockito.anyLong(), Mockito.anyLong()))
-                .thenReturn(Optional.of(getDefaultDTO()));
-        CaloriePerDayDTO caloriePerDayDTO = getDefaultCaloriePerDay();
+                .thenReturn(Optional.of(TestData.getDefaultCalorieDTO()));
+        CaloriePerDayDTO caloriePerDayDTO = TestData.getDefaultCaloriePerDayDTO();
         Mockito.when(caloriePerDayRepository.findById(Mockito.any(UserDay.class))).thenReturn(Optional.of(caloriePerDayDTO));
-        CalorieDTO updatedCalorieDTO = getDefaultDTO();
-        updatedCalorieDTO.setNumCalories(2*default_calorie_value);
+        CalorieDTO updatedCalorieDTO = TestData.getDefaultCalorieDTO();
+        updatedCalorieDTO.setNumCalories(2 * TestData.default_calorie_value);
 
         Mockito.when(calorieMapper.updateCalorieDTO(Mockito.any(), Mockito.any())).thenReturn(updatedCalorieDTO);
         ArgumentCaptor<CaloriePerDayDTO> caloriePerDayDTOArgumentCaptor = ArgumentCaptor.forClass(CaloriePerDayDTO.class);
 
-        calorieService.updateById(default_calorie_user_id, default_calorie_id, getDefaultCalorie());
+        calorieService.updateById(TestData.default_calorie_user_id, TestData.default_calorie_id, TestData.getDefaultCalorie());
         Mockito.verify(caloriePerDayRepository, Mockito.times(2)).save(caloriePerDayDTOArgumentCaptor.capture());
         List<CaloriePerDayDTO> caloriePerDayDTOS = caloriePerDayDTOArgumentCaptor.getAllValues();
-        assert caloriePerDayDTOS.get(1).getTotalCalories() == default_calorie_per_day+default_calorie_value;
+        assert caloriePerDayDTOS.get(1).getTotalCalories() == TestData.default_calorie_per_day + TestData.default_calorie_value;
     }
 
     @Test
-    void updateByCalorieId(){
+    void updateByCalorieId() {
         Mockito.when(calorieRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            calorieService.updateById(default_calorie_id, getDefaultCalorie());
+            calorieService.updateById(TestData.default_calorie_id, TestData.getDefaultCalorie());
         });
 
         Mockito.when(calorieRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(getDefaultDTO()));
-        CaloriePerDayDTO caloriePerDayDTO = getDefaultCaloriePerDay();
+                .thenReturn(Optional.of(TestData.getDefaultCalorieDTO()));
+        CaloriePerDayDTO caloriePerDayDTO = TestData.getDefaultCaloriePerDayDTO();
         Mockito.when(caloriePerDayRepository.findById(Mockito.any(UserDay.class))).thenReturn(Optional.of(caloriePerDayDTO));
-        CalorieDTO updatedCalorieDTO = getDefaultDTO();
-        updatedCalorieDTO.setNumCalories(2*default_calorie_value);
+        CalorieDTO updatedCalorieDTO = TestData.getDefaultCalorieDTO();
+        updatedCalorieDTO.setNumCalories(2 * TestData.default_calorie_value);
 
         Mockito.when(calorieMapper.updateCalorieDTO(Mockito.any(), Mockito.any())).thenReturn(updatedCalorieDTO);
         ArgumentCaptor<CaloriePerDayDTO> caloriePerDayDTOArgumentCaptor = ArgumentCaptor.forClass(CaloriePerDayDTO.class);
 
-        calorieService.updateById(default_calorie_id, getDefaultCalorie());
+        calorieService.updateById(TestData.default_calorie_id, TestData.getDefaultCalorie());
         Mockito.verify(caloriePerDayRepository, Mockito.times(2)).save(caloriePerDayDTOArgumentCaptor.capture());
         List<CaloriePerDayDTO> caloriePerDayDTOS = caloriePerDayDTOArgumentCaptor.getAllValues();
-        assert caloriePerDayDTOS.get(1).getTotalCalories() == default_calorie_per_day+default_calorie_value;
+        assert caloriePerDayDTOS.get(1).getTotalCalories() == TestData.default_calorie_per_day + TestData.default_calorie_value;
     }
 
     private static Stream<Arguments> createCalorieProvider() {
-        Calorie calorieOne = getDefaultCalorie();
-        CalorieDTO calorieDTO = getDefaultDTO();
+        Calorie calorieOne = TestData.getDefaultCalorie();
+        CalorieDTO calorieDTO = TestData.getDefaultCalorieDTO();
         Optional<CaloriePerDayDTO> emptyCaloriePerDayDTO = Optional.empty();
-        Optional<CaloriePerDayDTO> caloriePerDayDTO = Optional.of(getDefaultCaloriePerDay());
+        Optional<CaloriePerDayDTO> caloriePerDayDTO = Optional.of(TestData.getDefaultCaloriePerDayDTO());
         return Stream.of(
                 Arguments.of(calorieOne, calorieDTO, emptyCaloriePerDayDTO),
                 Arguments.of(calorieOne, calorieDTO, caloriePerDayDTO)
         );
-    }
-
-    private static CalorieDTO getDefaultDTO(){
-        CalorieDTO calorieDTO = new CalorieDTO();
-        calorieDTO.setId(default_calorie_id);
-        calorieDTO.setUserId(default_calorie_user_id);
-        calorieDTO.setDateTime(default_date_time);
-        calorieDTO.setMealDetails(default_calorie_detail);
-        calorieDTO.setNumCalories(default_calorie_value);
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(default_calorie_user_id);
-        calorieDTO.setUserDTO(userDTO);
-        return calorieDTO;
-    }
-
-    private static Calorie getDefaultCalorie(){
-        Calorie calorie = new Calorie();
-        calorie.setId(default_calorie_id);
-        calorie.setUserId(default_calorie_user_id);
-        calorie.setDateTime(default_date_time);
-        calorie.setMealDetails(default_calorie_detail);
-        calorie.setNumCalories(default_calorie_value);
-        return calorie;
-    }
-
-    private static CaloriePerDayDTO getDefaultCaloriePerDay(){
-        CaloriePerDayDTO caloriePerDayDTO = new CaloriePerDayDTO();
-        caloriePerDayDTO.setTotalCalories(default_calorie_per_day);
-        UserDay userDay = new UserDay();
-        userDay.setUserId(default_calorie_user_id);
-        userDay.setDate(default_date_time.toLocalDate());
-        caloriePerDayDTO.setId(userDay);
-        return caloriePerDayDTO;
     }
 }
