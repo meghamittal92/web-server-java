@@ -4,7 +4,9 @@ import com.client.calorieserver.domain.exception.ExternalCalorieServiceException
 import com.client.calorieserver.domain.model.calorie.accessor.NutritionixErrorResponse;
 import com.client.calorieserver.domain.model.calorie.accessor.NutritionixRequest;
 import com.client.calorieserver.domain.model.calorie.accessor.NutritionixResponse;
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -17,16 +19,21 @@ import javax.ws.rs.core.Response;
 public class NutritionixCalorieAccessorImpl implements CalorieAccessor {
 
     private final String apikey;
-
     private final String appId;
+    private final Client client;
 
-    @Autowired
-    public NutritionixCalorieAccessorImpl(String apikey, String appId) {
+    @VisibleForTesting
+    protected NutritionixCalorieAccessorImpl(final String apikey,final String appId, final Client client) {
         this.apikey = apikey;
         this.appId = appId;
-        client = ClientBuilder.newClient();
-        target = client.target(
-                NUTRITIONIX_ENDPOINT_URI);
+        this.client = client;
+    }
+
+    @Autowired
+    public NutritionixCalorieAccessorImpl(final String apikey,final String appId) {
+        this.apikey = apikey;
+        this.appId = appId;
+        this.client = ClientBuilder.newClient();
     }
 
     private static final String NUTRITIONIX_ENDPOINT_URI = "https://trackapi.nutritionix.com/";
@@ -36,16 +43,14 @@ public class NutritionixCalorieAccessorImpl implements CalorieAccessor {
     private static final String REMOTE_USER_ID_HEADER_NAME = "x-remote-user-id";
 
 
-    private final Client client;
-    private final WebTarget target;
-
 
     @Override
     public Integer getCalories(final String mealDetails, final Long userID) {
         final NutritionixRequest nutritionixRequest = new NutritionixRequest(mealDetails);
         final Entity entity = Entity.json(nutritionixRequest);
 
-        final Response response = target.path(NUTRITIONIX_GET_CALORIES_PATH)
+        final Response response = client.target(
+                NUTRITIONIX_ENDPOINT_URI).path(NUTRITIONIX_GET_CALORIES_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .header(API_KEY_HEADER_NAME, apikey)
                 .header(APP_ID_HEADER_NAME, appId)
