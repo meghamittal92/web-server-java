@@ -129,8 +129,6 @@ public class SpecificationBuilder<U> {
         while (!stack.isEmpty())
             postFixExpStack.push(stack.pop());
 
-        System.out.println("Post fix exp stack is:");
-        System.out.println(postFixExpStack);
         return postFixExpStack;
     }
 
