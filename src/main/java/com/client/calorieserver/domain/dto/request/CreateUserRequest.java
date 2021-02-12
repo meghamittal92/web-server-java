@@ -1,6 +1,5 @@
 package com.client.calorieserver.domain.dto.request;
 
-
 import com.client.calorieserver.domain.validator.PasswordConstraint;
 import com.client.calorieserver.domain.validator.UsernameConstraint;
 import lombok.Data;
@@ -16,20 +15,21 @@ import java.util.Set;
 @Data
 public class CreateUserRequest {
 
-    @UsernameConstraint
-    @NotBlank
-    private String username;
+	@UsernameConstraint
+	@NotBlank
+	private String username;
 
-    @PasswordConstraint
-    @NotBlank
-    private String password;
+	@PasswordConstraint
+	@NotBlank
+	private String password;
 
-    @Email
-    @NotBlank
-    private String email;
+	@Email
+	@NotBlank
+	private String email;
 
-    private Set<String> roles;
+	private Set<String> roles;
 
-    @Min(0)
-    private Integer expectedCaloriesPerDay;
+	@Min(0)
+	private Integer expectedCaloriesPerDay;
+
 }

@@ -10,5 +10,6 @@ import java.util.Optional;
 
 public interface RoleRepository extends CrudRepository<RoleDTO, Long> {
 
-    public Optional<RoleDTO> findByName(@Param(RoleDTO_.NAME) String roleName);
+	public Optional<RoleDTO> findByName(@Param(RoleDTO_.NAME) String roleName);
+
 }

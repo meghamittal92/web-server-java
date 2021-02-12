@@ -25,154 +25,154 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CalorieService {
 
-    private final CalorieRepository calorieRepository;
-    private final CalorieMapper calorieMapper;
-    private final CaloriePerDayRepository caloriePerDayRepository;
+	private final CalorieRepository calorieRepository;
 
-    public Page<Calorie> findAllByUser(final Long userId, final Pageable pageable) {
+	private final CalorieMapper calorieMapper;
 
-        final Page<CalorieDTO> calorieDTOS = calorieRepository.findByUserId(userId, pageable);
+	private final CaloriePerDayRepository caloriePerDayRepository;
 
-        return calorieDTOS.map(calorieMapper::toCalorie);
+	public Page<Calorie> findAllByUser(final Long userId, final Pageable pageable) {
 
-    }
+		final Page<CalorieDTO> calorieDTOS = calorieRepository.findByUserId(userId, pageable);
 
-    public Calorie findOneByUser(final Long userId, final Long calorieId) {
+		return calorieDTOS.map(calorieMapper::toCalorie);
 
-        final CalorieDTO calorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
+	}
 
-        return calorieMapper.toCalorie(calorieDTO);
+	public Calorie findOneByUser(final Long userId, final Long calorieId) {
 
-    }
+		final CalorieDTO calorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
 
-    @Transactional
-    public Calorie createCalorie(Calorie calorie) {
+		return calorieMapper.toCalorie(calorieDTO);
 
-        saveOrUpdateCaloriesPerDay(calorie.getUserId(), calorie.getDateTime(), calorie.getNumCalories());
-        final CalorieDTO calorieDTO = calorieRepository.save(calorieMapper.toCalorieDTO(calorie));
+	}
 
-        calorieRepository.flushAndRefresh(calorieDTO);
-        return calorieMapper.toCalorie(calorieDTO);
-    }
+	@Transactional
+	public Calorie createCalorie(Calorie calorie) {
 
-    @Transactional
-    public Calorie replaceById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
+		saveOrUpdateCaloriesPerDay(calorie.getUserId(), calorie.getDateTime(), calorie.getNumCalories());
+		final CalorieDTO calorieDTO = calorieRepository.save(calorieMapper.toCalorieDTO(calorie));
 
-        updatedCalorie.setUserId(userId);
-        final CalorieDTO originalCalorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
+		calorieRepository.flushAndRefresh(calorieDTO);
+		return calorieMapper.toCalorie(calorieDTO);
+	}
 
-        CalorieDTO updatedCalorieDTO = calorieMapper.toCalorieDTO(updatedCalorie);
-        updatedCalorie.setId(originalCalorieDTO.getId());
+	@Transactional
+	public Calorie replaceById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
 
-        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalCalorieDTO.getDateTime(), -1 * originalCalorieDTO.getNumCalories());
-        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(), updatedCalorieDTO.getNumCalories());
+		updatedCalorie.setUserId(userId);
+		final CalorieDTO originalCalorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
 
-        updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
-        calorieRepository.flushAndRefresh(updatedCalorieDTO);
-        return calorieMapper.toCalorie(updatedCalorieDTO);
-    }
+		CalorieDTO updatedCalorieDTO = calorieMapper.toCalorieDTO(updatedCalorie);
+		updatedCalorie.setId(originalCalorieDTO.getId());
 
-    @Transactional
-    public Calorie updateById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
+		saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalCalorieDTO.getDateTime(),
+				-1 * originalCalorieDTO.getNumCalories());
+		saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(),
+				updatedCalorieDTO.getNumCalories());
 
-        updatedCalorie.setUserId(userId);
-        final CalorieDTO originalCalorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
+		updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
+		calorieRepository.flushAndRefresh(updatedCalorieDTO);
+		return calorieMapper.toCalorie(updatedCalorieDTO);
+	}
 
-        final LocalDateTime originalDateTime = originalCalorieDTO.getDateTime();
-        final Integer originalCalories = originalCalorieDTO.getNumCalories();
+	@Transactional
+	public Calorie updateById(final Long userId, final Long calorieId, final Calorie updatedCalorie) {
 
-        CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
+		updatedCalorie.setUserId(userId);
+		final CalorieDTO originalCalorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
 
-        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime, -1 * originalCalories);
-        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(), updatedCalorieDTO.getNumCalories());
+		final LocalDateTime originalDateTime = originalCalorieDTO.getDateTime();
+		final Integer originalCalories = originalCalorieDTO.getNumCalories();
 
+		CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
 
-        updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
-        calorieRepository.flushAndRefresh(updatedCalorieDTO);
-        return calorieMapper.toCalorie(updatedCalorieDTO);
-    }
+		saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime, -1 * originalCalories);
+		saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(),
+				updatedCalorieDTO.getNumCalories());
 
-    @Transactional
-    public Calorie updateById(final Long calorieId, final Calorie updatedCalorie) {
+		updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
+		calorieRepository.flushAndRefresh(updatedCalorieDTO);
+		return calorieMapper.toCalorie(updatedCalorieDTO);
+	}
 
-        final CalorieDTO originalCalorieDTO = calorieRepository.findById(calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
+	@Transactional
+	public Calorie updateById(final Long calorieId, final Calorie updatedCalorie) {
 
-        final LocalDateTime originalDateTime = originalCalorieDTO.getDateTime();
-        final Integer originalCalories = originalCalorieDTO.getNumCalories();
+		final CalorieDTO originalCalorieDTO = calorieRepository.findById(calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
 
-        CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
+		final LocalDateTime originalDateTime = originalCalorieDTO.getDateTime();
+		final Integer originalCalories = originalCalorieDTO.getNumCalories();
 
-        saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime, -1 * originalCalories);
-        saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(), updatedCalorieDTO.getNumCalories());
+		CalorieDTO updatedCalorieDTO = calorieMapper.updateCalorieDTO(updatedCalorie, originalCalorieDTO);
 
+		saveOrUpdateCaloriesPerDay(originalCalorieDTO.getUserId(), originalDateTime, -1 * originalCalories);
+		saveOrUpdateCaloriesPerDay(updatedCalorieDTO.getUserId(), updatedCalorieDTO.getDateTime(),
+				updatedCalorieDTO.getNumCalories());
 
-        updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
-        calorieRepository.flushAndRefresh(updatedCalorieDTO);
-        return calorieMapper.toCalorie(updatedCalorieDTO);
-    }
+		updatedCalorieDTO = calorieRepository.save(updatedCalorieDTO);
+		calorieRepository.flushAndRefresh(updatedCalorieDTO);
+		return calorieMapper.toCalorie(updatedCalorieDTO);
+	}
 
-    @Transactional
-    public void deleteById(final Long userId, final Long calorieId) {
+	@Transactional
+	public void deleteById(final Long userId, final Long calorieId) {
 
-        CalorieDTO calorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
+		CalorieDTO calorieDTO = calorieRepository.findByUserIdAndId(userId, calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
 
-        saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(), -1 * calorieDTO.getNumCalories());
-        calorieRepository.deleteByUserIdAndId(userId, calorieId);
-    }
+		saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(),
+				-1 * calorieDTO.getNumCalories());
+		calorieRepository.deleteByUserIdAndId(userId, calorieId);
+	}
 
-    @Transactional
-    public void deleteById(final Long calorieId) {
+	@Transactional
+	public void deleteById(final Long calorieId) {
 
-        CalorieDTO calorieDTO = calorieRepository.findById(calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
-        saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(), -1 * calorieDTO.getNumCalories());
-        calorieRepository.deleteById(calorieId);
-    }
+		CalorieDTO calorieDTO = calorieRepository.findById(calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
+		saveOrUpdateCaloriesPerDay(calorieDTO.getUserDTO().getId(), calorieDTO.getDateTime(),
+				-1 * calorieDTO.getNumCalories());
+		calorieRepository.deleteById(calorieId);
+	}
 
-    private void saveOrUpdateCaloriesPerDay(final Long userId, final LocalDateTime dateTime, final int deltaCalories) {
-        final UserDay userDay = new UserDay(userId, dateTime.toLocalDate());
-        Optional<CaloriePerDayDTO> caloriePerDayDTOOptional = caloriePerDayRepository.findById(userDay);
-        CaloriePerDayDTO caloriePerDayDTO;
-        if (caloriePerDayDTOOptional.isPresent()) {
-            caloriePerDayDTO = caloriePerDayDTOOptional.get();
+	private void saveOrUpdateCaloriesPerDay(final Long userId, final LocalDateTime dateTime, final int deltaCalories) {
+		final UserDay userDay = new UserDay(userId, dateTime.toLocalDate());
+		Optional<CaloriePerDayDTO> caloriePerDayDTOOptional = caloriePerDayRepository.findById(userDay);
+		CaloriePerDayDTO caloriePerDayDTO;
+		if (caloriePerDayDTOOptional.isPresent()) {
+			caloriePerDayDTO = caloriePerDayDTOOptional.get();
 
-            caloriePerDayDTO.setTotalCalories(caloriePerDayDTO.getTotalCalories() + deltaCalories);
+			caloriePerDayDTO.setTotalCalories(caloriePerDayDTO.getTotalCalories() + deltaCalories);
 
-        } else {
-            caloriePerDayDTO = new CaloriePerDayDTO();
-            caloriePerDayDTO.setId(userDay);
-            caloriePerDayDTO.setTotalCalories(deltaCalories);
+		}
+		else {
+			caloriePerDayDTO = new CaloriePerDayDTO();
+			caloriePerDayDTO.setId(userDay);
+			caloriePerDayDTO.setTotalCalories(deltaCalories);
 
-        }
+		}
 
-        caloriePerDayRepository.save(caloriePerDayDTO);
-    }
+		caloriePerDayRepository.save(caloriePerDayDTO);
+	}
 
-    public Page<Calorie> findAll(Specification<CalorieDTO> spec, Pageable pageable) {
+	public Page<Calorie> findAll(Specification<CalorieDTO> spec, Pageable pageable) {
 
-        final Page<CalorieDTO> calorieDTOS = calorieRepository.findAll(spec, pageable);
+		final Page<CalorieDTO> calorieDTOS = calorieRepository.findAll(spec, pageable);
 
-        return calorieDTOS.map(calorieMapper::toCalorie);
-    }
+		return calorieDTOS.map(calorieMapper::toCalorie);
+	}
 
-    public Calorie findById(Long calorieId) {
+	public Calorie findById(Long calorieId) {
 
-        final CalorieDTO calorieDTO = calorieRepository.findById(calorieId).orElseThrow(
-                () -> new EntityNotFoundException(Calorie.class, calorieId)
-        );
+		final CalorieDTO calorieDTO = calorieRepository.findById(calorieId)
+				.orElseThrow(() -> new EntityNotFoundException(Calorie.class, calorieId));
 
-        return calorieMapper.toCalorie(calorieDTO);
-    }
+		return calorieMapper.toCalorie(calorieDTO);
+	}
 
 }

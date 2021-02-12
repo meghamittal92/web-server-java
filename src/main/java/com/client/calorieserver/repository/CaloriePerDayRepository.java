@@ -5,4 +5,5 @@ import com.client.calorieserver.domain.dto.db.UserDay;
 import org.springframework.data.repository.CrudRepository;
 
 public interface CaloriePerDayRepository extends CrudRepository<CaloriePerDayDTO, UserDay> {
+
 }

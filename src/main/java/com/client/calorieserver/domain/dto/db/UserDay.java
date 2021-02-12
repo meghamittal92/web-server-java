@@ -15,7 +15,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UserDay implements Serializable {
 
-    @Column(name = "user_id")
-    Long userId;
-    LocalDate date;
+	@Column(name = "user_id")
+	Long userId;
+
+	LocalDate date;
+
 }

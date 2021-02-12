@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class NutritionixErrorResponse {
 
-    final String message;
-    final String id;
+	final String message;
+
+	final String id;
+
 }

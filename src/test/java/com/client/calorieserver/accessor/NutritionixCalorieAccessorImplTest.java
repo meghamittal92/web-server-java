@@ -19,95 +19,104 @@ import javax.ws.rs.core.Response;
 
 public class NutritionixCalorieAccessorImplTest {
 
-    private NutritionixCalorieAccessorImpl accessor;
-    private final String apiKey = "api_key";
-    private final String appId = "app_id";
-    private final String MEAL_DETAILS = "burger";
-    private final Long TEST_ID = 0L;
-    private final String ERROR_MESSAGE = "error";
-    private final String ERROR_MESSAGE_ID = "errorMessageID";
-    private static final Integer RETURNED_CALORIES = 4;
+	private NutritionixCalorieAccessorImpl accessor;
 
-    @Mock
-    Client mockClient;
+	private final String apiKey = "api_key";
 
-    @Mock
-    WebTarget mockWebTarget;
+	private final String appId = "app_id";
 
-    @Mock
-    Invocation.Builder invocationBuilderMock;
+	private final String MEAL_DETAILS = "burger";
 
-    @Mock
-    Response responseMock;
+	private final Long TEST_ID = 0L;
 
-    @Mock
-    NutritionixResponse nutritionixResponse;
+	private final String ERROR_MESSAGE = "error";
 
+	private final String ERROR_MESSAGE_ID = "errorMessageID";
 
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
-        accessor = new NutritionixCalorieAccessorImpl(apiKey, appId, mockClient);
-    }
+	private static final Integer RETURNED_CALORIES = 4;
 
-    @Test
-    void getCaloriesStatusOKEntityNull() {
+	@Mock
+	Client mockClient;
 
-        NutritionixErrorResponse nutritionixErrorResponse = new NutritionixErrorResponse(ERROR_MESSAGE, ERROR_MESSAGE_ID);
-        Mockito.when(mockClient.target(Mockito.anyString())).thenReturn(mockWebTarget);
-        Mockito.when(mockWebTarget.path(Mockito.anyString())).thenReturn(mockWebTarget);
-        Mockito.when(mockWebTarget.request(Mockito.anyString())).thenReturn(invocationBuilderMock);
-        Mockito.when(invocationBuilderMock.header(Mockito.anyString(), Mockito.any())).thenReturn(invocationBuilderMock);
-        Mockito.when(invocationBuilderMock.post(Mockito.any(Entity.class))).thenReturn(responseMock);
+	@Mock
+	WebTarget mockWebTarget;
 
-        Mockito.when(responseMock.getStatus()).thenReturn(HttpStatus.OK.value());
-        Mockito.when(responseMock.getEntity()).thenReturn(null);
-        Mockito.when(responseMock.readEntity(NutritionixErrorResponse.class)).thenReturn(nutritionixErrorResponse);
+	@Mock
+	Invocation.Builder invocationBuilderMock;
 
+	@Mock
+	Response responseMock;
 
-        Assertions.assertThrows(ExternalCalorieServiceException.class, () -> {
-            this.accessor.getCalories(MEAL_DETAILS, TEST_ID);
-        }, ERROR_MESSAGE);
+	@Mock
+	NutritionixResponse nutritionixResponse;
 
-    }
+	@BeforeEach
+	void init() {
+		MockitoAnnotations.openMocks(this);
+		accessor = new NutritionixCalorieAccessorImpl(apiKey, appId, mockClient);
+	}
 
-    @Test
-    void getCaloriesStatusError() {
+	@Test
+	void getCaloriesStatusOKEntityNull() {
 
-        final NutritionixErrorResponse nutritionixErrorResponse = new NutritionixErrorResponse(ERROR_MESSAGE, ERROR_MESSAGE_ID);
-        Mockito.when(mockClient.target(Mockito.anyString())).thenReturn(mockWebTarget);
-        Mockito.when(mockWebTarget.path(Mockito.anyString())).thenReturn(mockWebTarget);
-        Mockito.when(mockWebTarget.request(Mockito.anyString())).thenReturn(invocationBuilderMock);
-        Mockito.when(invocationBuilderMock.header(Mockito.anyString(), Mockito.any())).thenReturn(invocationBuilderMock);
-        Mockito.when(invocationBuilderMock.post(Mockito.any(Entity.class))).thenReturn(responseMock);
+		NutritionixErrorResponse nutritionixErrorResponse = new NutritionixErrorResponse(ERROR_MESSAGE,
+				ERROR_MESSAGE_ID);
+		Mockito.when(mockClient.target(Mockito.anyString())).thenReturn(mockWebTarget);
+		Mockito.when(mockWebTarget.path(Mockito.anyString())).thenReturn(mockWebTarget);
+		Mockito.when(mockWebTarget.request(Mockito.anyString())).thenReturn(invocationBuilderMock);
+		Mockito.when(invocationBuilderMock.header(Mockito.anyString(), Mockito.any()))
+				.thenReturn(invocationBuilderMock);
+		Mockito.when(invocationBuilderMock.post(Mockito.any(Entity.class))).thenReturn(responseMock);
 
-        Mockito.when(responseMock.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        Mockito.when(responseMock.getEntity()).thenReturn(nutritionixErrorResponse);
-        Mockito.when(responseMock.readEntity(NutritionixErrorResponse.class)).thenReturn(nutritionixErrorResponse);
+		Mockito.when(responseMock.getStatus()).thenReturn(HttpStatus.OK.value());
+		Mockito.when(responseMock.getEntity()).thenReturn(null);
+		Mockito.when(responseMock.readEntity(NutritionixErrorResponse.class)).thenReturn(nutritionixErrorResponse);
 
+		Assertions.assertThrows(ExternalCalorieServiceException.class, () -> {
+			this.accessor.getCalories(MEAL_DETAILS, TEST_ID);
+		}, ERROR_MESSAGE);
 
-        Assertions.assertThrows(ExternalCalorieServiceException.class, () -> {
-            this.accessor.getCalories(MEAL_DETAILS, TEST_ID);
-        }, ERROR_MESSAGE);
+	}
 
-    }
+	@Test
+	void getCaloriesStatusError() {
 
-    @Test
-    void getCaloriesSuccess() {
+		final NutritionixErrorResponse nutritionixErrorResponse = new NutritionixErrorResponse(ERROR_MESSAGE,
+				ERROR_MESSAGE_ID);
+		Mockito.when(mockClient.target(Mockito.anyString())).thenReturn(mockWebTarget);
+		Mockito.when(mockWebTarget.path(Mockito.anyString())).thenReturn(mockWebTarget);
+		Mockito.when(mockWebTarget.request(Mockito.anyString())).thenReturn(invocationBuilderMock);
+		Mockito.when(invocationBuilderMock.header(Mockito.anyString(), Mockito.any()))
+				.thenReturn(invocationBuilderMock);
+		Mockito.when(invocationBuilderMock.post(Mockito.any(Entity.class))).thenReturn(responseMock);
 
+		Mockito.when(responseMock.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		Mockito.when(responseMock.getEntity()).thenReturn(nutritionixErrorResponse);
+		Mockito.when(responseMock.readEntity(NutritionixErrorResponse.class)).thenReturn(nutritionixErrorResponse);
 
-        Mockito.when(mockClient.target(Mockito.anyString())).thenReturn(mockWebTarget);
-        Mockito.when(mockWebTarget.path(Mockito.anyString())).thenReturn(mockWebTarget);
-        Mockito.when(mockWebTarget.request(Mockito.anyString())).thenReturn(invocationBuilderMock);
-        Mockito.when(invocationBuilderMock.header(Mockito.anyString(), Mockito.any())).thenReturn(invocationBuilderMock);
-        Mockito.when(invocationBuilderMock.post(Mockito.any(Entity.class))).thenReturn(responseMock);
+		Assertions.assertThrows(ExternalCalorieServiceException.class, () -> {
+			this.accessor.getCalories(MEAL_DETAILS, TEST_ID);
+		}, ERROR_MESSAGE);
 
-        Mockito.when(responseMock.getStatus()).thenReturn(HttpStatus.OK.value());
-        Mockito.when(responseMock.getEntity()).thenReturn(nutritionixResponse);
-        Mockito.when(responseMock.readEntity(NutritionixResponse.class)).thenReturn(nutritionixResponse);
-        Mockito.when(nutritionixResponse.getCalories()).thenReturn(RETURNED_CALORIES);
+	}
 
-        Assertions.assertEquals(this.accessor.getCalories(MEAL_DETAILS, TEST_ID), RETURNED_CALORIES);
+	@Test
+	void getCaloriesSuccess() {
 
-    }
+		Mockito.when(mockClient.target(Mockito.anyString())).thenReturn(mockWebTarget);
+		Mockito.when(mockWebTarget.path(Mockito.anyString())).thenReturn(mockWebTarget);
+		Mockito.when(mockWebTarget.request(Mockito.anyString())).thenReturn(invocationBuilderMock);
+		Mockito.when(invocationBuilderMock.header(Mockito.anyString(), Mockito.any()))
+				.thenReturn(invocationBuilderMock);
+		Mockito.when(invocationBuilderMock.post(Mockito.any(Entity.class))).thenReturn(responseMock);
+
+		Mockito.when(responseMock.getStatus()).thenReturn(HttpStatus.OK.value());
+		Mockito.when(responseMock.getEntity()).thenReturn(nutritionixResponse);
+		Mockito.when(responseMock.readEntity(NutritionixResponse.class)).thenReturn(nutritionixResponse);
+		Mockito.when(nutritionixResponse.getCalories()).thenReturn(RETURNED_CALORIES);
+
+		Assertions.assertEquals(this.accessor.getCalories(MEAL_DETAILS, TEST_ID), RETURNED_CALORIES);
+
+	}
+
 }

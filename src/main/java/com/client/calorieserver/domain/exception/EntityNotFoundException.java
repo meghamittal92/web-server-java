@@ -1,6 +1,5 @@
 package com.client.calorieserver.domain.exception;
 
-
 import lombok.Getter;
 
 /**
@@ -9,22 +8,23 @@ import lombok.Getter;
 @Getter
 public class EntityNotFoundException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
-    private Class<?> entityClass;
+	private static final long serialVersionUID = 1L;
 
-    public EntityNotFoundException(String message) {
-        super(message);
-    }
+	private Class<?> entityClass;
 
-    public EntityNotFoundException(Class<?> clazz, long id) {
-        super(String.format("Entity %s with id %d not found", clazz.getSimpleName(), id));
-        this.entityClass = clazz;
+	public EntityNotFoundException(String message) {
+		super(message);
+	}
 
-    }
+	public EntityNotFoundException(Class<?> clazz, long id) {
+		super(String.format("Entity %s with id %d not found", clazz.getSimpleName(), id));
+		this.entityClass = clazz;
 
-    public EntityNotFoundException(Class<?> clazz, String message) {
-        super(message);
-        this.entityClass = clazz;
-    }
+	}
+
+	public EntityNotFoundException(Class<?> clazz, String message) {
+		super(message);
+		this.entityClass = clazz;
+	}
 
 }

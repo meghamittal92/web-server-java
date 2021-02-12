@@ -9,33 +9,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum LogicalOperator {
 
-    AND("AND"),
-    OR("OR");
+	AND("AND"), OR("OR");
 
-    private static final Map<String, LogicalOperator> LOGICAL_OPERATOR_MAP;
-    private final String name;
+	private static final Map<String, LogicalOperator> LOGICAL_OPERATOR_MAP;
 
-    LogicalOperator(final String name) {
+	private final String name;
 
-        this.name = name;
-    }
+	LogicalOperator(final String name) {
 
-    public String getBooleanOperatorName() {
-        return this.name;
-    }
+		this.name = name;
+	}
 
-    static {
-        Map<String, LogicalOperator> map = new ConcurrentHashMap<String, LogicalOperator>();
-        for (LogicalOperator instance : LogicalOperator.values()) {
-            map.put(instance.getBooleanOperatorName().toLowerCase(), instance);
-        }
-        LOGICAL_OPERATOR_MAP = Collections.unmodifiableMap(map);
-    }
+	public String getBooleanOperatorName() {
+		return this.name;
+	}
 
-    public static LogicalOperator get(String name) {
-        return LOGICAL_OPERATOR_MAP.get(name.toLowerCase());
-    }
+	static {
+		Map<String, LogicalOperator> map = new ConcurrentHashMap<String, LogicalOperator>();
+		for (LogicalOperator instance : LogicalOperator.values()) {
+			map.put(instance.getBooleanOperatorName().toLowerCase(), instance);
+		}
+		LOGICAL_OPERATOR_MAP = Collections.unmodifiableMap(map);
+	}
+
+	public static LogicalOperator get(String name) {
+		return LOGICAL_OPERATOR_MAP.get(name.toLowerCase());
+	}
 
 }
-
-

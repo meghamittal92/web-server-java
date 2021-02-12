@@ -10,19 +10,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-
 import java.util.Optional;
 
 public interface CalorieRepository extends CustomRepository<CalorieDTO, Long>, JpaSpecificationExecutor<CalorieDTO> {
 
-    Page<CalorieDTO> findByUserId(@Param(CalorieDTO_.USER_ID) Long userId, final Pageable pageable);
+	Page<CalorieDTO> findByUserId(@Param(CalorieDTO_.USER_ID) Long userId, final Pageable pageable);
 
+	Optional<CalorieDTO> findByUserIdAndId(@Param(CalorieDTO_.USER_ID) Long userId,
+			@Param(CalorieDTO_.ID) Long calorieId);
 
-    Optional<CalorieDTO> findByUserIdAndId(@Param(CalorieDTO_.USER_ID) Long userId, @Param(CalorieDTO_.ID) Long calorieId);
-
-    @Modifying
-    void deleteByUserIdAndId(@Param(CalorieDTO_.USER_ID) Long userId, @Param(CalorieDTO_.ID) Long calorieId);
-
+	@Modifying
+	void deleteByUserIdAndId(@Param(CalorieDTO_.USER_ID) Long userId, @Param(CalorieDTO_.ID) Long calorieId);
 
 }
-

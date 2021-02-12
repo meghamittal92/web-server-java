@@ -21,32 +21,33 @@ import java.time.temporal.ChronoUnit;
 
 public class CustomDateSerializerTest {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT);
-    private CustomDateSerializer customDateSerializer;
+	private static final DateTimeFormatter formatter = DateTimeFormatter
+			.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT);
 
-    @Mock
-    JsonGenerator jsonGenerator;
+	private CustomDateSerializer customDateSerializer;
 
-    @Mock
-    SerializerProvider serializerProvider;
+	@Mock
+	JsonGenerator jsonGenerator;
 
-    @BeforeEach
-    void init(){
-        MockitoAnnotations.openMocks(this);
-        customDateSerializer = new CustomDateSerializer();
-    }
+	@Mock
+	SerializerProvider serializerProvider;
 
-    @Test
-    void serialize() throws Exception{
-        LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        customDateSerializer.serialize(null, jsonGenerator, serializerProvider);
-        Mockito.verify(jsonGenerator, Mockito.times(1)).writeNull();
+	@BeforeEach
+	void init() {
+		MockitoAnnotations.openMocks(this);
+		customDateSerializer = new CustomDateSerializer();
+	}
 
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        customDateSerializer.serialize(time, jsonGenerator, serializerProvider);
-        Mockito.verify(jsonGenerator, Mockito.times(1))
-                .writeString(argumentCaptor.capture());
-        assert argumentCaptor.getValue().equalsIgnoreCase(formatter.format(time));
-    }
+	@Test
+	void serialize() throws Exception {
+		LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+		customDateSerializer.serialize(null, jsonGenerator, serializerProvider);
+		Mockito.verify(jsonGenerator, Mockito.times(1)).writeNull();
+
+		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+		customDateSerializer.serialize(time, jsonGenerator, serializerProvider);
+		Mockito.verify(jsonGenerator, Mockito.times(1)).writeString(argumentCaptor.capture());
+		assert argumentCaptor.getValue().equalsIgnoreCase(formatter.format(time));
+	}
 
 }

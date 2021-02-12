@@ -9,24 +9,24 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Request object to hold parameters for new
- * user registration.
+ * Request object to hold parameters for new user registration.
  */
 @Data
 public class RegisterUserRequest {
 
-    @UsernameConstraint
-    @NotBlank
-    private String username;
+	@UsernameConstraint
+	@NotBlank
+	private String username;
 
-    @PasswordConstraint
-    @NotBlank
-    private String password;
+	@PasswordConstraint
+	@NotBlank
+	private String password;
 
-    @Min(0)
-    private Integer expectedCaloriesPerDay;
+	@Min(0)
+	private Integer expectedCaloriesPerDay;
 
-    @Email
-    @NotBlank
-    private String email;
+	@Email
+	@NotBlank
+	private String email;
+
 }

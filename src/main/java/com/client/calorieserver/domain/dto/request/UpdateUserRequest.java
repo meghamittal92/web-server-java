@@ -17,15 +17,18 @@ import java.util.Set;
 @Data
 public class UpdateUserRequest {
 
+	@UsernameConstraint
+	private String username;
 
-    @UsernameConstraint
-    private String username;
+	@PasswordConstraint
+	private String password;
 
-    @PasswordConstraint
-    private String password;
-    private Set<String> roles;
-    @Min(0)
-    private Integer expectedCaloriesPerDay;
-    @Email
-    private String email;
+	private Set<String> roles;
+
+	@Min(0)
+	private Integer expectedCaloriesPerDay;
+
+	@Email
+	private String email;
+
 }

@@ -12,43 +12,40 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum CalorieSearchKey {
 
-    userId("userId", CalorieDTO_.USER_ID),
-    dateTime("dateTime", CalorieDTO_.DATE_TIME),
-    numCalories("numCalories", CalorieDTO_.NUM_CALORIES),
-    mealDetails("mealDetails", CalorieDTO_.MEAL_DETAILS),
-    withinLimit("withinLimit", "");
+	userId("userId", CalorieDTO_.USER_ID), dateTime("dateTime", CalorieDTO_.DATE_TIME), numCalories("numCalories",
+			CalorieDTO_.NUM_CALORIES), mealDetails("mealDetails",
+					CalorieDTO_.MEAL_DETAILS), withinLimit("withinLimit", "");
 
-    private static final Map<String, CalorieSearchKey> CALORIE_SEARCH_KEY_MAP;
-    private final String name;
-    private final String dbColumnName;
+	private static final Map<String, CalorieSearchKey> CALORIE_SEARCH_KEY_MAP;
 
-    CalorieSearchKey(final String name, final String dbColumnName) {
+	private final String name;
 
-        this.name = name;
-        this.dbColumnName = dbColumnName;
-    }
+	private final String dbColumnName;
 
-    public String getName() {
-        return name;
-    }
+	CalorieSearchKey(final String name, final String dbColumnName) {
 
-    public String getDbColumnName() {
-        return dbColumnName;
-    }
+		this.name = name;
+		this.dbColumnName = dbColumnName;
+	}
 
+	public String getName() {
+		return name;
+	}
 
-    static {
-        Map<String, CalorieSearchKey> map = new ConcurrentHashMap<String, CalorieSearchKey>();
-        for (CalorieSearchKey instance : CalorieSearchKey.values()) {
-            map.put(instance.getName().toLowerCase(), instance);
-        }
-        CALORIE_SEARCH_KEY_MAP = Collections.unmodifiableMap(map);
-    }
+	public String getDbColumnName() {
+		return dbColumnName;
+	}
 
-    public static CalorieSearchKey get(String name) {
-        return CALORIE_SEARCH_KEY_MAP.get(name.toLowerCase());
-    }
+	static {
+		Map<String, CalorieSearchKey> map = new ConcurrentHashMap<String, CalorieSearchKey>();
+		for (CalorieSearchKey instance : CalorieSearchKey.values()) {
+			map.put(instance.getName().toLowerCase(), instance);
+		}
+		CALORIE_SEARCH_KEY_MAP = Collections.unmodifiableMap(map);
+	}
 
+	public static CalorieSearchKey get(String name) {
+		return CALORIE_SEARCH_KEY_MAP.get(name.toLowerCase());
+	}
 
 }
-

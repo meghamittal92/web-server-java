@@ -13,65 +13,62 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 /**
- * {@link CalorieAccessor} implementation using the Nutrionix service
- * to fetch calories.
+ * {@link CalorieAccessor} implementation using the Nutrionix service to fetch calories.
  */
 public class NutritionixCalorieAccessorImpl implements CalorieAccessor {
 
-    private final String apikey;
-    private final String appId;
-    private final Client client;
+	private final String apikey;
 
-    @VisibleForTesting
-    protected NutritionixCalorieAccessorImpl(final String apikey,final String appId,
-                                             final Client client) {
-        this.apikey = apikey;
-        this.appId = appId;
-        this.client = client;
-    }
+	private final String appId;
 
-    @Autowired
-    public NutritionixCalorieAccessorImpl(final String apikey,final String appId) {
-        this.apikey = apikey;
-        this.appId = appId;
-        this.client = ClientBuilder.newClient();
-    }
+	private final Client client;
 
-    private static final String NUTRITIONIX_ENDPOINT_URI = "https://trackapi.nutritionix.com/";
-    private static final String NUTRITIONIX_GET_CALORIES_PATH = "v2/natural/nutrients";
-    private static final String API_KEY_HEADER_NAME = "x-app-key";
-    private static final String APP_ID_HEADER_NAME = "x-app-id";
-    private static final String REMOTE_USER_ID_HEADER_NAME = "x-remote-user-id";
+	@VisibleForTesting
+	protected NutritionixCalorieAccessorImpl(final String apikey, final String appId, final Client client) {
+		this.apikey = apikey;
+		this.appId = appId;
+		this.client = client;
+	}
 
+	@Autowired
+	public NutritionixCalorieAccessorImpl(final String apikey, final String appId) {
+		this.apikey = apikey;
+		this.appId = appId;
+		this.client = ClientBuilder.newClient();
+	}
 
+	private static final String NUTRITIONIX_ENDPOINT_URI = "https://trackapi.nutritionix.com/";
 
-    @Override
-    public Integer getCalories(final String mealDetails, final Long userID) {
-        final NutritionixRequest nutritionixRequest = new NutritionixRequest(mealDetails);
-        final Entity entity = Entity.json(nutritionixRequest);
+	private static final String NUTRITIONIX_GET_CALORIES_PATH = "v2/natural/nutrients";
 
-        final Response response = client.target(
-                NUTRITIONIX_ENDPOINT_URI).path(NUTRITIONIX_GET_CALORIES_PATH)
-                .request(MediaType.APPLICATION_JSON)
-                .header(API_KEY_HEADER_NAME, apikey)
-                .header(APP_ID_HEADER_NAME, appId)
-                .header(REMOTE_USER_ID_HEADER_NAME, userID)
-                .post(entity);
+	private static final String API_KEY_HEADER_NAME = "x-app-key";
 
-        final int responseStatus = response.getStatus();
+	private static final String APP_ID_HEADER_NAME = "x-app-id";
 
+	private static final String REMOTE_USER_ID_HEADER_NAME = "x-remote-user-id";
 
-        if (responseStatus == Response.Status.OK.getStatusCode() && response.getEntity() != null) {
-            NutritionixResponse nutritionixResponse = response.readEntity(NutritionixResponse.class);
-            return nutritionixResponse.getCalories();
+	@Override
+	public Integer getCalories(final String mealDetails, final Long userID) {
+		final NutritionixRequest nutritionixRequest = new NutritionixRequest(mealDetails);
+		final Entity entity = Entity.json(nutritionixRequest);
 
-        } else {
-            NutritionixErrorResponse nutritionixErrorResponse = response.readEntity(NutritionixErrorResponse.class);
-            throw new ExternalCalorieServiceException(nutritionixErrorResponse.getMessage());
-        }
+		final Response response = client.target(NUTRITIONIX_ENDPOINT_URI).path(NUTRITIONIX_GET_CALORIES_PATH)
+				.request(MediaType.APPLICATION_JSON).header(API_KEY_HEADER_NAME, apikey)
+				.header(APP_ID_HEADER_NAME, appId).header(REMOTE_USER_ID_HEADER_NAME, userID).post(entity);
 
+		final int responseStatus = response.getStatus();
 
-    }
+		if (responseStatus == Response.Status.OK.getStatusCode() && response.getEntity() != null) {
+			NutritionixResponse nutritionixResponse = response.readEntity(NutritionixResponse.class);
+			return nutritionixResponse.getCalories();
+
+		}
+		else {
+			NutritionixErrorResponse nutritionixErrorResponse = response.readEntity(NutritionixErrorResponse.class);
+			throw new ExternalCalorieServiceException(nutritionixErrorResponse.getMessage());
+		}
+
+	}
+
 }

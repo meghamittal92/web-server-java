@@ -1,4 +1,5 @@
 package com.client.calorieserver.domain.dto.db;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -18,21 +19,22 @@ import java.util.Date;
 @Setter(AccessLevel.PROTECTED)
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class AuditableDTO<U>
-{
-    @CreatedBy
-    @Column(name = "created_by")
-    private U createdBy;
+public class AuditableDTO<U> {
 
-    @CreatedDate
-    @Column(name = "created_date")
-    private Date createdDate;
+	@CreatedBy
+	@Column(name = "created_by")
+	private U createdBy;
 
-    @LastModifiedBy
-    @Column(name = "last_modified_by")
-    private U lastModifiedBy;
+	@CreatedDate
+	@Column(name = "created_date")
+	private Date createdDate;
 
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    private Date lastModifiedDate;
+	@LastModifiedBy
+	@Column(name = "last_modified_by")
+	private U lastModifiedBy;
+
+	@LastModifiedDate
+	@Column(name = "last_modified_date")
+	private Date lastModifiedDate;
+
 }

@@ -25,48 +25,43 @@ import static java.util.List.of;
 @RequiredArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+	final JWTUtil jwtUtil;
 
-    final JWTUtil jwtUtil;
+	final UserDetailsService userDetailsService;
 
-    final UserDetailsService userDetailsService;
+	@Override
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		final String header = req.getHeader(HttpHeaders.AUTHORIZATION);
 
+		if (header == null || !header.startsWith(Constants.SecurityConstants.TOKEN_PREFIX)) {
+			chain.doFilter(req, res);
+			return;
+		}
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest req,
-                                    HttpServletResponse res,
-                                    FilterChain chain) throws IOException, ServletException {
-        final String header = req.getHeader(HttpHeaders.AUTHORIZATION);
+		final String token = header.replace(Constants.SecurityConstants.TOKEN_PREFIX, "");
 
-        if (header == null || !header.startsWith(Constants.SecurityConstants.TOKEN_PREFIX)) {
-            chain.doFilter(req, res);
-            return;
-        }
+		if (token == null || !jwtUtil.validateJwtToken(token)) {
+			chain.doFilter(req, res);
+			return;
+		}
+		UsernamePasswordAuthenticationToken authentication = getAuthentication(req, token);
 
-        final String token = header.replace(Constants.SecurityConstants.TOKEN_PREFIX, "");
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		chain.doFilter(req, res);
+	}
 
-        if (token == null || !jwtUtil.validateJwtToken(token)) {
-            chain.doFilter(req, res);
-            return;
-        }
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req, token);
+	private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest req, final String token) {
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
-    }
+		String username = jwtUtil.getUserNameFromJwtToken(token);
+		User user = (User) userDetailsService.loadUserByUsername(username);
 
-    private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest req, final String token) {
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,
+				user.getPassword(), Optional.ofNullable(user).map(UserDetails::getAuthorities).orElse(of()));
 
-        String username = jwtUtil.getUserNameFromJwtToken(token);
-        User user = (User) userDetailsService.loadUserByUsername(username);
+		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+		return authentication;
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user, user.getPassword(),
-                        Optional.ofNullable(user).map(UserDetails::getAuthorities).orElse(of()));
+	}
 
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(req)
-        );
-        return authentication;
-
-    }
 }

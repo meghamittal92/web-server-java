@@ -26,71 +26,73 @@ import java.util.Set;
 
 public class JWTAuthorizationFilterTest {
 
-    private final static String token="Bearer token";
-    private final static String username="test_user";
-    private final static String password="test_password";
-    JWTAuthorizationFilter jwtAuthorizationFilter;
+	private final static String token = "Bearer token";
 
-    @Mock
-    HttpServletRequest request;
+	private final static String username = "test_user";
 
-    @Mock
-    HttpServletResponse response;
+	private final static String password = "test_password";
 
-    @Mock
-    JWTUtil jwtUtil;
+	JWTAuthorizationFilter jwtAuthorizationFilter;
 
-    @Mock
-    UserDetailsService userDetailsService;
+	@Mock
+	HttpServletRequest request;
 
-    @Mock
-    FilterChain chain;
+	@Mock
+	HttpServletResponse response;
 
-    @BeforeEach
-    void init(){
-        MockitoAnnotations.openMocks(this);
-        jwtAuthorizationFilter = new JWTAuthorizationFilter(jwtUtil, userDetailsService);
-    }
+	@Mock
+	JWTUtil jwtUtil;
 
-    @Test
-    void filterRequest() throws Exception{
-        jwtAuthorizationFilter = new JWTAuthorizationFilter(jwtUtil, userDetailsService);
-        Mockito.when(request.getHeader(Mockito.anyString())).thenReturn("");
-        Mockito.when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
-        jwtAuthorizationFilter.doFilter(request, response, chain);
+	@Mock
+	UserDetailsService userDetailsService;
 
-        Mockito.verify(request, Mockito.atLeast(1)).getHeader(Mockito.anyString());
-        Mockito.verify(jwtUtil, Mockito.times(0))
-                .validateJwtToken(Mockito.anyString());
+	@Mock
+	FilterChain chain;
 
-        Mockito.when(request.getHeader(Mockito.anyString())).thenReturn( token);
-        Mockito.when(jwtUtil.validateJwtToken(Mockito.anyString())).thenReturn(false);
-        jwtAuthorizationFilter.doFilter(request, response, chain);
-        Mockito.verify(jwtUtil, Mockito.times(1))
-                .validateJwtToken(Mockito.anyString());
+	@BeforeEach
+	void init() {
+		MockitoAnnotations.openMocks(this);
+		jwtAuthorizationFilter = new JWTAuthorizationFilter(jwtUtil, userDetailsService);
+	}
 
-        Mockito.when(request.getHeader(Mockito.anyString())).thenReturn( token);
-        Mockito.when(jwtUtil.validateJwtToken(Mockito.anyString())).thenReturn(true);
-        ArgumentCaptor<String> argumentCaptor =  ArgumentCaptor.forClass(String.class);
-        Mockito.when(jwtUtil.getUserNameFromJwtToken(Mockito.anyString())).thenReturn(username);
+	@Test
+	void filterRequest() throws Exception {
+		jwtAuthorizationFilter = new JWTAuthorizationFilter(jwtUtil, userDetailsService);
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn("");
+		Mockito.when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
+		jwtAuthorizationFilter.doFilter(request, response, chain);
 
-        final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority(Constants.SecurityConstants.ROLE_PREFIX + Role.USER.getName()));
-        
-        User user = createUser();
-        Mockito.when(userDetailsService.loadUserByUsername(Mockito.anyString())).thenReturn(user);
-        jwtAuthorizationFilter.doFilter(request, response, chain);
-        Mockito.verify(jwtUtil).getUserNameFromJwtToken(argumentCaptor.capture());
-        assert argumentCaptor.getValue().equalsIgnoreCase("token");
-    }
-    
-    private User createUser(){
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        Set<Role> roles = new HashSet<>();
-        roles.add(Role.USER);
-        user.setRoles(roles);
-        return user;
-    }
+		Mockito.verify(request, Mockito.atLeast(1)).getHeader(Mockito.anyString());
+		Mockito.verify(jwtUtil, Mockito.times(0)).validateJwtToken(Mockito.anyString());
+
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(token);
+		Mockito.when(jwtUtil.validateJwtToken(Mockito.anyString())).thenReturn(false);
+		jwtAuthorizationFilter.doFilter(request, response, chain);
+		Mockito.verify(jwtUtil, Mockito.times(1)).validateJwtToken(Mockito.anyString());
+
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(token);
+		Mockito.when(jwtUtil.validateJwtToken(Mockito.anyString())).thenReturn(true);
+		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.when(jwtUtil.getUserNameFromJwtToken(Mockito.anyString())).thenReturn(username);
+
+		final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		authorities.add(new SimpleGrantedAuthority(Constants.SecurityConstants.ROLE_PREFIX + Role.USER.getName()));
+
+		User user = createUser();
+		Mockito.when(userDetailsService.loadUserByUsername(Mockito.anyString())).thenReturn(user);
+		jwtAuthorizationFilter.doFilter(request, response, chain);
+		Mockito.verify(jwtUtil).getUserNameFromJwtToken(argumentCaptor.capture());
+		assert argumentCaptor.getValue().equalsIgnoreCase("token");
+	}
+
+	private User createUser() {
+		User user = new User();
+		user.setUsername(username);
+		user.setPassword(password);
+		Set<Role> roles = new HashSet<>();
+		roles.add(Role.USER);
+		user.setRoles(roles);
+		return user;
+	}
+
 }

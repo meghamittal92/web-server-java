@@ -26,81 +26,81 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 /**
- * Controller to provide operations on {@link Calorie} for
- * a logged in user.
+ * Controller to provide operations on {@link Calorie} for a logged in user.
  */
 @RestController
 @RequestMapping(path = "${server.request.path.userProfile.calories}")
-@RolesAllowed({Role.RoleConstants.USER_VALUE})
+@RolesAllowed({ Role.RoleConstants.USER_VALUE })
 @RequiredArgsConstructor
 public class UserCalorieController {
 
+	private final CalorieService calorieService;
 
-    private final CalorieService calorieService;
-    private final CalorieMapper calorieMapper;
+	private final CalorieMapper calorieMapper;
 
+	@GetMapping
+	public Page<UserCalorieView> findAll(@RequestParam(value = "search", required = false) String search,
+			final Pageable pageable) {
 
-    @GetMapping
-    public Page<UserCalorieView> findAll(@RequestParam(value = "search", required = false) String search, final Pageable pageable) {
+		final Long userId = fetchUserIdFromAuth();
 
-        final Long userId = fetchUserIdFromAuth();
+		SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>()
+				.with(new Filter(CalorieSearchKey.userId.getName(), RelationalOperator.EQUAL, userId));
+		if (search != null)
+			specBuilder = specBuilder.with(search);
+		Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
 
-        SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>().with(new Filter(CalorieSearchKey.userId.getName(), RelationalOperator.EQUAL, userId));
-        if (search != null)
-            specBuilder = specBuilder.with(search);
-        Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
+		return calorieService.findAll(spec, pageable).map(calorieMapper::toUserCalorieView);
+	}
 
-        return calorieService.findAll(spec, pageable).map(calorieMapper::toUserCalorieView);
-    }
+	@GetMapping(path = "/{id}")
+	public UserCalorieView find(@PathVariable("id") final Long calorieId) {
+		final Long userId = fetchUserIdFromAuth();
+		return calorieMapper.toUserCalorieView(calorieService.findOneByUser(userId, calorieId));
 
-    @GetMapping(path = "/{id}")
-    public UserCalorieView find(@PathVariable("id") final Long calorieId) {
-        final Long userId = fetchUserIdFromAuth();
-        return calorieMapper.toUserCalorieView(calorieService.findOneByUser(userId, calorieId));
+	}
 
+	@PostMapping(consumes = "application/json")
+	public UserCalorieView create(@RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
 
-    }
+		final Long userId = fetchUserIdFromAuth();
+		Calorie calorie = calorieMapper.toCalorie(createUserCalorieRequest, userId);
+		calorie.setUserId(userId);
+		return calorieMapper.toUserCalorieView(calorieService.createCalorie(calorie));
+	}
 
-    @PostMapping(consumes = "application/json")
-    public UserCalorieView create(@RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
+	@DeleteMapping(path = "/{id}")
+	public void delete(@PathVariable("id") final Long calorieId) {
 
-        final Long userId = fetchUserIdFromAuth();
-        Calorie calorie = calorieMapper.toCalorie(createUserCalorieRequest, userId);
-        calorie.setUserId(userId);
-        return calorieMapper.toUserCalorieView(calorieService.createCalorie(calorie));
-    }
+		final Long userId = fetchUserIdFromAuth();
+		calorieService.deleteById(userId, calorieId);
+	}
 
-    @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") final Long calorieId) {
+	@PatchMapping(path = "/{id}")
+	public UserCalorieView update(@PathVariable("id") final Long calorieId,
+			@RequestBody @Valid final UpdateCalorieRequest updateCalorieRequest) {
 
-        final Long userId = fetchUserIdFromAuth();
-        calorieService.deleteById(userId, calorieId);
-    }
+		final Long userId = fetchUserIdFromAuth();
+		Calorie originalCalorie = calorieService.findOneByUser(userId, calorieId);
+		Calorie updatedCalorie = calorieMapper.updateCalorie(updateCalorieRequest, originalCalorie);
 
-    @PatchMapping(path = "/{id}")
-    public UserCalorieView update(@PathVariable("id") final Long calorieId, @RequestBody @Valid final UpdateCalorieRequest updateCalorieRequest) {
+		return calorieMapper.toUserCalorieView(calorieService.updateById(userId, calorieId, updatedCalorie));
+	}
 
-        final Long userId = fetchUserIdFromAuth();
-        Calorie originalCalorie = calorieService.findOneByUser(userId, calorieId);
-        Calorie updatedCalorie = calorieMapper.updateCalorie(updateCalorieRequest, originalCalorie);
+	@PutMapping(path = "/{id}")
+	public UserCalorieView replace(@PathVariable("id") final Long calorieId,
+			@RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
 
-        return calorieMapper.toUserCalorieView(calorieService.updateById(userId, calorieId, updatedCalorie));
-    }
+		final Long userId = fetchUserIdFromAuth();
+		Calorie updatedCalorie = calorieMapper.toCalorie(createUserCalorieRequest, userId);
 
-    @PutMapping(path = "/{id}")
-    public UserCalorieView replace(@PathVariable("id") final Long calorieId, @RequestBody @Valid final CreateUserCalorieRequest createUserCalorieRequest) {
+		return calorieMapper.toUserCalorieView(calorieService.replaceById(userId, calorieId, updatedCalorie));
+	}
 
-        final Long userId = fetchUserIdFromAuth();
-        Calorie updatedCalorie = calorieMapper.toCalorie(createUserCalorieRequest, userId);
+	private Long fetchUserIdFromAuth() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return ((User) auth.getPrincipal()).getId();
 
-
-        return calorieMapper.toUserCalorieView(calorieService.replaceById(userId, calorieId, updatedCalorie));
-    }
-
-    private Long fetchUserIdFromAuth() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ((User) auth.getPrincipal()).getId();
-
-    }
+	}
 
 }

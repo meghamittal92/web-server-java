@@ -15,24 +15,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-
 @Component
 @RequiredArgsConstructor
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+	final ObjectMapper objectMapper;
 
-    final ObjectMapper objectMapper;
+	@Override
+	public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			AuthenticationException e) throws IOException {
+		final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED,
+				ApiError.UNAUTHORIZED.getErrorMessage(), ApiError.UNAUTHORIZED.getErrorCode());
 
-    @Override
-    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
-        final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, ApiError.UNAUTHORIZED.getErrorMessage(), ApiError.UNAUTHORIZED.getErrorCode());
+		httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+		httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		httpServletResponse.getOutputStream().println(objectMapper.writeValueAsString(errorResponse));
 
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        httpServletResponse.getOutputStream()
-                .println(objectMapper.writeValueAsString(errorResponse));
+	}
 
-    }
 }

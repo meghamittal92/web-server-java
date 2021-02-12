@@ -16,40 +16,39 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 /**
- * Controller to provide operations on user profile
- * for a logged in user .
+ * Controller to provide operations on user profile for a logged in user .
  */
 @RestController
 @RequestMapping(path = "${server.request.path.userProfile}")
 @RequiredArgsConstructor
-@RolesAllowed({Role.RoleConstants.USER_VALUE})
+@RolesAllowed({ Role.RoleConstants.USER_VALUE })
 public class UserProfileController {
 
+	private final UserService userService;
 
-    private final UserService userService;
-    private final UserMapper userMapper;
+	private final UserMapper userMapper;
 
+	@GetMapping
+	public ProfileView read() {
 
-    @GetMapping
-    public ProfileView read() {
+		final Long userId = fetchUserIdFromAuth();
 
-        final Long userId = fetchUserIdFromAuth();
+		return userMapper.toProfileView(userService.findById(userId));
+	}
 
-        return userMapper.toProfileView(userService.findById(userId));
-    }
+	@PatchMapping
+	public ProfileView updateProfile(@RequestBody @Valid UpdateProfileRequest updateProfileRequest) {
 
-    @PatchMapping
-    public ProfileView updateProfile( @RequestBody @Valid UpdateProfileRequest updateProfileRequest) {
+		final Long userId = fetchUserIdFromAuth();
+		final User existingUser = userService.findById(userId);
+		return userMapper.toProfileView(
+				userService.updateById(userId, userMapper.updateUser(updateProfileRequest, existingUser)));
+	}
 
-        final Long userId = fetchUserIdFromAuth();
-        final User existingUser = userService.findById(userId);
-        return userMapper.toProfileView(userService.updateById(userId,  userMapper.updateUser(updateProfileRequest, existingUser)));
-    }
+	private Long fetchUserIdFromAuth() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return ((User) auth.getPrincipal()).getId();
 
-    private Long fetchUserIdFromAuth() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ((User) auth.getPrincipal()).getId();
-
-    }
+	}
 
 }

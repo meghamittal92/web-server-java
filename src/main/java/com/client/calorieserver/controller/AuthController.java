@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
- * Controller for user authentication authorization
- * operations.
+ * Controller for user authentication authorization operations.
  *
  */
 @RestController
@@ -27,31 +26,33 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AuthController {
 
+	private final UserService userService;
 
-    private final UserService userService;
-    private final UserMapper userMapper;
-    private final AuthenticationManager authenticationManager;
-    private final JWTUtil jwtUtil;
+	private final UserMapper userMapper;
 
-    @PostMapping("${server.request.endpoint.registerUser}")
-    public ProfileView register(@RequestBody @Valid final RegisterUserRequest registerUserRequest) {
+	private final AuthenticationManager authenticationManager;
 
-        User user = userMapper.toUser(registerUserRequest);
-        return userMapper.toProfileView(userService.create(user));
-    }
+	private final JWTUtil jwtUtil;
 
-    @PostMapping("${server.request.endpoint.loginUser}")
-    public ResponseEntity<ProfileView> login(@RequestBody @Valid final LoginRequest request) {
-        final Authentication auth = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+	@PostMapping("${server.request.endpoint.registerUser}")
+	public ProfileView register(@RequestBody @Valid final RegisterUserRequest registerUserRequest) {
 
-        final String username = ((User) auth.getPrincipal()).getUsername();
-        final User user = (User) userService.loadUserByUsername(username);
+		User user = userMapper.toUser(registerUserRequest);
+		return userMapper.toProfileView(userService.create(user));
+	}
 
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBearerAuth(jwtUtil.generateJwtToken(auth));
+	@PostMapping("${server.request.endpoint.loginUser}")
+	public ResponseEntity<ProfileView> login(@RequestBody @Valid final LoginRequest request) {
+		final Authentication auth = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
+		final String username = ((User) auth.getPrincipal()).getUsername();
+		final User user = (User) userService.loadUserByUsername(username);
 
-        return ResponseEntity.ok().headers(httpHeaders).body(userMapper.toProfileView(user));
-    }
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setBearerAuth(jwtUtil.generateJwtToken(auth));
+
+		return ResponseEntity.ok().headers(httpHeaders).body(userMapper.toProfileView(user));
+	}
+
 }

@@ -15,36 +15,33 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class CalorieDTO extends AuditableDTO<String> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(name = "datetime")
-    private LocalDateTime dateTime;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "num_calories")
-    private Integer numCalories;
+	@Column(name = "datetime")
+	private LocalDateTime dateTime;
 
-    @Column(name = "meal_details")
-    private String mealDetails;
+	@Column(name = "num_calories")
+	private Integer numCalories;
 
+	@Column(name = "meal_details")
+	private String mealDetails;
 
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
+	@Column(name = "user_id", insertable = false, updatable = false)
+	private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "user_id", referencedColumnName = "id")
-    private UserDTO userDTO;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	private UserDTO userDTO;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.LAZY)
-    @JoinColumnsOrFormulas(
-            {
-                    @JoinColumnOrFormula(column = @JoinColumn(insertable = false, updatable = false, name = "user_id", referencedColumnName = "user_id")),
-                    @JoinColumnOrFormula(formula = @JoinFormula(value = "CAST(datetime as date)", referencedColumnName = "date"))
-            }
-    )
-    private CaloriePerDayDTO caloriePerDayDTO;
+	@ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.LAZY)
+	@JoinColumnsOrFormulas({
+			@JoinColumnOrFormula(column = @JoinColumn(insertable = false, updatable = false, name = "user_id",
+					referencedColumnName = "user_id")),
+			@JoinColumnOrFormula(
+					formula = @JoinFormula(value = "CAST(datetime as date)", referencedColumnName = "date")) })
+	private CaloriePerDayDTO caloriePerDayDTO;
 
 }
-

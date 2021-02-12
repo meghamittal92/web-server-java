@@ -11,9 +11,14 @@ import java.util.Set;
 @Data
 public class UserView {
 
-    private Long id;
-    private String username;
-    private Integer expectedCaloriesPerDay;
-    private Set<Role> roles;
-    private String email;
+	private Long id;
+
+	private String username;
+
+	private Integer expectedCaloriesPerDay;
+
+	private Set<Role> roles;
+
+	private String email;
+
 }

@@ -5,15 +5,16 @@ import lombok.Data;
 @Data
 public class Filter {
 
-    private String key;
-    private RelationalOperator operator;
-    private Object value;
+	private String key;
 
+	private RelationalOperator operator;
 
-    public Filter(String key, RelationalOperator operator, Object value) {
-        this.key = key;
-        this.operator = operator;
-        this.value = value;
-    }
+	private Object value;
+
+	public Filter(String key, RelationalOperator operator, Object value) {
+		this.key = key;
+		this.operator = operator;
+		this.value = value;
+	}
 
 }

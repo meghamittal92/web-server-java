@@ -1,6 +1,5 @@
 package com.client.calorieserver;
 
-
 import com.client.calorieserver.accessor.CalorieAccessor;
 import com.client.calorieserver.accessor.NutritionixCalorieAccessorImpl;
 import com.client.calorieserver.configuration.Constants;
@@ -19,7 +18,6 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -28,36 +26,37 @@ import java.time.format.DateTimeFormatter;
 @EnableJpaRepositories(repositoryBaseClass = CustomRepositoryImpl.class)
 public class AppConfig {
 
-    @Value("${app.nutritionix.apiKey}")
-    private String apikey;
+	@Value("${app.nutritionix.apiKey}")
+	private String apikey;
 
-    @Value("${app.nutritionix.appId}")
-    private String appId;
+	@Value("${app.nutritionix.appId}")
+	private String appId;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
+	@Bean
+	public ObjectMapper objectMapper() {
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final SimpleModule module = new SimpleModule();
+		final LocalDateTimeSerializer localDateTimeDeserializer = new LocalDateTimeSerializer(
+				DateTimeFormatter.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT));
+		module.addSerializer(LocalDateTime.class, localDateTimeDeserializer);
+		objectMapper.registerModule(module);
+		return objectMapper;
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final SimpleModule module = new SimpleModule();
-        final LocalDateTimeSerializer localDateTimeDeserializer = new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT));
-        module.addSerializer(LocalDateTime.class, localDateTimeDeserializer);
-        objectMapper.registerModule(module);
-        return objectMapper;
+	}
 
-    }
+	@Bean
+	public ConversionService conversionService() {
+		return new DefaultConversionService();
+	}
 
-    @Bean
-    public ConversionService conversionService() {
-        return new DefaultConversionService();
-    }
+	@Bean
+	public CalorieAccessor calorieAccessor() {
+		return new NutritionixCalorieAccessorImpl(apikey, appId);
+	}
 
-    @Bean
-    public CalorieAccessor calorieAccessor() {
-        return new NutritionixCalorieAccessorImpl(apikey, appId);
-    }
 }

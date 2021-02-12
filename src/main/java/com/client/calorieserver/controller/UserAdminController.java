@@ -19,63 +19,62 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 /**
- * Controller to provide administrative
- * operations on {@link UserDTO} object.
+ * Controller to provide administrative operations on {@link UserDTO} object.
  */
 @RestController
 @RequestMapping(path = "${server.request.path.users}")
 @RequiredArgsConstructor
-@RolesAllowed({Role.RoleConstants.ADMIN_VALUE, Role.RoleConstants.USER_MANAGER_VALUE})
+@RolesAllowed({ Role.RoleConstants.ADMIN_VALUE, Role.RoleConstants.USER_MANAGER_VALUE })
 public class UserAdminController {
 
+	private final UserService userService;
 
-    private final UserService userService;
-    private final UserMapper userMapper;
+	private final UserMapper userMapper;
 
+	@GetMapping
+	public Page<UserView> findAll(@RequestParam(value = "search", required = false) final String search,
+			final Pageable pageable) {
 
-    @GetMapping
-    public Page<UserView> findAll(@RequestParam(value = "search", required = false) final String search, final Pageable pageable) {
+		SpecificationBuilder<UserDTO> specificationBuilder = new SpecificationBuilder<>();
+		if (search != null)
+			specificationBuilder.with(search);
 
-        SpecificationBuilder<UserDTO> specificationBuilder = new SpecificationBuilder<>();
-        if (search != null)
-            specificationBuilder.with(search);
+		return userService.findAll(specificationBuilder.build(UserDTOSpecification::new), pageable)
+				.map(userMapper::toUserView);
+	}
 
-        return userService.findAll(specificationBuilder.build(UserDTOSpecification::new), pageable).map(userMapper::toUserView);
-    }
+	@GetMapping(path = "/{id}")
+	public UserView find(@PathVariable("id") Long userId) {
+		return userMapper.toUserView(userService.findById(userId));
+	}
 
-    @GetMapping(path = "/{id}")
-    public UserView find(@PathVariable("id") Long userId) {
-        return userMapper.toUserView(userService.findById(userId));
-    }
+	@PostMapping(consumes = "application/json")
+	public UserView create(@RequestBody @Valid CreateUserRequest createUserRequest) {
 
-    @PostMapping(consumes = "application/json")
-    public UserView create(@RequestBody @Valid CreateUserRequest createUserRequest) {
+		User user = userMapper.toUser(createUserRequest);
+		return userMapper.toUserView(userService.create(user));
+	}
 
-        User user = userMapper.toUser(createUserRequest);
-        return userMapper.toUserView(userService.create(user));
-    }
+	@DeleteMapping(path = "/{id}")
+	public void delete(@PathVariable("id") Long userId) {
 
-    @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") Long userId) {
+		userService.deleteById(userId);
+	}
 
-        userService.deleteById(userId);
-    }
+	@PutMapping(path = "/{id}")
+	public UserView replace(@PathVariable("id") Long userId, @RequestBody @Valid CreateUserRequest createUserRequest) {
 
-    @PutMapping(path = "/{id}")
-    public UserView replace(@PathVariable("id") Long userId, @RequestBody @Valid CreateUserRequest createUserRequest) {
+		User updatedUser = userMapper.toUser(createUserRequest);
+		return userMapper.toUserView(userService.replaceById(userId, updatedUser));
+	}
 
-        User updatedUser = userMapper.toUser(createUserRequest);
-        return userMapper.toUserView(userService.replaceById(userId, updatedUser));
-    }
+	@PatchMapping(path = "/{id}")
+	public UserView update(@PathVariable("id") Long userId, @RequestBody @Valid UpdateUserRequest updateUserRequest) {
 
+		User originalUser = userService.findById(userId);
 
-    @PatchMapping(path = "/{id}")
-    public UserView update(@PathVariable("id") Long userId, @RequestBody @Valid UpdateUserRequest updateUserRequest) {
-
-        User originalUser = userService.findById(userId);
-
-        User updatedUser = userMapper.updateUser(updateUserRequest, originalUser);
-        return userMapper.toUserView(userService.updateById(userId, updatedUser));
-    }
+		User updatedUser = userMapper.updateUser(updateUserRequest, originalUser);
+		return userMapper.toUserView(userService.updateById(userId, updatedUser));
+	}
 
 }

@@ -1,6 +1,5 @@
 package com.client.calorieserver.domain.dto.db;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,14 +12,14 @@ import java.util.Collection;
 @Setter
 public class RoleDTO extends AuditableDTO<String> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(unique = true)
-    private String name;
+	@Column(unique = true)
+	private String name;
 
-    @ManyToMany(mappedBy = "roleDTOs")
-    private Collection<UserDTO> userDTOS;
+	@ManyToMany(mappedBy = "roleDTOs")
+	private Collection<UserDTO> userDTOS;
 
 }

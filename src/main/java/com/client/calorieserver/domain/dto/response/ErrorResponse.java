@@ -9,7 +9,6 @@ import lombok.Getter;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
 
-
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -22,36 +21,40 @@ import java.util.List;
 @Data
 public class ErrorResponse {
 
-    private HttpStatus status;
-    private String message;
-    private String errorCode;
-    @JsonSerialize(as = LocalDateTime.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DateConstants.DATE_TIME_FORMAT)
-    private LocalDateTime timestamp;
-    List<String> details;
+	private HttpStatus status;
 
-    private ErrorResponse() {
-        timestamp = LocalDateTime.now();
-    }
+	private String message;
 
-    public ErrorResponse(HttpStatus status) {
-        this();
-        this.status = status;
-    }
+	private String errorCode;
 
-    public ErrorResponse(HttpStatus status, String message, String errorCode, List<String> details) {
-        this();
-        this.status = status;
-        this.message = message;
-        this.errorCode = errorCode;
-        this.details = details;
-    }
+	@JsonSerialize(as = LocalDateTime.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DateConstants.DATE_TIME_FORMAT)
+	private LocalDateTime timestamp;
 
-    public ErrorResponse(HttpStatus status, String message, String errorCode) {
-        this();
-        this.status = status;
-        this.message = message;
-        this.errorCode = errorCode;
-    }
+	List<String> details;
+
+	private ErrorResponse() {
+		timestamp = LocalDateTime.now();
+	}
+
+	public ErrorResponse(HttpStatus status) {
+		this();
+		this.status = status;
+	}
+
+	public ErrorResponse(HttpStatus status, String message, String errorCode, List<String> details) {
+		this();
+		this.status = status;
+		this.message = message;
+		this.errorCode = errorCode;
+		this.details = details;
+	}
+
+	public ErrorResponse(HttpStatus status, String message, String errorCode) {
+		this();
+		this.status = status;
+		this.message = message;
+		this.errorCode = errorCode;
+	}
 
 }

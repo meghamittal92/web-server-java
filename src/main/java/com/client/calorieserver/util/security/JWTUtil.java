@@ -19,52 +19,51 @@ import java.util.Date;
  */
 @Component
 public class JWTUtil {
-    private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 
-    @Value("${app.jwtSecret}")
-    private String jwtSecret;
+	private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 
-    @Value("${spring.datasource.password}")
-    private String pass;
+	@Value("${app.jwtSecret}")
+	private String jwtSecret;
 
-    @Value("${app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+	@Value("${spring.datasource.password}")
+	private String pass;
 
-    public String generateJwtToken(Authentication auth) {
+	@Value("${app.jwtExpirationMs}")
+	private int jwtExpirationMs;
 
-        final String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .sign(Algorithm.HMAC512(jwtSecret.getBytes()));
+	public String generateJwtToken(Authentication auth) {
 
-        return token;
+		final String token = JWT.create().withSubject(((User) auth.getPrincipal()).getUsername())
+				.withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
+				.sign(Algorithm.HMAC512(jwtSecret.getBytes()));
 
+		return token;
 
-    }
+	}
 
-    public String getUserNameFromJwtToken(String authToken) {
-        return JWT.require(Algorithm.HMAC512(jwtSecret))
-                .build()
-                .verify(authToken)
-                .getSubject();
-    }
+	public String getUserNameFromJwtToken(String authToken) {
+		return JWT.require(Algorithm.HMAC512(jwtSecret)).build().verify(authToken).getSubject();
+	}
 
-    public boolean validateJwtToken(String authToken) {
-        try {
-            JWT.require(Algorithm.HMAC512(jwtSecret.getBytes()))
-                    .build()
-                    .verify(authToken);
-            return true;
-        } catch (SignatureVerificationException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
-        } catch (TokenExpiredException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
-        } catch (InvalidClaimException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty - {}", ex.getMessage());
-        }
+	public boolean validateJwtToken(String authToken) {
+		try {
+			JWT.require(Algorithm.HMAC512(jwtSecret.getBytes())).build().verify(authToken);
+			return true;
+		}
+		catch (SignatureVerificationException e) {
+			logger.error("Invalid JWT signature: {}", e.getMessage());
+		}
+		catch (TokenExpiredException e) {
+			logger.error("JWT token is expired: {}", e.getMessage());
+		}
+		catch (InvalidClaimException e) {
+			logger.error("Invalid JWT token: {}", e.getMessage());
+		}
+		catch (IllegalArgumentException ex) {
+			logger.error("JWT claims string is empty - {}", ex.getMessage());
+		}
 
-        return false;
-    }
+		return false;
+	}
+
 }

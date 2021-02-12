@@ -16,29 +16,26 @@ import java.time.format.DateTimeFormatter;
 /**
  * Custom serializer for {@Link LocalDateTime} objects.
  */
-public class CustomDateDeserializer
-        extends StdDeserializer<LocalDateTime> {
+public class CustomDateDeserializer extends StdDeserializer<LocalDateTime> {
 
+	private static final DateTimeFormatter formatter = DateTimeFormatter
+			.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT);
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT);
+	public CustomDateDeserializer() {
+		super(LocalDateTime.class);
+	}
 
-    public CustomDateDeserializer() {
-        super(LocalDateTime.class);
-    }
+	public CustomDateDeserializer(Class<?> vc) {
+		super(vc);
+	}
 
-    public CustomDateDeserializer(Class<?> vc) {
-        super(vc);
-    }
+	@Override
+	public LocalDateTime deserialize(final JsonParser jsonparser, final DeserializationContext context)
+			throws IOException {
 
-    @Override
-    public LocalDateTime deserialize(
-            final JsonParser jsonparser, final DeserializationContext context)
-            throws IOException {
+		final String dateString = jsonparser.getText();
+		return LocalDateTime.parse(dateString, formatter);
 
-        final String dateString = jsonparser.getText();
-        return LocalDateTime.parse(dateString, formatter);
-
-    }
-
+	}
 
 }

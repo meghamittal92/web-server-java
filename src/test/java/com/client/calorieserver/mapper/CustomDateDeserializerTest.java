@@ -13,30 +13,31 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class CustomDateDeserializerTest {
-    private static final String date="1986-04-08T12:30:00";
 
-    private CustomDateDeserializer customDateDeserializer;
+	private static final String date = "1986-04-08T12:30:00";
 
-    @Mock
-    JsonParser jsonParser;
+	private CustomDateDeserializer customDateDeserializer;
 
-    @Mock
-    DeserializationContext context;
+	@Mock
+	JsonParser jsonParser;
 
-    @BeforeEach
-    void init(){
-        MockitoAnnotations.openMocks(this);
-        customDateDeserializer = new CustomDateDeserializer();
-    }
+	@Mock
+	DeserializationContext context;
 
-    @Test
-    void deserialize() throws Exception{
-        LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        Mockito.when(jsonParser.getText()).thenReturn(date);
-        LocalDateTime deserialized = customDateDeserializer.deserialize(jsonParser, context);
-        assert deserialized != null;
-        assert deserialized.getYear() == 1986;
-        assert deserialized.getDayOfMonth() == 8;
-    }
+	@BeforeEach
+	void init() {
+		MockitoAnnotations.openMocks(this);
+		customDateDeserializer = new CustomDateDeserializer();
+	}
+
+	@Test
+	void deserialize() throws Exception {
+		LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+		Mockito.when(jsonParser.getText()).thenReturn(date);
+		LocalDateTime deserialized = customDateDeserializer.deserialize(jsonParser, context);
+		assert deserialized != null;
+		assert deserialized.getYear() == 1986;
+		assert deserialized.getDayOfMonth() == 8;
+	}
 
 }

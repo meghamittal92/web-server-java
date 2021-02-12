@@ -14,10 +14,10 @@ import java.util.Optional;
 @EnableJpaAuditing(auditorAwareRef = "testAuditorProvider")
 public class TestAuditingConfiguration {
 
-    @Bean
-    @Primary
-    public AuditorAware<String> testAuditorProvider() {
-        return () -> Optional.of("Test");
-    }
+	@Bean
+	@Primary
+	public AuditorAware<String> testAuditorProvider() {
+		return () -> Optional.of("Test");
+	}
 
 }

@@ -15,26 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-
 @Component
 @RequiredArgsConstructor
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
+	final ObjectMapper objectMapper;
 
+	@Override
+	public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			AccessDeniedException e) throws IOException {
+		final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED,
+				ApiError.UNAUTHORIZED.getErrorMessage(), ApiError.UNAUTHORIZED.getErrorCode());
 
-    final ObjectMapper objectMapper;
+		httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-    @Override
-    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException {
-        final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED,
-                ApiError.UNAUTHORIZED.getErrorMessage(), ApiError.UNAUTHORIZED.getErrorCode());
+		httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		httpServletResponse.getOutputStream().println(objectMapper.writeValueAsString(errorResponse));
+	}
 
-
-        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        httpServletResponse.getOutputStream()
-                .println(objectMapper.writeValueAsString(errorResponse));
-    }
 }

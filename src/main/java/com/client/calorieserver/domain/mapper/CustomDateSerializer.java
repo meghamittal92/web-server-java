@@ -14,23 +14,27 @@ import java.time.format.DateTimeFormatter;
  * Custom deserializer for {@Link LocalDateTime} objects.
  */
 public class CustomDateSerializer extends StdSerializer<LocalDateTime> {
-    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT);
+	private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
 
-    public CustomDateSerializer() {
-        super(LocalDateTime.class);
-    }
+	private static final DateTimeFormatter formatter = DateTimeFormatter
+			.ofPattern(Constants.DateConstants.DATE_TIME_FORMAT);
 
-    @Override
-    public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public CustomDateSerializer() {
+		super(LocalDateTime.class);
+	}
 
-        if (value != null) {
-            final String formattedDateTime = value.format(formatter);
-            gen.writeString(formattedDateTime);
-        } else {
-            gen.writeNull();
-        }
+	@Override
+	public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
-    }
+		if (value != null) {
+			final String formattedDateTime = value.format(formatter);
+			gen.writeString(formattedDateTime);
+		}
+		else {
+			gen.writeNull();
+		}
+
+	}
+
 }

@@ -1,6 +1,5 @@
 package com.client.calorieserver.domain.model.search;
 
-
 import com.client.calorieserver.domain.dto.db.UserDTO_;
 
 import java.util.Collections;
@@ -12,40 +11,39 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum UserSearchKey {
 
-    username("username", UserDTO_.USERNAME),
-    email("email", UserDTO_.EMAIL),
-    expectedCaloriesPerDay("expectedCaloriesPerDay", UserDTO_.EXPECTED_CALORIES_PER_DAY);
+	username("username", UserDTO_.USERNAME), email("email",
+			UserDTO_.EMAIL), expectedCaloriesPerDay("expectedCaloriesPerDay", UserDTO_.EXPECTED_CALORIES_PER_DAY);
 
-    private static final Map<String, UserSearchKey> USER_SEARCH_KEY_MAP;
-    private final String name;
-    private final String dbColumnName;
+	private static final Map<String, UserSearchKey> USER_SEARCH_KEY_MAP;
 
-    UserSearchKey(final String name, final String dbColumnName) {
+	private final String name;
 
-        this.name = name;
-        this.dbColumnName = dbColumnName;
-    }
+	private final String dbColumnName;
 
-    public String getName() {
-        return name;
-    }
+	UserSearchKey(final String name, final String dbColumnName) {
 
-    public String getDbColumnName() {
-        return dbColumnName;
-    }
+		this.name = name;
+		this.dbColumnName = dbColumnName;
+	}
 
+	public String getName() {
+		return name;
+	}
 
-    static {
-        Map<String, UserSearchKey> map = new ConcurrentHashMap<String, UserSearchKey>();
-        for (UserSearchKey instance : UserSearchKey.values()) {
-            map.put(instance.getName().toLowerCase(), instance);
-        }
-        USER_SEARCH_KEY_MAP = Collections.unmodifiableMap(map);
-    }
+	public String getDbColumnName() {
+		return dbColumnName;
+	}
 
-    public static UserSearchKey get(String name) {
-        return USER_SEARCH_KEY_MAP.get(name.toLowerCase());
-    }
+	static {
+		Map<String, UserSearchKey> map = new ConcurrentHashMap<String, UserSearchKey>();
+		for (UserSearchKey instance : UserSearchKey.values()) {
+			map.put(instance.getName().toLowerCase(), instance);
+		}
+		USER_SEARCH_KEY_MAP = Collections.unmodifiableMap(map);
+	}
 
+	public static UserSearchKey get(String name) {
+		return USER_SEARCH_KEY_MAP.get(name.toLowerCase());
+	}
 
 }

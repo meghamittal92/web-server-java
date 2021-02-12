@@ -27,103 +27,103 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+	private final UserRepository userRepository;
 
-    @Transactional
-    public User create(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new EntityAlreadyExistsException(User.class, String.format("User with name %s already exists", user.getUsername()));
-        }
+	private final UserMapper userMapper;
 
-        if (userRepository.existsByEmail(user.getEmail()))
-            throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", user.getEmail()));
+	@Transactional
+	public User create(User user) {
+		if (userRepository.existsByUsername(user.getUsername())) {
+			throw new EntityAlreadyExistsException(User.class,
+					String.format("User with name %s already exists", user.getUsername()));
+		}
 
-        final UserDTO userDTO = userRepository.save(userMapper.toUserDTO(user));
-        return userMapper.toUser(userDTO);
-    }
+		if (userRepository.existsByEmail(user.getEmail()))
+			throw new EntityAlreadyExistsException(User.class,
+					String.format("User with email %s already exists", user.getEmail()));
 
-    @Transactional
-    public User replaceById(final Long id, User updatedUser) {
+		final UserDTO userDTO = userRepository.save(userMapper.toUserDTO(user));
+		return userMapper.toUser(userDTO);
+	}
 
-        UserDTO originalUserDTO = userRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(User.class, id)
-        );
+	@Transactional
+	public User replaceById(final Long id, User updatedUser) {
 
-        if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
-            if (userRepository.existsByUsername(updatedUser.getUsername()))
-                throw new EntityAlreadyExistsException(User.class, String.format("User with username %s already exists", updatedUser.getUsername()));
-        }
+		UserDTO originalUserDTO = userRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
-        if (!updatedUser.getEmail().equals(originalUserDTO.getEmail())) {
-            if (userRepository.existsByEmail(updatedUser.getEmail()))
-                throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", updatedUser.getEmail()));
-        }
+		if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
+			if (userRepository.existsByUsername(updatedUser.getUsername()))
+				throw new EntityAlreadyExistsException(User.class,
+						String.format("User with username %s already exists", updatedUser.getUsername()));
+		}
 
-        UserDTO updatedUserDTO = userMapper.toUserDTO(updatedUser);
-        updatedUserDTO.setId(originalUserDTO.getId());
+		if (!updatedUser.getEmail().equals(originalUserDTO.getEmail())) {
+			if (userRepository.existsByEmail(updatedUser.getEmail()))
+				throw new EntityAlreadyExistsException(User.class,
+						String.format("User with email %s already exists", updatedUser.getEmail()));
+		}
 
-        return userMapper.toUser(userRepository.save(updatedUserDTO));
-    }
+		UserDTO updatedUserDTO = userMapper.toUserDTO(updatedUser);
+		updatedUserDTO.setId(originalUserDTO.getId());
 
-    @Transactional
-    public User updateById(final Long id, User updatedUser) {
+		return userMapper.toUser(userRepository.save(updatedUserDTO));
+	}
 
-        UserDTO originalUserDTO = userRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(User.class, id)
-        );
+	@Transactional
+	public User updateById(final Long id, User updatedUser) {
 
-        if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
-            if (userRepository.existsByUsername(updatedUser.getUsername()))
-                throw new EntityAlreadyExistsException(User.class, String.format("User with username %s already exists", updatedUser.getUsername()));
-        }
+		UserDTO originalUserDTO = userRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
-        if (!updatedUser.getEmail().equals(originalUserDTO.getEmail())) {
-            if (userRepository.existsByEmail(updatedUser.getEmail()))
-                throw new EntityAlreadyExistsException(User.class, String.format("User with email %s already exists", updatedUser.getEmail()));
-        }
+		if (!updatedUser.getUsername().equals(originalUserDTO.getUsername())) {
+			if (userRepository.existsByUsername(updatedUser.getUsername()))
+				throw new EntityAlreadyExistsException(User.class,
+						String.format("User with username %s already exists", updatedUser.getUsername()));
+		}
 
-        UserDTO updatedUserDTO = userMapper.updateUserDTO(updatedUser, originalUserDTO);
+		if (!updatedUser.getEmail().equals(originalUserDTO.getEmail())) {
+			if (userRepository.existsByEmail(updatedUser.getEmail()))
+				throw new EntityAlreadyExistsException(User.class,
+						String.format("User with email %s already exists", updatedUser.getEmail()));
+		}
 
-        return userMapper.toUser(userRepository.save(updatedUserDTO));
-    }
+		UserDTO updatedUserDTO = userMapper.updateUserDTO(updatedUser, originalUserDTO);
 
-    public Page<User> findAll(final Pageable pageable) {
+		return userMapper.toUser(userRepository.save(updatedUserDTO));
+	}
 
-        return userRepository.findAll(pageable).map(userMapper::toUser);
-    }
+	public Page<User> findAll(final Pageable pageable) {
 
-    public Page<User> findAll(Specification<UserDTO> spec, Pageable pageable) {
+		return userRepository.findAll(pageable).map(userMapper::toUser);
+	}
 
-        final Page<UserDTO> userDTOS = userRepository.findAll(spec, pageable);
+	public Page<User> findAll(Specification<UserDTO> spec, Pageable pageable) {
 
-        return userDTOS.map(userMapper::toUser);
-    }
+		final Page<UserDTO> userDTOS = userRepository.findAll(spec, pageable);
 
+		return userDTOS.map(userMapper::toUser);
+	}
 
-    @Transactional
-    public void deleteById(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(User.class, userId)
-                );
-        userRepository.deleteById(userId);
-    }
+	@Transactional
+	public void deleteById(Long userId) {
+		userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(User.class, userId));
+		userRepository.deleteById(userId);
+	}
 
-    @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
-        UserDTO userDTO = userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException(String.format("Could not find user with username: %s", username)));
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserDTO userDTO = userRepository.findByUsername(username).orElseThrow(
+				() -> new UsernameNotFoundException(String.format("Could not find user with username: %s", username)));
 
-        return userMapper.toUser(userDTO);
-    }
+		return userMapper.toUser(userDTO);
+	}
 
-    public User findById(final Long userId) {
+	public User findById(final Long userId) {
 
-        final UserDTO userDTO = userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(User.class, userId)
-        );
-        return userMapper.toUser(userDTO);
-    }
+		final UserDTO userDTO = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException(User.class, userId));
+		return userMapper.toUser(userDTO);
+	}
+
 }

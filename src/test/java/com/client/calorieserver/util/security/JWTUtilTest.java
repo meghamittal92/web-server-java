@@ -9,67 +9,70 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 
-
 public class JWTUtilTest {
 
-    private final static String username = "user_name";
-    private final static String password = "password";
-    private final static int expirationMs = 100000;
-    JWTUtil jwtUtil;
+	private final static String username = "user_name";
 
-    @Mock
-    Authentication authentication;
+	private final static String password = "password";
 
-    @BeforeEach
-    void init(){
-        MockitoAnnotations.openMocks(this);
-        jwtUtil = new JWTUtil();
-        org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtSecret", password);
-        org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtExpirationMs", expirationMs);
-    }
+	private final static int expirationMs = 100000;
 
-    @Test
-    void creatAuthToken(){
-        User user = new User();
-        user.setUsername(username);
-        Mockito.when(authentication.getPrincipal()).thenReturn(user);
-        String token = jwtUtil.generateJwtToken(authentication);
-        assert token != null;
-    }
+	JWTUtil jwtUtil;
 
-    @Test
-    void getUserName(){
+	@Mock
+	Authentication authentication;
 
-        User user = new User();
-        user.setUsername(username);
-        Mockito.when(authentication.getPrincipal()).thenReturn(user);
-        String token = jwtUtil.generateJwtToken(authentication);
-        assert token != null;
+	@BeforeEach
+	void init() {
+		MockitoAnnotations.openMocks(this);
+		jwtUtil = new JWTUtil();
+		org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtSecret", password);
+		org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtExpirationMs", expirationMs);
+	}
 
-        assert jwtUtil.getUserNameFromJwtToken(token).equalsIgnoreCase(username);
-    }
+	@Test
+	void creatAuthToken() {
+		User user = new User();
+		user.setUsername(username);
+		Mockito.when(authentication.getPrincipal()).thenReturn(user);
+		String token = jwtUtil.generateJwtToken(authentication);
+		assert token != null;
+	}
 
-    @Test
-    void validateAuthToken(){
+	@Test
+	void getUserName() {
 
-        User user = new User();
-        user.setUsername(username);
-        Mockito.when(authentication.getPrincipal()).thenReturn(user);
-        String token = jwtUtil.generateJwtToken(authentication);
-        assert token != null;
-        assert jwtUtil.validateJwtToken(token);
+		User user = new User();
+		user.setUsername(username);
+		Mockito.when(authentication.getPrincipal()).thenReturn(user);
+		String token = jwtUtil.generateJwtToken(authentication);
+		assert token != null;
 
-        org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtSecret", password+"random");
-        token = jwtUtil.generateJwtToken(authentication);
-        assert token != null;
-        org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtSecret", password);
+		assert jwtUtil.getUserNameFromJwtToken(token).equalsIgnoreCase(username);
+	}
 
-        assert !jwtUtil.validateJwtToken(token);
+	@Test
+	void validateAuthToken() {
 
-        org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtExpirationMs", -10000000);
-        token = jwtUtil.generateJwtToken(authentication);
-        assert token != null;
-        assert !jwtUtil.validateJwtToken(token);
-        org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtExpirationMs", expirationMs);
-    }
+		User user = new User();
+		user.setUsername(username);
+		Mockito.when(authentication.getPrincipal()).thenReturn(user);
+		String token = jwtUtil.generateJwtToken(authentication);
+		assert token != null;
+		assert jwtUtil.validateJwtToken(token);
+
+		org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtSecret", password + "random");
+		token = jwtUtil.generateJwtToken(authentication);
+		assert token != null;
+		org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtSecret", password);
+
+		assert !jwtUtil.validateJwtToken(token);
+
+		org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtExpirationMs", -10000000);
+		token = jwtUtil.generateJwtToken(authentication);
+		assert token != null;
+		assert !jwtUtil.validateJwtToken(token);
+		org.springframework.test.util.ReflectionTestUtils.setField(jwtUtil, "jwtExpirationMs", expirationMs);
+	}
+
 }

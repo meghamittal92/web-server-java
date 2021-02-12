@@ -20,59 +20,58 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 /**
- * Controller to provide operations on all {@link Calorie}
- * entities.
+ * Controller to provide operations on all {@link Calorie} entities.
  */
 @RestController
 @RequestMapping(path = "${server.request.path.calories}")
-@RolesAllowed({Role.RoleConstants.ADMIN_VALUE})
+@RolesAllowed({ Role.RoleConstants.ADMIN_VALUE })
 @RequiredArgsConstructor
 public class CalorieController {
 
+	private final CalorieService calorieService;
 
-    private final CalorieService calorieService;
-    private final CalorieMapper calorieMapper;
+	private final CalorieMapper calorieMapper;
 
+	@GetMapping
+	public Page<AdminCalorieView> findAll(@RequestParam(value = "search", required = false) String search,
+			final Pageable pageable) {
 
-    @GetMapping
-    public Page<AdminCalorieView> findAll(@RequestParam(value = "search", required = false) String search, final Pageable pageable) {
+		SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>();
+		if (search != null)
+			specBuilder = specBuilder.with(search);
+		Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
 
-        SpecificationBuilder<CalorieDTO> specBuilder = new SpecificationBuilder<CalorieDTO>();
-        if (search != null)
-            specBuilder = specBuilder.with(search);
-        Specification<CalorieDTO> spec = specBuilder.build(CalorieDTOSpecification::new);
+		return calorieService.findAll(spec, pageable).map(calorieMapper::toAdminCalorieView);
+	}
 
-        return calorieService.findAll(spec, pageable).map(calorieMapper::toAdminCalorieView);
-    }
+	@GetMapping(path = "/{id}")
+	public AdminCalorieView find(@PathVariable("id") final Long calorieId) {
 
-    @GetMapping(path = "/{id}")
-    public AdminCalorieView find(@PathVariable("id") final Long calorieId) {
+		return calorieMapper.toAdminCalorieView(calorieService.findById(calorieId));
 
-        return calorieMapper.toAdminCalorieView(calorieService.findById(calorieId));
+	}
 
-    }
+	@PostMapping(consumes = "application/json")
+	public AdminCalorieView create(@RequestBody @Valid final CreateCalorieRequest createCalorieRequest) {
 
-    @PostMapping(consumes = "application/json")
-    public AdminCalorieView create(@RequestBody @Valid final CreateCalorieRequest createCalorieRequest) {
+		Calorie calorie = calorieMapper.toCalorie(createCalorieRequest);
+		return calorieMapper.toAdminCalorieView(calorieService.createCalorie(calorie));
+	}
 
-        Calorie calorie = calorieMapper.toCalorie(createCalorieRequest);
-        return calorieMapper.toAdminCalorieView(calorieService.createCalorie(calorie));
-    }
+	@DeleteMapping(path = "/{id}")
+	public void delete(@PathVariable("id") final Long calorieId) {
 
-    @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") final Long calorieId) {
+		calorieService.deleteById(calorieId);
+	}
 
-        calorieService.deleteById(calorieId);
-    }
+	@PatchMapping(path = "/{id}")
+	public AdminCalorieView update(@PathVariable("id") final Long calorieId,
+			@RequestBody @Valid final UpdateCalorieRequest updateCalorieRequest) {
 
-    @PatchMapping(path = "/{id}")
-    public AdminCalorieView update(@PathVariable("id") final Long calorieId, @RequestBody @Valid final UpdateCalorieRequest updateCalorieRequest) {
+		Calorie originalCalorie = calorieService.findById(calorieId);
+		Calorie updatedCalorie = calorieMapper.updateCalorie(updateCalorieRequest, originalCalorie);
 
-        Calorie originalCalorie = calorieService.findById(calorieId);
-        Calorie updatedCalorie = calorieMapper.updateCalorie(updateCalorieRequest, originalCalorie);
-
-        return calorieMapper.toAdminCalorieView(calorieService.updateById(calorieId, updatedCalorie));
-    }
-
+		return calorieMapper.toAdminCalorieView(calorieService.updateById(calorieId, updatedCalorie));
+	}
 
 }

@@ -6,17 +6,16 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-
 @Entity
 @Table(name = "calories_per_day")
 @Getter
 @Setter
-public class CaloriePerDayDTO  extends AuditableDTO<String>{
+public class CaloriePerDayDTO extends AuditableDTO<String> {
 
-    @EmbeddedId
-    UserDay id;
+	@EmbeddedId
+	UserDay id;
 
-    @Column(name = "total_calories")
-    Integer totalCalories;
+	@Column(name = "total_calories")
+	Integer totalCalories;
 
 }
